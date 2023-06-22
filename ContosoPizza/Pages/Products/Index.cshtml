@@ -1,0 +1,104 @@
+﻿@page "{SearchString?}"
+@model ContosoPizza.Pages.Products.IndexModel
+@inject Microsoft.AspNetCore.Http.IHttpContextAccessor HttpContextAccessor
+@{
+    ViewData["Title"] = "Index";
+}
+
+<h1>Index</h1>
+
+<form>
+    <p>
+        Categories: <select asp-for="Food_Category" asp-items="Model.Categories">
+            <option value="">All</option>
+        </select>
+        &nbsp;&nbsp;
+        FoodName and Description:<select asp-for="Food_Type">
+            <option value="">All</option>
+            <option value="Beef">Beef</option>
+            <option value="Chicken">Chicken</option>
+            <option value="Fish">Fish</option>
+            <option value="Salad">Salad</option>
+            <option value="Vegetable">Vegetable</option>
+        </select>
+        &nbsp;&nbsp;
+        Search: <input type="text" asp-for="SearchString" />
+        <input type="submit" value="Filter" />
+    </p>
+</form>
+
+<p>
+    @if (HttpContextAccessor.HttpContext.Session.Keys.Contains("UserRole"))
+    {
+        if (HttpContextAccessor.HttpContext.Session.GetString("UserRole") == "Admin")
+        {
+            <a asp-page="Create">Create New</a>
+        }
+    }
+</p>
+<table class="table">
+    <thead>
+        <tr>
+            <th>
+                @Html.DisplayNameFor(model => model.Product[0].ProductName)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Product[0].UnitPrice)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Product[0].Category)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Product[0].Materials)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Product[0].Image)
+            </th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+@foreach (var item in Model.Product) {
+        <tr>
+            <td>
+                @Html.DisplayFor(modelItem => item.ProductName)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.UnitPrice)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Category.CategoryName)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Materials)@*//trường hợp này đã join Catergory vào Product nên sẽ có thông tin, không cần phải dùng Model (Model)*@
+            </td>
+            <td>
+                    <img src="@item.Image" alt="Image" style="max-width: 200px; max-height: 200px;" />
+            </td>
+                @if (HttpContextAccessor.HttpContext.Session.GetString("UserRole") == "Admin")
+                {
+                    <td>
+                        <a asp-page="./Edit" asp-route-id="@item.Id">Edit</a> |
+                        <a asp-page="./Details" asp-route-id="@item.Id">Details</a> |
+                        <a asp-page="./Delete" asp-route-id="@item.Id">Delete</a>
+                    </td>
+                }
+                else if (HttpContextAccessor.HttpContext.Session.GetString("UserRole") == "Customer"||!HttpContextAccessor.HttpContext.Session.Keys.Contains("UserRole"))
+                {
+                    <td>
+                        <form method="post">
+                            <input type="submit" class="btn-primary btn" value="Add to cart" asp-route-id="@item.Id">
+                        </form>
+                    </td>
+                }
+        </tr>
+}
+    </tbody>
+</table>
+
+<div class="text-center">
+    @for (int i = 1; i <= 5; i++)
+    {
+        <a href="?Food_Category=@Model.Food_Category&Food_Type=@Model.Food_Type&SearchString=@Model.SearchString&Page=@i" style="color:black; font-weight:bold; font-size: 30px">@i</a>
+    }
+</div>

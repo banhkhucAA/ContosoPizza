@@ -1,0 +1,33 @@
+﻿@*@using Microsoft.AspNetCore.Mvc
+@{
+    var userRole = TempData["UserRole"] as string;// Lấy vai trò của người dùng từ cơ sở dữ liệu
+
+    if (userRole == "Admin")
+    {
+        Layout = "_LayoutAdmin";
+    }
+    else
+    {
+        Layout = "_Layout";
+    }
+    TempData.Keep("UserRole");
+}
+*@
+@inject IHttpContextAccessor HttpContextAccessor
+@{
+    Layout = "_Layout";
+    var userRole = HttpContextAccessor.HttpContext.Session.GetString("UserRole");
+
+    if (userRole == "Admin")
+    {
+        Layout = "_LayoutAdmin";
+    }
+    else if (userRole == "Employee")
+        Layout = "_LayoutEmployee";
+
+    if (string.IsNullOrEmpty(userRole))
+    {
+        Layout = "_Layout";
+    }
+}
+

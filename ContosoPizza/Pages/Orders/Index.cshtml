@@ -1,0 +1,151 @@
+﻿@page
+@model ContosoPizza.Pages.Orders.IndexModel
+@{
+    ViewData["Title"] = "Index";
+}
+
+<h1>Index</h1>
+
+<form>
+    <p>
+        OrderStatus: <select asp-for="searchOrderStatus" asp-items="Model.searchOrderStatuses">
+            <option value="">All</option>
+        </select>
+        &nbsp;&nbsp;
+        DeliveryMethod:
+        <select asp-for="searchDeliveryMethod" asp-items="Model.searchDeliveryMethods">
+            <option value="">All</option>
+        </select>
+        &nbsp;&nbsp;
+        PaymentMethod:
+        <select asp-for="searchPaymentMethod" asp-items="Model.searchPaymentMethods">
+            <option value="">All</option>
+        </select>
+    </p>
+    <p>
+        From Date:
+        <input type="date" asp-for="FromDate" />
+        &nbsp;&nbsp;
+        To Date:
+        <input type="date" asp-for="ToDate" />
+    </p>
+    <input type="submit" value="Filter" />
+</form>
+
+<p>
+    <a asp-page="Create">Create New</a>
+</p>
+<table class="table">
+    <thead>
+        <tr>
+            <th>
+                Creator/Editor
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Order[0].Coupon)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Order[0].Customer)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Order[0].OrderStatus)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Order[0].DeliveryMethod)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Order[0].PaymentMethod)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Order[0].PlacedAddress)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Order[0].BillPrice)
+            </th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+@foreach (var item in Model.Order) {
+        <tr>
+            <td>
+                @Html.DisplayFor(modelItem => item.Employee.FirstName)
+                @Html.DisplayFor(modelItem => item.Employee.LastName)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Coupon.CouponCode)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Customer.Id)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.OrderStatus.StatusName)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.DeliveryMethod.Method)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.PaymentMethod.Method)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.PlacedAddress)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.BillPrice) $
+            </td>
+            <td>
+                    <form method="post">
+                        <a asp-page="./Edit" asp-route-id="@item.Id" class="btn btn-primary">Edit</a> |
+                        <a href="/OrderDetails/Create?orderId=@item.Id" class="btn btn-primary">Details</a> |
+                        <input type="submit" name="Delete" value="Delete" asp-route-id="@item.Id" class="btn btn-primary">
+                    </form>
+            </td>
+        </tr>
+}
+    </tbody>
+</table>
+
+<div class="text-center">
+    @for (int i = 1; i <= 5; i++)
+    {
+        <a href="?Page=@i&searchOrderStatus=@Model.searchOrderStatus&searchDeliveryMethod=@Model.searchDeliveryMethod&searchPaymentMethod=@Model.searchPaymentMethod&FromDate=@Model.FromDate&ToDate=@Model.ToDate" style="color:black; font-weight:bold; font-size: 30px">@i</a>
+    }
+</div>
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+    <script>
+        $(document).ready(function () {
+            var errorMessage = '@TempData["ErrorMessage"]';
+            if (errorMessage !== '') {
+                $('#errorModal').modal('show');
+            }
+            $('#errorModal .close').click(function () {
+                $('#errorModal').modal('hide');
+            });
+            $('#errorModal button[data-dismiss="modal"]').click(function () {
+                $('#errorModal').modal('hide');
+            });
+        });
+    </script>
+}
+<div class="modal fade" id="errorModal" tabindex="-1" role="dialog" aria-labelledby="errorModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="errorModalLabel">Notification</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                @TempData["ErrorMessage"]
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+            </div>
+        </div>
+    </div>
+</div>

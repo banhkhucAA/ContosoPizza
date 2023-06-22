@@ -1,0 +1,93 @@
+﻿@page
+@model ContosoPizza.Pages.Products.EditModel
+
+@{
+    ViewData["Title"] = "Edit";
+}
+
+<h1>Edit</h1>
+
+<h4>Product</h4>
+<hr />
+<div class="row">
+    <div class="col-md-4">
+        <form method="post" enctype="multipart/form-data">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <input type="hidden" asp-for="Product.Id" />
+            <input type="hidden" asp-for=skippedcount />
+            <div class="form-group">
+                <label asp-for="Product.ProductName" class="control-label"></label>
+                <input asp-for="Product.ProductName" class="form-control" />
+                <span asp-validation-for="Product.ProductName" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Product.UnitPrice" class="control-label"></label>
+                <input asp-for="Product.UnitPrice" class="form-control" />
+                <span asp-validation-for="Product.UnitPrice" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Product.CategoryId" class="control-label">Category</label>
+                <select asp-for="Product.CategoryId" class="form-control" asp-items="Model.CategoryList"></select>
+                <span asp-validation-for="Product.CategoryId" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Product.Materials" class="control-label"></label>
+                <input asp-for="Product.Materials" class="form-control" />
+                <span asp-validation-for="Product.Materials" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <img src="@Model.Product.Image" alt="Image" style="max-width: 200px; max-height: 200px;" />
+            </div>
+            <div class="form-group">
+                <label>Upload Image</label>
+                <input type="file" name="imageFile" class="form-control-file" />
+            </div>
+            <hr />
+            <div class="form-group">
+                <input type="submit" value="Save" name="Save" class="btn btn-primary" />
+            </div>
+        </form>
+    </div>
+</div>
+
+<div>
+    <a href="./?Page=@(Model.skippedcount/5+1)">Back to List</a>
+</div>
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+    <script>
+        $(document).ready(function () {
+            var errorMessage = '@Model.ErrorMessage';
+            if (errorMessage !== '') {
+                $('#errorModal').modal('show');
+            }
+            $('#errorModal .close').click(function () {
+                $('#errorModal').modal('hide');
+            });
+            $('#errorModal button[data-dismiss="modal"]').click(function () {
+                $('#errorModal').modal('hide');
+            });
+        });
+    </script>
+}
+<div class="modal fade" id="errorModal" tabindex="-1" role="dialog" aria-labelledby="errorModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="errorModalLabel">Error</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                @Model.ErrorMessage
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+            </div>
+        </div>
+    </div>
+</div>

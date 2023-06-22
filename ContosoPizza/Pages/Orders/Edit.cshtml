@@ -1,0 +1,220 @@
+﻿@page
+@model ContosoPizza.Pages.Orders.EditModel
+
+@{
+    ViewData["Title"] = "Edit";
+}
+
+<div class="row">
+    <div class="col-md-4">
+        <h1>Edit</h1>
+
+        <h4>Order</h4>
+        <form method="post">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <input type="hidden" asp-for="Order.Id" />
+            <div class="form-group">
+                <label asp-for="Order.OrderPlacedAt" class="control-label"></label>
+                <input asp-for="Order.OrderPlacedAt" class ="form-control" />
+                <span asp-validation-for="Order.OrderPlacedAt" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Order.OrderFullFilledAt" class="control-label"></label>
+                <input asp-for="Order.OrderFullFilledAt" class="form-control" />
+                <span asp-validation-for="Order.OrderFullFilledAt" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Order.EmployeeId" class="control-label"></label>
+                <select asp-for="Order.EmployeeId" class="form-control" asp-items="@ViewBag.EmployeeId" readonly></select>
+            </div>         
+            <div class="form-group form-check">
+                <label class="form-check-label">
+                    <input id="IsCustomerMember" class="form-check-input" asp-for="Order.IsCustomerMember" disabled/>
+                    @Html.DisplayNameFor(model => model.Order.IsCustomerMember)
+                </label>
+            </div>
+            <div class="form-group" id="PhoneNumber">
+                <label asp-for="Order.NoneCustomerMemberPhoneNumber" class="control-label">Phone Number</label>
+                <input asp-for="Order.NoneCustomerMemberPhoneNumber" class="form-control" />
+            </div>
+            <div class="form-group" id="EmailAddress">
+                <label asp-for="Order.NoneCustomerMemberEmailAddress" class="control-label">Email Address</label>
+                <input asp-for="Order.NoneCustomerMemberEmailAddress" class="form-control" />
+            </div>
+            <div class="form-group" id="CustomerIdContainer" style="display: none;">
+                <label asp-for="Order.CustomerId" class="control-label">Customer</label>
+                <select asp-for="Order.CustomerId" class="form-control" asp-items="ViewBag.CustomerId" readonly></select>
+            </div>
+            <div class="form-group" id="CouponIdContainer" style="display: none;">
+                <label asp-for="Order.CouponId" class="control-label">Coupon Code</label>
+                <select asp-for="Order.CouponId" class="form-control" asp-items="ViewBag.CouponId" readonly></select>
+            </div>
+            <div class="form-group">
+                <label asp-for="Order.OrderStatusId" class="control-label"></label>
+                <select asp-for="Order.OrderStatusId" class="form-control" asp-items="ViewBag.OrderStatusId"></select>
+                <span asp-validation-for="Order.OrderStatusId" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Order.DeliveryMethodId" class="control-label"></label>
+                <select asp-for="Order.DeliveryMethodId" class="form-control" asp-items="ViewBag.DeliveryMethodId"></select>
+                <span asp-validation-for="Order.DeliveryMethodId" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Order.PaymentMethodId" class="control-label"></label>
+                <select asp-for="Order.PaymentMethodId" class="form-control" asp-items="ViewBag.PaymentMethodId"></select>
+                <span asp-validation-for="Order.PaymentMethodId" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Order.PlacedAddress" class="control-label"></label>
+                <input asp-for="Order.PlacedAddress" class="form-control" />
+                <span asp-validation-for="Order.PlacedAddress" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <input type="submit" value="Save" name="saveButton" class="btn btn-primary" />
+            </div>
+        </form>
+    </div>
+
+    <div class="col-md-2"></div>
+
+    <div class="col-md-4">
+        <h1>Find</h1>
+
+        <h4>Customer Member</h4>
+        <hr />
+        <form method="post">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <input type="hidden" asp-for="Order.Id" />
+            <input type="hidden" asp-for="Order.PlacedAddress" />
+            <div class="form-group">
+                <label asp-for="Customer.Email" class="control-label"></label>
+                <input asp-for="Customer.Email" class="form-control" placeholder="Enter Customer's email here" />
+                <span asp-validation-for="Customer.Email" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <input type="submit" value="Find" name="findButton" class="btn btn-primary" />
+            </div>
+        </form>
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>|</th>
+                    <th>
+                        @Html.DisplayNameFor(model=>model.Customer.Id)
+                    </th>
+                    <th>
+                        @Html.DisplayNameFor(model=>model.Customer.LastName)
+                    </th>
+                    <th>|</th>
+                    <th>
+                        @Html.DisplayNameFor(model=>model.Customer.Address)
+                    </th>
+                    <th>|</th>
+                    <th>
+                        @Html.DisplayNameFor(model=>model.Customer.Phone)
+                    </th>
+                    <th>|</th>
+                    <th>
+                        @Html.DisplayNameFor(model=>model.Customer.Email)
+                    </th>
+                    <th>|</th>
+                </tr>
+            </thead>
+
+            <tbody>
+                <tr>
+                    <th>|</th>
+                    <th>
+                        @Html.DisplayFor(model=>model.Customer.Id)
+                    </th>
+                    <th>
+                        @Html.DisplayFor(model=>model.Customer.LastName)
+                    </th>
+                    <th>|</th>
+                    <th>
+                        @Html.DisplayFor(model=>model.Customer.Address)
+                    </th>
+                    <th>|</th>
+                    <th>
+                        @Html.DisplayFor(model=>model.Customer.Phone)
+                    </th>
+                    <th>|</th>
+                    <th>
+                        @Html.DisplayFor(model=>model.Customer.Email)
+                    </th>
+                    <th>|</th>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+</div>
+
+
+
+<div>
+    <a asp-page="./Index">Back to List</a>
+</div>
+
+<!-- Các trường mã HTML -->
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+    <script>
+        $(document).ready(function () {
+            var errorMessage = '@Model.ErrorMessage';
+            if (errorMessage !== '') {
+                $('#errorModal').modal('show');
+            }
+            $('#errorModal .close').click(function () {
+                $('#errorModal').modal('hide');
+            });
+            $('#errorModal button[data-dismiss="modal"]').click(function () {
+                $('#errorModal').modal('hide');
+            });
+
+            var isCustomerMember = @Model.Order.CustomerId!=null;
+            showHideCustomerMemberFields(isCustomerMember);
+
+            function showHideCustomerMemberFields(isMember) {
+                if (isMember) {
+                    $('#CustomerIdContainer').closest('.form-group').show();
+                    $('#CouponIdContainer').closest('.form-group').show();
+                    $('#PhoneNumber').closest('.form-group').hide();
+                    $('#EmailAddress').closest('.form-group').hide();
+                    $('#IsCustomerMember').prop('checked', true);
+                    $('#IsCustomerMember').prop('disabled', true);
+                    $('#IsCustomerMember').prop('readonly', true);
+                } else if(isMember==null) {
+                    $('#CustomerIdContainer').closest('.form-group').hide();
+                    $('#CouponIdContainer').closest('.form-group').hide();
+                    $('#PhoneNumber').closest('.form-group').show();
+                    $('#EmailAddress').closest('.form-group').show();
+                    $('#IsCustomerMember').prop('checked', false);
+                    $('#IsCustomerMember').prop('disabled', true);
+                   
+                }
+            }
+        });
+    </script>
+}
+
+
+<div class="modal fade" id="errorModal" tabindex="-1" role="dialog" aria-labelledby="errorModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="errorModalLabel">Error</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                @Model.ErrorMessage
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+            </div>
+        </div>
+    </div>
+</div>
