@@ -39,7 +39,7 @@ namespace ContosoPizza.Pages.OrderDetails
                 .Include(o => o.Employee)
                 .FirstOrDefault(x => x.Id == orderId);
 
-            var orderDetails = _context.OrderDetails.Where(x => x.OrderId == orderId).ToList();
+            var orderDetails = _context.OrderDetails.Where(x => x.OrderId == orderId).Include(p=>p.Product).ToList();
 
             if (order == null)
             {

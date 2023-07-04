@@ -20,7 +20,9 @@ namespace ContosoPizza.Pages.OrderStatuses
         }
 
         [BindProperty]
-      public OrderStatus OrderStatus { get; set; } = default!;
+        public OrderStatus OrderStatus { get; set; } = default!;
+        [BindProperty]
+        public string ErrorMessage { get; set; }
 
         public async Task<IActionResult> OnGetAsync(int? id)
         {
@@ -52,6 +54,12 @@ namespace ContosoPizza.Pages.OrderStatuses
 
             if (orderstatus != null)
             {
+                var orders = _context.Orders.Where(or=>or.OrderStatusId == id && or.OrderStatus.IsActive==true).ToList();
+                if (orders.Any()) 
+                {
+                    ErrorMessage = "Can't delete. This order status has been used in active orders";
+                    return await OnGetAsync(id);
+                }
                 OrderStatus = orderstatus;
                 _context.OrderStatuses.Remove(OrderStatus);
                 await _context.SaveChangesAsync();

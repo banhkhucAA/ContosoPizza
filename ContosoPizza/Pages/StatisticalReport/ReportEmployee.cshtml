@@ -1,0 +1,145 @@
+﻿@page
+@model ContosoPizza.Pages.StatisticalReport.ReportEmployeeModel
+@{
+    ViewData["Title"] = "Report Employees";
+    int count = 0;
+    string[] colors = { "red", "blue", "green" };
+}
+
+<h1>Report Employees</h1>
+
+<form>
+    <p>
+        Order by:
+        <select id="orderBySelect">
+            <option value="">Default</option>
+            <option value="OrderByTotalMoneyOrders">Total Money</option>
+            <option value="OrderByDoneOrders">Done Orders</option>
+            <option value="OrderByFailedOrders">Failed Orders</option>
+            <option value="OrderBySuccessfullMoneyOrders">Successfull Orders (Money)</option>
+            <option value="OrderByDiscrepancy">Discrepancy (between Successfull Orders and Total Money)</option>
+        </select>
+    </p>
+</form>
+
+<table class="table">
+    <thead> 
+        <tr>
+            <th>
+                @Html.DisplayNameFor(model => model.reportEmployeeDtos[0].FullName)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.reportEmployeeDtos[0].Role)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.reportEmployeeDtos[0].DoneOrders)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.reportEmployeeDtos[0].FailedOrders)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.reportEmployeeDtos[0].TotalMoneyOrders)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.reportEmployeeDtos[0].SuccessfullMoneyOrders)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.reportEmployeeDtos[0].Discrepancy)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.reportEmployeeDtos[0].Image)
+            </th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model.reportEmployeeDtos)
+        {
+            @if (count <= 2)
+            {
+                <tr style="color: @colors[count % colors.Length]; font-weight: bold;">
+                    <td>
+                        <a style="color: @colors[count % colors.Length]; font-weight: bold;" href="/Employees/Details?Id=@item.Id">@Html.DisplayFor(modelItem => item.FullName)</a>
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.Role)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.DoneOrders)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.FailedOrders)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.TotalMoneyOrders)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.SuccessfullMoneyOrders)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.Discrepancy)
+                    </td>                 
+                    <td>
+                        <img src="@item.Image" alt="Image" style="max-width: 200px; max-height: 200px;" />
+                    </td>
+                    <td></td>
+                </tr>
+            }else
+            {
+                <tr>
+                    <td>
+                        <a href="/Employees/Details?Id=@item.Id">@Html.DisplayFor(modelItem => item.FullName)</a>
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.Role)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.DoneOrders)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.FailedOrders)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.TotalMoneyOrders)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.SuccessfullMoneyOrders)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.Discrepancy)
+                    </td>
+                    <td></td>
+                </tr>
+            }
+            count++;
+        }
+    </tbody>
+</table>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        // Khôi phục giá trị đã lưu nếu có
+        var storedOrderByValue = sessionStorage.getItem('selectedOrderByOption');
+        if (storedOrderByValue) {
+            document.getElementById('orderBySelect').value = storedOrderByValue;
+        }
+
+        document.getElementById('orderBySelect').addEventListener('change', function (event) {
+            redirectToSelectedOption();
+        });
+
+        function redirectToSelectedOption() {
+            var selectElement = document.getElementById("orderBySelect");
+            var selectedValue = selectElement.value;
+
+            // Lưu trữ giá trị đã chọn vào sessionStorage
+            sessionStorage.setItem('selectedOrderByOption', selectedValue);
+
+            // Chuyển hướng đến đường dẫn đã chọn
+            if (selectedValue !== "") {
+                window.location.href = '/StatisticalReport/ReportEmployee?OrderBy=' + selectedValue;
+            }
+        }
+    });
+</script>
+

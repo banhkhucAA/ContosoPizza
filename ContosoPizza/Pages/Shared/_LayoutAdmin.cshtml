@@ -44,6 +44,15 @@
                             <a class="nav-link text-dark" asp-area="" asp-page="/DeliveryMethods/Index">DeliveryMethods</a>
                         </li>
                         <li class="nav-item ms-auto">
+                            <select class="form-select" id="reportOptions">
+                                <option value="">Report</option>
+                                <option value="/StatisticalReport/ReportEmployee" >Employee Report</option>
+                                <option value="/StatisticalReport/ReportOrder">Order Report</option>
+                                <option value="option2" onclick="redirectTo('')">Food Report</option>
+                                <option value="option3">Customer Report</option>
+                            </select>
+                        </li>
+                        <li class="nav-item">
                             <a class="nav-link text-dark" asp-area="" asp-page="/Logout">LOGOUT</a>
                         </li>
                     </ul>
@@ -66,7 +75,33 @@
     <script src="~/lib/jquery/dist/jquery.min.js"></script>
     <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
     <script src="~/js/site.js" asp-append-version="true"></script>
-
     @await RenderSectionAsync("Scripts", required: false)
 </body>
 </html>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        // Khôi phục giá trị đã lưu nếu có
+        var storedReportValue = sessionStorage.getItem('selectedReportOption');
+        if (storedReportValue) {
+            document.getElementById('reportOptions').value = storedReportValue;
+        }
+
+        document.getElementById('reportOptions').addEventListener('change', function (event) {
+            redirectToOption();
+        });
+
+        function redirectToOption() {
+            var selectElement = document.getElementById("reportOptions");
+            var selectedValue = selectElement.value;
+
+            // Lưu trữ giá trị đã chọn vào sessionStorage
+            sessionStorage.setItem('selectedReportOption', selectedValue);
+
+            // Chuyển hướng đến đường dẫn đã chọn
+            if (selectedValue !== "") {
+                window.location.href = selectedValue + "?OrderBy=";
+            }
+        }
+    });
+</script>

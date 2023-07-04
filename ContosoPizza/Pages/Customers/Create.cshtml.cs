@@ -29,16 +29,23 @@ namespace ContosoPizza.Pages.Customers
 
         [BindProperty]
         public Customer Customer { get; set; } = default!;
+        [BindProperty]
+        public string ErrorMessage { get; set; }
 
         public int skippedCount = 0;
         // To protect from overposting attacks, see https://aka.ms/RazorPagesCRUD
         public async Task<IActionResult> OnPostAsync()
-        {
-    
-            if (!ModelState.IsValid || _context.Customers == null || Customer == null)
+        {  
+            if (_context.Customers == null || Customer == null)
             {
                 return Page();
             }
+            var ExistEmail = await _context.Customers.FirstOrDefaultAsync(c=>c.Email==Customer.Email);
+            if(ExistEmail!=null)
+            {
+                ErrorMessage = "This email has already been used";
+                return await OnGet();
+            }    
 
             var skippedCount = HttpContext.Session.GetInt32("SkippedCount");
             var curentPage = (skippedCount+1) / 5 + 1;

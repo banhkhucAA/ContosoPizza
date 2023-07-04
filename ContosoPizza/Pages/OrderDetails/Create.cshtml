@@ -1,122 +1,141 @@
 ﻿@page
 @model ContosoPizza.Pages.OrderDetails.CreateModel
-
+@inject Microsoft.AspNetCore.Http.IHttpContextAccessor HttpContextAccessor
 @{
     ViewData["Title"] = "Create";
 }
 @{
     float Bill = 0;
 }
+@inject Microsoft.AspNetCore.Http.IHttpContextAccessor HttpContextAccessor
 
 <div class="row">
-    <div class="col-md-4">
-        <h1>Create</h1>
+    @if (HttpContextAccessor.HttpContext.Session.GetString("UserRole") == "Employee")
+    {
+        <div class="col-md-4">
+            <h1>Create</h1>
 
-        <h4>Order</h4>
-        <hr />
-        <div>
-            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-            <input type="hidden" asp-for="Order.Id" />
-            <div class="form-group">
-                <label asp-for="Order.OrderPlacedAt" class="control-label"></label>
-                <input asp-for="Order.OrderPlacedAt" class="form-control" readonly />
-                <span asp-validation-for="Order.OrderPlacedAt" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="Order.OrderFullFilledAt" class="control-label"></label>
-                <input asp-for="Order.OrderFullFilledAt" class="form-control" readonly />
-                <span asp-validation-for="Order.OrderFullFilledAt" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="Order.EmployeeId" class="control-label"></label>
-                <input class="form-control" value="@Model.Order.Employee.FirstName @Model.Order.Employee.LastName" readonly />
-            </div>
-            <div class="form-group">
-                <label asp-for="Order.CustomerId" class="control-label">CustomerName</label>
-                @if (Model.Order.Customer != null && Model.Order.Customer.FirstName != null)
+            <h4>Order</h4>
+            <hr />
+            <div>
+                <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+                <input type="hidden" asp-for="Order.Id" />
+                <div class="form-group">
+                    <label asp-for="Order.OrderPlacedAt" class="control-label"></label>
+                    <input asp-for="Order.OrderPlacedAt" class="form-control" readonly />
+                    <span asp-validation-for="Order.OrderPlacedAt" class="text-danger"></span>
+                </div>
+                <div class="form-group">
+                    <label asp-for="Order.OrderFullFilledAt" class="control-label"></label>
+                    <input asp-for="Order.OrderFullFilledAt" class="form-control" readonly />
+                    <span asp-validation-for="Order.OrderFullFilledAt" class="text-danger"></span>
+                </div>
+                @if (Model.Order.Employee != null)
                 {
-                    <input class="form-control" readonly value="@Model.Order.Customer.FirstName" />
-                }
-                else
-                {
-                    <input class="form-control" readonly />
                     <div class="form-group">
-                        <label asp-for="Order.NoneCustomerMemberEmailAddress" class="control-label">EmailAddress</label>
-                        <input asp-for="Order.NoneCustomerMemberEmailAddress" class="form-control" value="@Model.Order.NoneCustomerMemberEmailAddress" readonly />
-                    </div>
-                    <div class="form-group">
-                        <label asp-for="Order.NoneCustomerMemberPhoneNumber" class="control-label">PhoneNumber</label>
-                        <input asp-for="Order.NoneCustomerMemberPhoneNumber" class="form-control" value="@Model.Order.NoneCustomerMemberPhoneNumber" readonly />
+                        <label asp-for="Order.EmployeeId" class="control-label"></label>
+                        <input class="form-control" value="@Model.Order.Employee.FirstName @Model.Order.Employee.LastName" readonly />
                     </div>
                 }
-            </div>
-            <div class="form-group">
-                <label asp-for="Order.CouponId" class="control-label">CouponCode</label>
-                @if (Model.Order.Coupon != null && Model.Order.Coupon.CouponCode != null)
-                {
-                    <input class="form-control" readonly value="@Model.Order.Coupon.CouponCode" />
-                }
-                else
-                {
-                    <input class="form-control" readonly />
-                }
-            </div>
-            <div class="form-group">
-                <label asp-for="Order.OrderStatusId" class="control-label">OrderStaus</label>
-                <input class="form-control" value="@Model.Order.OrderStatus.StatusName" readonly />
-            </div>
-            <div class="form-group">
-                <label asp-for="Order.DeliveryMethodId" class="control-label">DeliveryMethod</label>
-                <input class="form-control" value="@Model.Order.DeliveryMethod.Method" readonly />
-            </div>
-            <div class="form-group">
-                <label asp-for="Order.PaymentMethodId" class="control-label">PaymentMethod</label>
-                <input class="form-control" value="@Model.Order.PaymentMethod.Method" readonly />
-            </div>
-            <div class="form-group">
-                <label asp-for="Order.PlacedAddress" class="control-label">PlacedAddress</label>
-                <input asp-for="Order.PlacedAddress" class="form-control" value="@Model.Order.PlacedAddress" readonly />
+                <div class="form-group form-check" readonly>
+                    <label class="form-check-label" readonly>
+                        <input id="IsCustomerMember" class="form-check-input" asp-for="Order.IsCustomerMember" readonly/>
+                        @Html.DisplayNameFor(model => model.Order.IsCustomerMember)
+                    </label>
+                </div>
+                <div class="form-group">
+                    <label asp-for="Order.CustomerId" class="control-label">CustomerName</label>
+                    @if (Model.Order.Customer != null && Model.Order.Customer.FirstName != null)
+                    {
+                        <input class="form-control" readonly value="@Model.Order.Customer.FirstName" />
+                    }
+                    else
+                    {
+                        <input class="form-control" readonly />
+                        <div class="form-group">
+                            <label asp-for="Order.NoneCustomerMemberEmailAddress" class="control-label">EmailAddress</label>
+                            <input asp-for="Order.NoneCustomerMemberEmailAddress" class="form-control" value="@Model.Order.NoneCustomerMemberEmailAddress" readonly />
+                        </div>
+                        <div class="form-group">
+                            <label asp-for="Order.NoneCustomerMemberPhoneNumber" class="control-label">PhoneNumber</label>
+                            <input asp-for="Order.NoneCustomerMemberPhoneNumber" class="form-control" value="@Model.Order.NoneCustomerMemberPhoneNumber" readonly />
+                        </div>
+                    }
+                </div>
+                <div class="form-group">
+                    <label asp-for="Order.CouponId" class="control-label">CouponCode</label>
+                    @if (Model.Order.Coupon != null && Model.Order.Coupon.CouponCode != null)
+                    {
+                        <input class="form-control" readonly value="@Model.Order.Coupon.CouponCode" />
+                    }
+                    else
+                    {
+                        <input class="form-control" readonly />
+                    }
+                </div>
+                <div class="form-group">
+                    <label asp-for="Order.OrderStatusId" class="control-label">OrderStatus</label>
+                    <input class="form-control" value="@Model.Order.OrderStatus.StatusName" readonly />
+                </div>
+                <div class="form-group">
+                    <label asp-for="Order.DeliveryMethodId" class="control-label">DeliveryMethod</label>
+                    <input class="form-control" value="@Model.Order.DeliveryMethod.Method" readonly />
+                </div>
+                <div class="form-group">
+                    <label asp-for="Order.PaymentMethodId" class="control-label">PaymentMethod</label>
+                    <input class="form-control" value="@Model.Order.PaymentMethod.Method" readonly />
+                </div>
+                <div class="form-group">
+                    <label asp-for="Order.PlacedAddress" class="control-label">PlacedAddress</label>
+                    <input asp-for="Order.PlacedAddress" class="form-control" value="@Model.Order.PlacedAddress" readonly />
+                </div>
             </div>
         </div>
-    </div>
+    }
 
     <div class="col-md-2"></div>
         <div class="col-md-6">
-                <h1>Create</h1>
+        @if (HttpContextAccessor.HttpContext.Session.GetString("UserRole") == "Employee")
+        {
+            <h1>Create</h1>
 
-                <h4>Order Details</h4>
-                <hr />
-                <form method="post">
-                    <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-                    <input type="hidden" asp-for="Order.Id" />
-                    <input type="hidden" asp-for="Order.DeliveryMethodId" />
-                    <input type="hidden" asp-for="Order.OrderStatusId" />
-                    <input type="hidden" asp-for="Order.PaymentMethodId" />
-                    <input type="hidden" asp-for="Order.CustomerId" />
-                    <input type="hidden" asp-for="Order.CouponId" />
-                    <input type="hidden" asp-for="Order.OrderFullFilledAt" />
-                    <input type="hidden" asp-for="Order.OrderPlacedAt" />
-                    <input type="hidden" asp-for="Order.PlacedAddress" />
-                    <input type="hidden" asp-for="Order.EmployeeId" />
-                    <div class="form-group">
-                        <label asp-for="OrderDetail.OrderId" class="control-label"></label>
-                        <input asp-for="OrderDetail.OrderId" readonly class="form-control" value="@Model.Order.Id" style="max-width: 300px" />
-                        <span asp-validation-for="OrderDetail.OrderId" class="text-danger"></span>
-                    </div>
-                    <div class="form-group">
-                        <label asp-for="OrderDetail.ProductId" class="control-label"></label>
-                        <select asp-for="OrderDetail.ProductId" class="form-control" asp-items="ViewBag.ProductId" style="max-width: 300px"></select>
-                    </div>
-                    <div class="form-group">
-                        <label asp-for="OrderDetail.Quantity" class="control-label"></label>
-                        <input asp-for="OrderDetail.Quantity" class="form-control" style="max-width: 300px" min="1" />
-                        <span asp-validation-for="OrderDetail.Quantity" class="text-danger"></span>
-                    </div>
-                    <div class="form-group">
-                        <input type="submit" value="Create" name="createButton" class="btn btn-primary" />
-                    </div>
-                </form>
-                <br />
+            <h4>Order Details</h4>
+            <hr />
+            <form method="post">
+                <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+                <input type="hidden" asp-for="Order.Id" />
+                <input type="hidden" asp-for="Order.DeliveryMethodId" />
+                <input type="hidden" asp-for="Order.OrderStatusId" />
+                <input type="hidden" asp-for="Order.PaymentMethodId" />
+                <input type="hidden" asp-for="Order.CustomerId" />
+                <input type="hidden" asp-for="Order.CouponId" />
+                <input type="hidden" asp-for="Order.OrderFullFilledAt" />
+                <input type="hidden" asp-for="Order.OrderPlacedAt" />
+                <input type="hidden" asp-for="Order.PlacedAddress" />
+                <input type="hidden" asp-for="Order.EmployeeId" />
+                <input type="hidden" asp-for="Order.IsCustomerMember" />
+                <input type="hidden" asp-for="Order.NoneCustomerMemberEmailAddress" />
+                <input type="hidden" asp-for="Order.NoneCustomerMemberPhoneNumber" />
+                <div class="form-group">
+                    <label asp-for="OrderDetail.OrderId" class="control-label"></label>
+                    <input asp-for="OrderDetail.OrderId" readonly class="form-control" value="@Model.Order.Id" style="max-width: 300px" />
+                    <span asp-validation-for="OrderDetail.OrderId" class="text-danger"></span>
+                </div>
+                <div class="form-group">
+                    <label asp-for="OrderDetail.ProductId" class="control-label"></label>
+                    <select asp-for="OrderDetail.ProductId" class="form-control" asp-items="ViewBag.ProductId" style="max-width: 300px"></select>
+                </div>
+                <div class="form-group">
+                    <label asp-for="OrderDetail.Quantity" class="control-label"></label>
+                    <input asp-for="OrderDetail.Quantity" class="form-control" style="max-width: 300px" min="1" />
+                    <span asp-validation-for="OrderDetail.Quantity" class="text-danger"></span>
+                </div>
+                <div class="form-group">
+                    <input type="submit" value="Create" name="createButton" class="btn btn-primary" />
+                </div>
+            </form>
+            <br />
+        }
 
                 <h1>Your recent items</h1>
 
@@ -149,10 +168,13 @@
                             <td>
                                 <img src="@item.Product.Image" alt="Image" style="max-width: 200px; max-height: 200px;" />
                             </td>
-                            <td>
-                                <a asp-page="./Edit" asp-route-id="@item.Id">Edit</a> |
-                                <a asp-page="./Delete" asp-route-id="@item.Id">Delete</a> |
-                            </td>
+                            @if (HttpContextAccessor.HttpContext.Session.GetString("UserRole") == "Employee")
+                            {
+                                <td>                                                     
+                                    <a asp-page="./Edit" asp-route-id="@item.Id">Edit</a> |
+                                    <a asp-page="./Delete" asp-route-id="@item.Id">Delete</a> |
+                                </td>
+                            }
                         </tr>
                          {Bill = Bill+(float)item.TotalPrice; }
                     }
@@ -170,14 +192,17 @@
                     <div>Total Discount:@(Math.Round((float)Bill * @Model.Order.Coupon.DiscountAmount/100, 2)) $</div>
                     var totalPrice = Math.Round(Bill + @Model.Order.DeliveryMethod.Price + @Model.Order.PaymentMethod.Price - (float)(Bill * @Model.Order.Coupon.DiscountAmount / 100), 2);
                     <div>Total Price: @(Math.Round(totalPrice, 2)) $</div>
+                    @if (HttpContextAccessor.HttpContext.Session.GetString("UserRole") == "Customer")
+                    {
+                        <hr />
+                        <div>Order placed at: @Model.Order.OrderPlacedAt</div>
+                    }
                 }
+
+        <a href="/Orders/Index">Back to List</a>
         </div>
 </div> 
 
-<div>
-    <a href="/Orders/Edit?id=@Model.Order?.Id">Edit</a> |
-    <a href="/Orders/Index">Back to List</a>
-</div>
 
 @section Scripts {
     @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}

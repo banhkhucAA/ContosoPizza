@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using ContosoPizza.Data;
 using ContosoPizza.Models.Generated;
+using Microsoft.EntityFrameworkCore;
 
 namespace ContosoPizza.Pages.PaymentMethods
 {
@@ -26,16 +27,23 @@ namespace ContosoPizza.Pages.PaymentMethods
 
         [BindProperty]
         public PaymentMethod PaymentMethod { get; set; } = default!;
-        
+        [BindProperty]
+        public string ErrorMessage { get; set; }
+
 
         // To protect from overposting attacks, see https://aka.ms/RazorPagesCRUD
         public async Task<IActionResult> OnPostAsync()
         {
-          if (!ModelState.IsValid || _context.PaymentMethods == null || PaymentMethod == null)
+          if ( _context.PaymentMethods == null || PaymentMethod == null)
             {
                 return Page();
             }
-
+            var existPaymentName = await _context.PaymentMethods.Where(c => c.Method == PaymentMethod.Method).FirstOrDefaultAsync();
+            if (existPaymentName != null)
+            {
+                ErrorMessage = "This Category Name: " + PaymentMethod.Method + " has already existed";
+                return Page();
+            }
             _context.PaymentMethods.Add(PaymentMethod);
             await _context.SaveChangesAsync();
 
@@ -43,3 +51,4 @@ namespace ContosoPizza.Pages.PaymentMethods
         }
     }
 }
+

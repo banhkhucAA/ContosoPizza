@@ -6,7 +6,16 @@
 }
 
 <h1>Index</h1>
-
+<form method="get">
+    <p>
+        Filter: <select asp-for="Expire" >
+            <option value="">All</option>
+            <option value="Expired">Expired Coupons</option>
+            <option value="Available">Available Coupons</option>
+        </select>
+        <input type="submit" value="Search" />
+    </p>
+</form>
 @if (HttpContextAccessor.HttpContext.Session.GetString("UserRole") == "Admin")
 {
     <p>

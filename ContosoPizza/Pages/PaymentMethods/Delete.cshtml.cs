@@ -20,7 +20,9 @@ namespace ContosoPizza.Pages.PaymentMethods
         }
 
         [BindProperty]
-      public PaymentMethod PaymentMethod { get; set; } = default!;
+        public PaymentMethod PaymentMethod { get; set; } = default!;
+        [BindProperty]
+        public string ErrorMessage { get; set; }
 
         public async Task<IActionResult> OnGetAsync(int? id)
         {
@@ -52,6 +54,7 @@ namespace ContosoPizza.Pages.PaymentMethods
 
             if (paymentmethod != null)
             {
+
                 PaymentMethod = paymentmethod;
                 _context.PaymentMethods.Remove(PaymentMethod);
                 await _context.SaveChangesAsync();

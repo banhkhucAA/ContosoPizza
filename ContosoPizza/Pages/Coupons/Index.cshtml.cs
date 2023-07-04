@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.EntityFrameworkCore;
 using ContosoPizza.Data;
 using ContosoPizza.Models.Generated;
+using Microsoft.AspNetCore.Mvc.Rendering;
 
 namespace ContosoPizza.Pages.Coupons
 {
@@ -18,14 +19,25 @@ namespace ContosoPizza.Pages.Coupons
         {
             _context = context;
         }
-
+        [BindProperty(SupportsGet = true)]
+        public string Expire { get; set; }
         public IList<Coupon> Coupon { get;set; } = default!;
 
-        public async Task OnGetAsync()
+        public async Task OnGetAsync()  
         {
             if (_context.Coupons != null)
             {
-                Coupon = await _context.Coupons.ToListAsync();
+                if(HttpContext.Session.GetString("UserRole")=="Admin")
+                {                    
+                    if(!string.IsNullOrEmpty(Expire)) 
+                    {
+                        if(Expire=="Expired") Coupon = await _context.Coupons.Where(c=>c.ExpireDate<DateTime.UtcNow).ToListAsync();
+                        else if(Expire=="Available") Coupon = await _context.Coupons.Where(c => c.ExpireDate > DateTime.UtcNow || c.ExpireDate == null).ToListAsync();
+                    }
+                    else Coupon = await _context.Coupons.ToListAsync();
+                }
+                else    
+                Coupon = await _context.Coupons.Where(c=>c.ExpireDate>DateTime.UtcNow||c.ExpireDate==null).ToListAsync();
             }
         }
     }

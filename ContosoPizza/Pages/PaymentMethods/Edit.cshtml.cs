@@ -8,6 +8,7 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using ContosoPizza.Data;
 using ContosoPizza.Models.Generated;
+using Microsoft.DotNet.Scaffolding.Shared.CodeModifier.CodeChange;
 
 namespace ContosoPizza.Pages.PaymentMethods
 {
@@ -22,6 +23,8 @@ namespace ContosoPizza.Pages.PaymentMethods
 
         [BindProperty]
         public PaymentMethod PaymentMethod { get; set; } = default!;
+        [BindProperty]
+        public string ErrorMessage { get; set; }
 
         public async Task<IActionResult> OnGetAsync(int? id)
         {
@@ -43,11 +46,12 @@ namespace ContosoPizza.Pages.PaymentMethods
         // For more details, see https://aka.ms/RazorPagesCRUD.
         public async Task<IActionResult> OnPostAsync()
         {
-            if (!ModelState.IsValid)
+            var existPaymentMethod = await _context.PaymentMethods.Where(c => c.Method == PaymentMethod.Method && c.Id != PaymentMethod.Id).FirstOrDefaultAsync();
+            if (existPaymentMethod != null)
             {
-                return Page();
+                ErrorMessage = "This payment method: " + PaymentMethod.Method + " has already existed";
+                return await OnGetAsync(PaymentMethod.Id);
             }
-
             _context.Attach(PaymentMethod).State = EntityState.Modified;
 
             try

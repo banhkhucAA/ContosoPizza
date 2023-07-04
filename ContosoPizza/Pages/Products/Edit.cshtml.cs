@@ -97,6 +97,12 @@ namespace ContosoPizza.Pages.Products
                     Product.Image = existingProduct.Image;
                 }
             }
+            var existProductName = await _context.Products.Where(c => c.ProductName == Product.ProductName && c.Id != Product.Id).FirstOrDefaultAsync();
+            if (existProductName != null)
+            {
+                ErrorMessage = "This product name: " + Product.ProductName + " has already existed";
+                return await OnGetAsync(Product.Id);
+            }
             _context.Attach(Product).State = EntityState.Modified;
             try
             {

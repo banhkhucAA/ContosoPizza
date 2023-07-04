@@ -1,0 +1,82 @@
+﻿@page
+@model ContosoPizza.Pages.EmailFormat.IndexModel
+@{
+    ViewData["Title"] = "Your Pizza Orders";
+}
+@{
+    double Bill = 0;
+    int TotalQuantity = 0;
+}
+@inject Microsoft.AspNetCore.Http.IHttpContextAccessor HttpContextAccessor
+
+<div class="col-md-2"></div>
+    <div class="col-md-6">
+
+        <h1>Your recent items</h1>
+        
+        <h4>Order Details</h4>
+        <hr />
+
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>@Html.DisplayNameFor(model => model.OrderDetails_Show[0].ProductName)</th>
+                    <th>@Html.DisplayNameFor(model => model.OrderDetails_Show[0].Quantity)</th>
+                    <th>@Html.DisplayNameFor(model => model.OrderDetails_Show[0].TotalPrice)</th>
+                    <th>@Html.DisplayNameFor(model => model.OrderDetails_Show[0].Image)</th>
+                    <th></th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var item in Model.OrderDetails_Show)
+                {
+                    <tr>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.ProductName)
+                        </td>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.Quantity)
+                        </td>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.TotalPrice)
+                        </td>
+                        <td>
+                            <img src="@item.Image" alt="Image" style="max-width: 200px; max-height: 200px;" />
+                        </td>
+                        @if (HttpContextAccessor.HttpContext.Session.GetString("UserRole") == "Employee")
+                        {
+                            <td>
+                                <a asp-page="./Edit" asp-route-id="@item.Id">Edit</a> |
+                                <a asp-page="./Delete" asp-route-id="@item.Id">Delete</a> |
+                            </td>
+                        }
+                    </tr>
+                    { Bill = Bill + (float)item.TotalPrice; }
+                }
+            </tbody>
+        </table>
+
+    @if (Model.Order != null)
+    {
+        <div>DeliveryMethod Price: @Model.Order.DeliveryMethod.Price $</div>
+        <div>PaymentMethod Price: @(Model.Order.PaymentMethod.Price) $</div>
+
+        @if (Model.Order.Coupon == null)
+        {
+            <div>Total Discount: 0 $</div>
+            <div>Total Price: @(Math.Round(Bill + @Model.Order.DeliveryMethod.Price + @Model.Order.PaymentMethod.Price, 2)) $</div>
+        }
+        else
+        {
+            <div>Total Discount:@(
+            Math.Round((float)Bill * @Model.Order.Coupon.DiscountAmount / 100, 2)) $</div>
+            var totalPrice = Math.Round(Bill + @Model.Order.DeliveryMethod.Price + @Model.Order.PaymentMethod.Price - (float)(Bill * @Model.Order.Coupon.DiscountAmount / 100), 2);
+            <div>Total Price: @(Math.Round(totalPrice, 2)) $</div>
+            @if (HttpContextAccessor.HttpContext.Session.GetString("UserRole") == "Customer")
+            {
+                <hr />
+                <div>Order placed at: @Model.Order.OrderPlacedAt</div>
+            }
+        }
+    }
+    </div>

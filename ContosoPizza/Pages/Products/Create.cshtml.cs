@@ -8,6 +8,7 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using ContosoPizza.Data;
 using ContosoPizza.Models.Generated;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.EntityFrameworkCore;
 
 namespace ContosoPizza.Pages.Products
 {
@@ -70,6 +71,12 @@ namespace ContosoPizza.Pages.Products
 
             if (_context.Products == null || Product == null)
             {
+                return Page();
+            }
+            var existProductName = await _context.Products.Where(c => c.ProductName == Product.ProductName).FirstOrDefaultAsync();
+            if (existProductName != null)
+            {
+                ErrorMessage = "This Product Name: " + Product.ProductName + " has already existed";
                 return Page();
             }
 

@@ -26,15 +26,33 @@
                             <li class="nav-item">
                                 <a class="nav-link text-dark" href="/Customers/Edit?id=@HttpContextAccessor.HttpContext.Session.GetInt32("UserId").ToString()">Your Information</a>
                             </li>
+                            <li class="nav-item">
+                                <a class="nav-link text-dark" href="/Coupons/Index">Available Coupons</a>
+                            </li>
                         }
                             <li class="nav-item">
                                 <a class="nav-link text-dark" asp-area="" asp-page="/Products/Index">Products</a>
                             </li>
                         @if (HttpContextAccessor.HttpContext.Session.Keys.Contains("UserRole"))
                         {
-                            <li class="nav-item ms-auto">
-                                <a class="nav-link text-dark" asp-area="" asp-page="/Logout">LOGOUT</a>
-                            </li>
+                            @if (HttpContextAccessor.HttpContext.Session.GetString("UserRole") == "Customer")
+                            {
+                                <li class="nav-item ms-auto">
+                                    <a class="nav-link text-dark" href="/Cart">YOUR CART</a>
+                                </li>
+                                <li class="nav-item">
+                                    <a class="nav-link text-dark" asp-area="" asp-page="/Orders/Index">ORDERS HISTORY</a>
+                                </li>
+                                <li class="nav-item">
+                                    <a class="nav-link text-dark" asp-area="" asp-page="/Logout">LOGOUT</a>
+                                </li>
+                            }
+                            else
+                            {
+                                <li class="nav-item ms-auto">
+                                    <a class="nav-link text-dark" asp-area="" asp-page="/Logout">LOGOUT</a>
+                                </li>
+                            }
                         }else
                         {
                             <li class="nav-item ms-auto">

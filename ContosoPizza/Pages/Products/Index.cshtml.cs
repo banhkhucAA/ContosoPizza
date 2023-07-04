@@ -32,36 +32,38 @@ namespace ContosoPizza.Pages.Products
         [BindProperty(SupportsGet = true)]
         public string? Food_Category { get; set; }
         [BindProperty]
-        public List<OrderDetailDto> OrderDetail_Show { get; set; } 
+        public List<OrderDetailDto> OrderDetail_Show { get; set; }
+        [BindProperty]
+        public string ErrorMessage { get; set; }
+        
 
         public int Page { get; set; }
 
         public async Task OnGetAsync()
         {
-            var food = _context.Products.Include(p => p.Category).ToList();
+            var query = _context.Products.AsQueryable();
 
             if (!string.IsNullOrEmpty(SearchString))
             {
-                food = food.Where(x => x.ProductName.Contains(SearchString) || x.Materials.Contains(SearchString)).ToList();
+                query = query.Where(x => x.ProductName.Contains(SearchString) || x.Materials.Contains(SearchString));
             }
+
             if (!string.IsNullOrEmpty(Food_Type))
             {
-                food = food.Where(f => f.ProductName.Contains(Food_Type)).ToList();
+                query = query.Where(f => f.ProductName.Contains(Food_Type));
             }
+
             if (!string.IsNullOrEmpty(Food_Category))
             {
-                var category_id = _context.Categories.Where(x => x.CategoryName==Food_Category).Select(x=>x.Id).FirstOrDefault();
-                food = food.Where(f => f.CategoryId == category_id).ToList();
-                foreach(var item in food)
-                {
-                    Console.WriteLine("Productname hiện tại là: "+item.ProductName);
-                }    
+                var category_id = await _context.Categories
+                    .Where(x => x.CategoryName == Food_Category)
+                    .Select(x => x.Id)
+                    .FirstOrDefaultAsync();
+
+                query = query.Where(f => f.CategoryId == category_id);
             }
-/*            foreach (var item in food)
-            {
-                Console.WriteLine("Productname hiện tại là: " + item.ProductName);
-            }*/
-            var category_list = _context.Categories.Select(cat=>cat.CategoryName).ToList();
+
+            var category_list = await _context.Categories.Select(cat=>cat.CategoryName).ToListAsync();
             Categories = new SelectList(category_list);
 
             int pageSize = 5;
@@ -79,11 +81,14 @@ namespace ContosoPizza.Pages.Products
             if (_context.Products != null)
             {
                 int offset = Math.Max((Page - 1) * pageSize, 0);
-                Product = food
+                Product = await query
                     .Skip(offset)
                     .Take(pageSize)
-                    .ToList();
+                    .ToListAsync();
             }
+            ErrorMessage = HttpContext.Session.GetString("ErrorMessage");
+            Console.WriteLine("Error Message currently is: " + ErrorMessage);
+            HttpContext.Session.Remove("ErrorMessage");
         }
         public async Task<IActionResult> OnPostAsync(int? id)
         {

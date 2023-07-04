@@ -8,6 +8,7 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using ContosoPizza.Data;
 using ContosoPizza.Models;
+using ContosoPizza.Models.Generated;
 
 namespace ContosoPizza.Pages.DeliveryMethods
 {
@@ -22,6 +23,8 @@ namespace ContosoPizza.Pages.DeliveryMethods
 
         [BindProperty]
         public DeliveryMethod DeliveryMethod { get; set; } = default!;
+        [BindProperty]
+        public string ErrorMessage { get; set; }
 
         public async Task<IActionResult> OnGetAsync(int? id)
         {
@@ -43,11 +46,12 @@ namespace ContosoPizza.Pages.DeliveryMethods
         // For more details, see https://aka.ms/RazorPagesCRUD.
         public async Task<IActionResult> OnPostAsync()
         {
-            if (!ModelState.IsValid)
+            var existDelimethod = await _context.DeliveryMethods.Where(c => c.Method == DeliveryMethod.Method && c.Id != DeliveryMethod.Id).FirstOrDefaultAsync();
+            if (existDelimethod != null)
             {
-                return Page();
+                ErrorMessage = "This delivery name: " + DeliveryMethod.Method + " has already existed";
+                return await OnGetAsync(DeliveryMethod.Id);
             }
-
             _context.Attach(DeliveryMethod).State = EntityState.Modified;
 
             try

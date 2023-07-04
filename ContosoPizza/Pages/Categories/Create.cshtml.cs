@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using ContosoPizza.Data;
 using ContosoPizza.Models.Generated;
+using Microsoft.EntityFrameworkCore;
 
 namespace ContosoPizza.Pages.Categories
 {
@@ -26,13 +27,22 @@ namespace ContosoPizza.Pages.Categories
 
         [BindProperty]
         public Category Category { get; set; } = default!;
-        
+        [BindProperty]
+        public string ErrorMessage { get; set; }
+
 
         // To protect from overposting attacks, see https://aka.ms/RazorPagesCRUD
         public async Task<IActionResult> OnPostAsync()
         {
-          if (!ModelState.IsValid || _context.Categories == null || Category == null)
+          if (_context.Categories == null || Category == null)
             {
+                return Page();
+            }
+
+            var existCategoryName = await _context.Categories.Where(c => c.CategoryName == Category.CategoryName).FirstOrDefaultAsync();
+            if (existCategoryName != null)
+            {
+                ErrorMessage = "This Category Name: "+ Category.CategoryName  + " has already existed";
                 return Page();
             }
 

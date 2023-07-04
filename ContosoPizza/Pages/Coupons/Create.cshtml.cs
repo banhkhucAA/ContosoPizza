@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using ContosoPizza.Data;
 using ContosoPizza.Models.Generated;
+using Microsoft.EntityFrameworkCore;
 
 namespace ContosoPizza.Pages.Coupons
 {
@@ -26,7 +27,8 @@ namespace ContosoPizza.Pages.Coupons
 
         [BindProperty]
         public Coupon Coupon { get; set; } = default!;
-        
+        [BindProperty]
+        public string ErrorMessage { get; set; }
 
         // To protect from overposting attacks, see https://aka.ms/RazorPagesCRUD
         public async Task<IActionResult> OnPostAsync()
@@ -35,8 +37,14 @@ namespace ContosoPizza.Pages.Coupons
             {
                 return Page();
             }
+            var existCouponName = await _context.Coupons.Where(c => c.CouponCode == Coupon.CouponCode).FirstOrDefaultAsync();
+            if(existCouponName!=null)
+            {
+                ErrorMessage = "This Coupon Code: "+ Coupon.CouponCode +" has already existed";
+                return Page();
+            }    
 
-            _context.Coupons.Add(Coupon);
+            _context.Coupons.Add(Coupon);   
             await _context.SaveChangesAsync();
 
             return RedirectToPage("./Index");

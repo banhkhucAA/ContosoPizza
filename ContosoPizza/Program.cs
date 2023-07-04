@@ -12,7 +12,7 @@ internal class Program
 
         builder.Services.AddDbContext<ContosoPizzaContext>(options =>
         options
-        //.UseLazyLoadingProxies()
+        .UseLazyLoadingProxies()
         .UseSqlServer(builder.Configuration.GetConnectionString("ContosoPizza")));
 
         builder.Services.AddSession();

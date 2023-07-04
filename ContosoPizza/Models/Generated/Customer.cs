@@ -25,7 +25,6 @@ namespace ContosoPizza.Models.Generated
         [StringLength(10)]
         [Unicode(false)]
         public string Phone { get; set; } = null!;
-        [StringLength(30)]
         [Unicode(false)]
         public string Email { get; set; } = null!;
         [StringLength(10)]

@@ -22,7 +22,8 @@ namespace ContosoPizza.Pages.OrderStatuses
 
         [BindProperty]
         public OrderStatus OrderStatus { get; set; } = default!;
-
+        [BindProperty]
+        public string ErrorMessage { get; set; }
         public async Task<IActionResult> OnGetAsync(int? id)
         {
             if (id == null || _context.OrderStatuses == null)
@@ -43,11 +44,12 @@ namespace ContosoPizza.Pages.OrderStatuses
         // For more details, see https://aka.ms/RazorPagesCRUD.
         public async Task<IActionResult> OnPostAsync()
         {
-            if (!ModelState.IsValid)
+            var existOrderStatName = await _context.OrderStatuses.Where(c => c.StatusName == OrderStatus.StatusName && c.Id != OrderStatus.Id).FirstOrDefaultAsync();
+            if (existOrderStatName != null)
             {
-                return Page();
+                ErrorMessage = "This order status: " + OrderStatus.StatusName + " has already existed";
+                return await OnGetAsync(OrderStatus.Id);
             }
-
             _context.Attach(OrderStatus).State = EntityState.Modified;
 
             try

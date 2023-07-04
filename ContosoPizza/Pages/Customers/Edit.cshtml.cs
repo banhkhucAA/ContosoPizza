@@ -22,6 +22,8 @@ namespace ContosoPizza.Pages.Customers
 
         [BindProperty]
         public Customer Customer { get; set; } = default!;
+        [BindProperty]
+        public string ErrorMessage { get; set; }
         public int skippedcount = 0;
         public async Task<IActionResult> OnGetAsync(int? id)
         {
@@ -47,9 +49,12 @@ namespace ContosoPizza.Pages.Customers
         {
             var skippedCount = HttpContext.Session.GetInt32("SkippedCount");
             var curentPage = skippedCount / 5 + 1;
-            if (!ModelState.IsValid)
+
+            var ExistEmail = await _context.Customers.FirstOrDefaultAsync(c => c.Email == Customer.Email&&c.Id!=Customer.Id);
+            if (ExistEmail != null)
             {
-                return Page();
+                ErrorMessage = "This email has already been used";
+                return await OnGetAsync(Customer.Id);
             }
 
             _context.Attach(Customer).State = EntityState.Modified;

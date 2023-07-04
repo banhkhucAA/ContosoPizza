@@ -3,6 +3,8 @@
 @{
     ViewData["Title"] = "Index";
 }
+@inject Microsoft.AspNetCore.Http.IHttpContextAccessor HttpContextAccessor
+
 
 <h1>Index</h1>
 
@@ -32,9 +34,12 @@
     <input type="submit" value="Filter" />
 </form>
 
-<p>
-    <a asp-page="Create">Create New</a>
-</p>
+@if (HttpContextAccessor.HttpContext.Session.GetString("UserRole") == "Employee")
+{
+    <p>
+        <a asp-page="Create">Create New</a>
+    </p>
+}
 <table class="table">
     <thead>
         <tr>
@@ -94,22 +99,25 @@
                 @Html.DisplayFor(modelItem => item.BillPrice) $
             </td>
             <td>
-                    <form method="post">
-                        <a asp-page="./Edit" asp-route-id="@item.Id" class="btn btn-primary">Edit</a> |
-                        <a href="/OrderDetails/Create?orderId=@item.Id" class="btn btn-primary">Details</a> |
-                        <input type="submit" name="Delete" value="Delete" asp-route-id="@item.Id" class="btn btn-primary">
-                    </form>
-            </td>
+                    @if (HttpContextAccessor.HttpContext.Session.GetString("UserRole") == "Employee")
+                    {
+                        <form method="post">
+                            <a asp-page="./Edit" asp-route-id="@item.Id" class="btn btn-primary">Edit</a> |
+                            <a href="/OrderDetails/Create?orderId=@item.Id" class="btn btn-primary">Details</a> |
+                            <input type="submit" name="Delete" value="Delete" asp-route-id="@item.Id" class="btn btn-primary">
+                        </form>
+                    }else
+                    {
+                        <a href="/OrderDetails/Create?orderId=@item.Id" class="btn btn-primary">Details</a>
+                    }
+                </td>
         </tr>
 }
     </tbody>
 </table>
 
 <div class="text-center">
-    @for (int i = 1; i <= 5; i++)
-    {
-        <a href="?Page=@i&searchOrderStatus=@Model.searchOrderStatus&searchDeliveryMethod=@Model.searchDeliveryMethod&searchPaymentMethod=@Model.searchPaymentMethod&FromDate=@Model.FromDate&ToDate=@Model.ToDate" style="color:black; font-weight:bold; font-size: 30px">@i</a>
-    }
+    Page: <input type="number" id="pageInput" style="color:black; font-weight:bold; font-size: 30px; max-width: 50px" min="1" step="1" onchange="updateLink(this.value)">
 </div>
 
 @section Scripts {
@@ -129,6 +137,31 @@
                 $('#errorModal').modal('hide');
             });
         });
+
+        var currentPage = localStorage.getItem('currentPage') || 1;
+
+        // Cập nhật giá trị ban đầu của ô input
+        document.getElementById('pageInput').value = currentPage;
+
+        // Lắng nghe sự kiện khi người dùng thay đổi giá trị trong ô input
+        document.getElementById('pageInput').addEventListener('input', function (event) {
+            currentPage = event.target.value; //target dùng để nhận biết xem là ô nào vừa thay đổi
+        });
+
+        // Lắng nghe sự kiện khi người dùng kết thúc nhập giá trị vào ô input (nhấn Enter)
+        document.getElementById('pageInput').addEventListener('change', function (event) {
+            updateLink(currentPage);
+        });
+
+        function updateLink(value) {
+            // Lưu giá trị trang hiện tại vào localStorage
+            localStorage.setItem('currentPage', value);
+
+            window.location.href = `?Page=${value}&searchOrderStatus=@Model.searchOrderStatus&searchDeliveryMethod=@Model.searchDeliveryMethod&searchPaymentMethod=@Model.searchPaymentMethod&FromDate=@Model.FromDate&ToDate=@Model.ToDate`;
+        }
+
+        currentPage = 1;
+        localStorage.setItem('currentPage', currentPage);
     </script>
 }
 <div class="modal fade" id="errorModal" tabindex="-1" role="dialog" aria-labelledby="errorModalLabel" aria-hidden="true">

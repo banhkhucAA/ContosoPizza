@@ -9,6 +9,7 @@ using ContosoPizza.Data;
 using ContosoPizza.Models.Generated;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using System.Drawing.Printing;
+using Microsoft.AspNetCore.Http;
 
 namespace ContosoPizza.Pages.Orders
 {
@@ -45,19 +46,22 @@ namespace ContosoPizza.Pages.Orders
         public int pageSize = 5;
         public async Task<IActionResult> OnGetAsync()
         {
-            if (_context.Orders != null)
+            if (_context.Orders != null && _httpContextAccessor.HttpContext.Session.GetString("UserRole")=="Employee")
             {
+                var employee = _context.Employees.Any(e => e.Id == _httpContextAccessor.HttpContext.Session.GetInt32("UserId") && e.Role == "Manager Employee");
+                if (employee) Order = await _context.Orders
+                    .ToListAsync();
+                else
                 Order = await _context.Orders
-                    .Include(o => o.Coupon)
-                    .Include(o => o.Customer)
-                    .Include(o => o.DeliveryMethod)
-                    .Include(o => o.OrderStatus)
-                    .Include(o => o.PaymentMethod)
-                    .Include(o => o.Employee)
-                    .OrderBy(o => o.OrderPlacedAt)
-                    .AsSplitQuery()
+                    .Where(o => o.EmployeeId == _httpContextAccessor.HttpContext.Session.GetInt32("UserId"))
                     .ToListAsync();
             }
+            else if(_context.Orders != null && _httpContextAccessor.HttpContext.Session.GetString("UserRole") == "Customer")
+            {
+                Order = await _context.Orders                    
+                    .Where(o=>o.CustomerId== _httpContextAccessor.HttpContext.Session.GetInt32("UserId"))
+                    .ToListAsync();
+            }    
 
             if (!string.IsNullOrEmpty(searchOrderStatus))
             {
@@ -80,13 +84,13 @@ namespace ContosoPizza.Pages.Orders
                 Order = Order.Where(or => or.OrderPlacedAt <= ToDate).ToList();
             }
 
-            var select_items = _context.OrderStatuses.Select(ors => ors.StatusName).ToList();
+            var select_items = _context.OrderStatuses.Select(ors => ors.StatusName);
             searchOrderStatuses = new SelectList(select_items);
 
-            var deliMethods = _context.DeliveryMethods.Select(dlv => dlv.Method).ToList();
+            var deliMethods = _context.DeliveryMethods.Select(dlv => dlv.Method);
             searchDeliveryMethods = new SelectList(deliMethods);
 
-            var paymentMethods = _context.PaymentMethods.Select(pmt => pmt.Method).ToList();
+            var paymentMethods = _context.PaymentMethods.Select(pmt => pmt.Method);
             searchPaymentMethods = new SelectList(paymentMethods);
 
             if (Request.Query.ContainsKey("page"))

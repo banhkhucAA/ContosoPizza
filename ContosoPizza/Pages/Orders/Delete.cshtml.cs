@@ -24,13 +24,7 @@ namespace ContosoPizza.Pages.Orders
 
         public async Task<IActionResult> OnGetAsync(int? id)
         {
-            var order = await _context.Orders
-                .Include(o => o.Coupon)
-                .Include(o => o.Customer)
-                .Include(o => o.DeliveryMethod)
-                .Include(o => o.OrderStatus)
-                .Include(o => o.PaymentMethod)
-                .AsSplitQuery()
+            var order = await _context.Orders              
                 .FirstOrDefaultAsync(m => m.Id == id);
             if (id == null || _context.Orders == null||order==null)
             {

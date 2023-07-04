@@ -62,17 +62,43 @@ namespace ContosoPizza.Pages.Orders
             ViewData["DeliveryMethodId"] = new SelectList(_context.DeliveryMethods, "Id", "Method");
             ViewData["OrderStatusId"] = new SelectList(_context.OrderStatuses, "Id", "StatusName");
             ViewData["PaymentMethodId"] = new SelectList(_context.PaymentMethods, "Id", "Method");
-            var employeeData = _context.Employees
-                                    .Where(emp => emp.Id == _httpContext.HttpContext.Session.GetInt32("UserId"))
-                                    .Select(emp => new EmployeeData
-                                    {
-                                        Id = emp.Id,
-                                        FullName = emp.FirstName + " " + emp.LastName
-                                    })
-                                    .FirstOrDefault();
-            ViewData["EmployeeId"] = new SelectList(new List<EmployeeData> { employeeData }, "Id", "FullName");
+            var isManagerEmployee = _context.Employees.Any(e => e.Role == "Manager Employee" && e.Id == _httpContext.HttpContext.Session.GetInt32("UserId"));
+            if (!isManagerEmployee)
+            {
+                var employeeData = GetCurrentEmployeeData();
+                ViewData["EmployeeId"] = new SelectList(new List<EmployeeData> { employeeData }, "Id", "FullName");
+            }else if(isManagerEmployee)
+            {
+                var EmployeeRecentData = _context.Employees.Where(em => em.Id == Order.EmployeeId)
+                    .Select(emp => new EmployeeData
+                    {
+                        Id = emp.Id,
+                        FullName = emp.FirstName + " " + emp.LastName
+                    }).FirstOrDefault();
+
+                if(EmployeeRecentData != null)
+                ViewData["EmployeeId"] = new SelectList(new List<EmployeeData> { EmployeeRecentData }, "Id", "FullName");
+                else
+                {
+                    var employeeData = GetCurrentEmployeeData();
+                    ViewData["EmployeeId"] = new SelectList(new List<EmployeeData> { employeeData }, "Id", "FullName");
+                }    
+            }  
             return Page();
         }
+
+        private EmployeeData GetCurrentEmployeeData()
+        {
+            var employeeData = _context.Employees
+                                        .Where(emp => emp.Id == _httpContext.HttpContext.Session.GetInt32("UserId"))
+                                        .Select(emp => new EmployeeData
+                                        {
+                                            Id = emp.Id,
+                                            FullName = emp.FirstName + " " + emp.LastName
+                                        })
+                                        .FirstOrDefault();
+            return employeeData;
+        }    
 
         // To protect from overposting attacks, enable the specific properties you want to bind to.
         // For more details, see https://aka.ms/RazorPagesCRUD.

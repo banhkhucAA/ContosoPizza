@@ -20,7 +20,9 @@ namespace ContosoPizza.Pages.Categories
         }
 
         [BindProperty]
-      public Category Category { get; set; } = default!;
+        public Category Category { get; set; } = default!;
+        [BindProperty]
+        public string ErrorMessage { get; set; }
 
         public async Task<IActionResult> OnGetAsync(int? id)
         {
@@ -52,6 +54,21 @@ namespace ContosoPizza.Pages.Categories
 
             if (category != null)
             {
+                var find_ProductsId = _context.Products.Where(p => p.CategoryId == id).Select(p => p.Id).ToList();
+                foreach (var item in find_ProductsId)
+                {
+                    var find_ordersId = _context.OrderDetails.Where(or => or.ProductId == item).Select(p => p.OrderId).ToList();
+                    foreach (var ordersid in find_ordersId)
+                    {
+                        var find_orders = _context.Orders.Where(or => or.Id == ordersid && or.OrderStatus.IsActive==true).ToList();
+                        if (find_orders.Any())
+                        {
+                            ErrorMessage = "Can't delete. This category has some products which have been used in active orders";
+                            return await OnGetAsync(id);
+                        }
+                    }    
+
+                }
                 Category = category;
                 _context.Categories.Remove(Category);
                 await _context.SaveChangesAsync();

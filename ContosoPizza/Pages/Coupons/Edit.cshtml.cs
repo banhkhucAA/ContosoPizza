@@ -22,6 +22,8 @@ namespace ContosoPizza.Pages.Coupons
 
         [BindProperty]
         public Coupon Coupon { get; set; } = default!;
+        [BindProperty]
+        public string ErrorMessage { get; set; }
 
         public async Task<IActionResult> OnGetAsync(int? id)
         {
@@ -43,7 +45,12 @@ namespace ContosoPizza.Pages.Coupons
         // For more details, see https://aka.ms/RazorPagesCRUD.
         public async Task<IActionResult> OnPostAsync()
         {
-
+            var existCouponName = await _context.Coupons.Where(c => c.CouponCode == Coupon.CouponCode&&c.Id!=Coupon.Id).FirstOrDefaultAsync();
+            if (existCouponName != null)
+            {
+                ErrorMessage = "This Coupon Code: " + Coupon.CouponCode + " has already existed";
+                return Page();
+            }
             _context.Attach(Coupon).State = EntityState.Modified;
 
             try

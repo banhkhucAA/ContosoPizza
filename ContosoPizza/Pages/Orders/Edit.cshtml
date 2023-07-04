@@ -27,11 +27,12 @@
                 <label asp-for="Order.EmployeeId" class="control-label"></label>
                 <select asp-for="Order.EmployeeId" class="form-control" asp-items="@ViewBag.EmployeeId" readonly></select>
             </div>         
-            <div class="form-group form-check">
-                <label class="form-check-label">
-                    <input id="IsCustomerMember" class="form-check-input" asp-for="Order.IsCustomerMember" disabled/>
+            <div class="form-group form-check" readonly>
+                <label class="form-check-label" readonly>
+                    <input id="IsCustomerMember" class="form-check-input" asp-for="Order.IsCustomerMember" readonly />
                     @Html.DisplayNameFor(model => model.Order.IsCustomerMember)
                 </label>
+                <input type="hidden" asp-for="Order.IsCustomerMember" />
             </div>
             <div class="form-group" id="PhoneNumber">
                 <label asp-for="Order.NoneCustomerMemberPhoneNumber" class="control-label">Phone Number</label>

@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using ContosoPizza.Data;
 using ContosoPizza.Models.Generated;
+using Microsoft.EntityFrameworkCore;
 
 namespace ContosoPizza.Pages.OrderStatuses
 {
@@ -26,13 +27,21 @@ namespace ContosoPizza.Pages.OrderStatuses
 
         [BindProperty]
         public OrderStatus OrderStatus { get; set; } = default!;
-        
+        [BindProperty]
+        public string ErrorMessage { get; set; }
 
         // To protect from overposting attacks, see https://aka.ms/RazorPagesCRUD
         public async Task<IActionResult> OnPostAsync()
         {
-          if (!ModelState.IsValid || _context.OrderStatuses == null || OrderStatus == null)
+          if (_context.OrderStatuses == null || OrderStatus == null)
             {
+                return Page();
+            }
+
+            var existStatusName = await _context.OrderStatuses.Where(c => c.StatusName == OrderStatus.StatusName).FirstOrDefaultAsync();
+            if (existStatusName != null)
+            {
+                ErrorMessage = "This Category Name: " + OrderStatus.StatusName + " has already existed";
                 return Page();
             }
 

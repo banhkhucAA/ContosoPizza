@@ -22,6 +22,8 @@ namespace ContosoPizza.Pages.Categories
 
         [BindProperty]
         public Category Category { get; set; } = default!;
+        [BindProperty]
+        public string ErrorMessage { get; set; }
 
         public async Task<IActionResult> OnGetAsync(int? id)
         {
@@ -43,11 +45,12 @@ namespace ContosoPizza.Pages.Categories
         // For more details, see https://aka.ms/RazorPagesCRUD.
         public async Task<IActionResult> OnPostAsync()
         {
-            if (!ModelState.IsValid)
+            var existCategory = await _context.Categories.Where(c => c.CategoryName == Category.CategoryName && c.Id != Category.Id).FirstOrDefaultAsync();
+            if (existCategory != null)
             {
-                return Page();
+                ErrorMessage = "This category name: " + Category.CategoryName + " has already existed";
+                return await OnGetAsync(Category.Id);
             }
-
             _context.Attach(Category).State = EntityState.Modified;
 
             try
