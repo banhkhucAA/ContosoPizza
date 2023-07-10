@@ -53,7 +53,7 @@ namespace ContosoPizza.Pages.Orders
                     .ToListAsync();
                 else
                 Order = await _context.Orders
-                    .Where(o => o.EmployeeId == _httpContextAccessor.HttpContext.Session.GetInt32("UserId"))
+                    .Where(o => o.EmployeeId == _httpContextAccessor.HttpContext.Session.GetInt32("UserId") || o.EmployeeId==null)
                     .ToListAsync();
             }
             else if(_context.Orders != null && _httpContextAccessor.HttpContext.Session.GetString("UserRole") == "Customer")

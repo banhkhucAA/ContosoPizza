@@ -20,7 +20,9 @@ namespace ContosoPizza.Pages.DeliveryMethods
         }
 
         [BindProperty]
-      public DeliveryMethod DeliveryMethod { get; set; } = default!;
+        public DeliveryMethod DeliveryMethod { get; set; } = default!;
+        [BindProperty]
+        public string ErrorMessage { get; set; }
 
         public async Task<IActionResult> OnGetAsync(int? id)
         {
@@ -52,6 +54,12 @@ namespace ContosoPizza.Pages.DeliveryMethods
 
             if (deliverymethod != null)
             {
+                var orders = _context.Orders.Where(or => or.DeliveryMethodId == id && or.OrderStatus.IsActive == true).ToList();
+                if(orders.Any())
+                {
+                    ErrorMessage = "Can't delete. This delivery method has already been used in active orders";
+                    return await OnGetAsync(id);
+                }    
                 DeliveryMethod = deliverymethod;
                 _context.DeliveryMethods.Remove(DeliveryMethod);
                 await _context.SaveChangesAsync();

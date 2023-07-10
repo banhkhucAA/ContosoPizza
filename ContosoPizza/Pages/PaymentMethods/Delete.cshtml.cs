@@ -54,7 +54,12 @@ namespace ContosoPizza.Pages.PaymentMethods
 
             if (paymentmethod != null)
             {
-
+                var orders = _context.Orders.Where(or => or.PaymentMethodId == id && or.OrderStatus.IsActive == true).ToList();
+                if(orders.Any())
+                {
+                    ErrorMessage = "Can't delete. This payment method has already been used in active orders";
+                    return await OnGetAsync(id);
+                }    
                 PaymentMethod = paymentmethod;
                 _context.PaymentMethods.Remove(PaymentMethod);
                 await _context.SaveChangesAsync();

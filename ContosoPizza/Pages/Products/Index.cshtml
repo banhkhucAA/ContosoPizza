@@ -8,6 +8,7 @@
 
 <h1>Index</h1>
 
+<div style="padding:5">
 <form>
     <p>
         Categories: <select asp-for="Food_Category" asp-items="Model.Categories">
@@ -98,10 +99,8 @@
 </table>
 
 <div class="text-center">
-    @for (int i = 1; i <= 5; i++)
-    {
-        <a href="?Food_Category=@Model.Food_Category&Food_Type=@Model.Food_Type&SearchString=@Model.SearchString&Page=@i" style="color:black; font-weight:bold; font-size: 30px">@i</a>
-    }
+    Page: <input type="number" id="pageInput" style="color:black; font-weight:bold; font-size: 30px; max-width: 50px" min="1" step="1">
+</div>
 </div>
 
 @section Scripts {
@@ -121,6 +120,37 @@
                 $('#errorModal').modal('hide');
             });
         });
+
+        var currentPage = localStorage.getItem('currentPage') || 1;
+
+        if (!currentPage) {
+            currentPage = 1;
+        } else {
+            currentPage = parseInt(currentPage); // Chuyển đổi thành số nguyên
+        }
+
+        // Cập nhật giá trị ban đầu của ô input
+        document.getElementById('pageInput').value = currentPage;
+
+        // Lắng nghe sự kiện khi người dùng thay đổi giá trị trong ô input
+        document.getElementById('pageInput').addEventListener('input', function (event) {
+            currentPage = event.target.value; //target dùng để nhận biết xem là ô nào vừa thay đổi
+        });
+
+        // Lắng nghe sự kiện khi người dùng kết thúc nhập giá trị vào ô input (nhấn Enter)
+        document.getElementById('pageInput').addEventListener('change', function (event) {
+            updateLink(currentPage);
+        });
+
+        function updateLink(value) {
+            // Lưu giá trị trang hiện tại vào localStorage
+            localStorage.setItem('currentPage', value);
+
+            window.location.href = `?Page=${value}&Food_Category=@Model.Food_Category&Food_Type=@Model.Food_Type&SearchString=@Model.SearchString`;
+        }
+
+        currentPage = 1;
+        localStorage.setItem('currentPage', currentPage);
     </script>
 }
 <div class="modal fade" id="errorModal" tabindex="-1" role="dialog" aria-labelledby="errorModalLabel" aria-hidden="true">

@@ -1,5 +1,6 @@
 ﻿@page
 @model ContosoPizza.Pages.Orders.EditModel
+@inject Microsoft.AspNetCore.Http.IHttpContextAccessor HttpContextAccessor
 
 @{
     ViewData["Title"] = "Edit";
@@ -153,7 +154,7 @@
 
 
 <div>
-    <a asp-page="./Index">Back to List</a>
+    <a asp-page="Index">Back to list</a>
 </div>
 
 <!-- Các trường mã HTML -->

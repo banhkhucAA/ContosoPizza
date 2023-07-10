@@ -10,6 +10,13 @@
 
 <form>
     <p>
+        Filter Date:
+        From: <input name="FromDate" type="date" asp-for="FromDate" value="" />
+        &nbsp;&nbsp;&nbsp;&nbsp;
+        To: <input name="ToDate" type="date" asp-for="ToDate" value="" />
+        <input type="submit" class="btn btn-primary" value="Search" />
+    </p>
+    <p>
         Order by:
         <select id="orderBySelect">
             <option value="">Default</option>
@@ -116,10 +123,18 @@
     </tbody>
 </table>
 
-<script>
+<script> 
+
     document.addEventListener('DOMContentLoaded', function () {
+        const searchButton = document.querySelector('input[type="submit"]');
+        let savedFromDate = localStorage.getItem('fromDate_EmployeeReport') || ''; // Lấy giá trị fromDate đã được lưu trữ từ trước (nếu có)
+        let savedToDate = localStorage.getItem('toDate_EmployeeReport') || ''; // Lấy giá trị toDate đã được lưu trữ từ trước (nếu có)
+        document.querySelector('input[name="FromDate"]').value = savedFromDate;
+        document.querySelector('input[name="ToDate"]').value = savedToDate;
+        searchButton.addEventListener('click', redirectToSelectedOption);
+
         // Khôi phục giá trị đã lưu nếu có
-        var storedOrderByValue = sessionStorage.getItem('selectedOrderByOption');
+        var storedOrderByValue = localStorage.getItem('selectedOrderByOption');
         if (storedOrderByValue) {
             document.getElementById('orderBySelect').value = storedOrderByValue;
         }
@@ -129,17 +144,48 @@
         });
 
         function redirectToSelectedOption() {
+            const baseUrl = window.location.href.split('?')[0];
             var selectElement = document.getElementById("orderBySelect");
             var selectedValue = selectElement.value;
+            const queryParams = [];
+            const fromDate = document.querySelector('input[name="FromDate"]').value;
+            const toDate = document.querySelector('input[name="ToDate"]').value;
 
-            // Lưu trữ giá trị đã chọn vào sessionStorage
-            sessionStorage.setItem('selectedOrderByOption', selectedValue);
+            // Lưu trữ giá trị đã chọn vào localStorage       
+            if(selectedValue){
+                queryParams.push(`OrderBy=${selectedValue}`);
+                localStorage.setItem('selectedOrderByOption', selectedValue);
+            }else{
+                localStorage.removeItem('selectedOrderByOption');
+            }
+
+            if (fromDate) {
+                queryParams.push(`fromdate=${fromDate}`);
+                savedFromDate = fromDate; // Lưu giá trị fromDate hiện tại
+                localStorage.setItem('fromDate_EmployeeReport', fromDate); // Lưu giá trị fromDate vào localStorage
+            } else {
+                savedFromDate = ''; // Reset giá trị fromDate nếu không có giá trị
+                localStorage.removeItem('fromDate_EmployeeReport'); // Xóa giá trị fromDate từ localStorage
+            }
+
+            if (toDate) {
+                queryParams.push(`todate=${toDate}`);
+                savedToDate = toDate; // Lưu giá trị toDate hiện tại
+                localStorage.setItem('toDate_EmployeeReport', toDate); // Lưu giá trị toDate vào localStorage
+            } else {
+                savedToDate = ''; // Reset giá trị toDate nếu không có giá trị
+                localStorage.removeItem('toDate_EmployeeReport'); // Xóa giá trị toDate từ localStorage
+            }
+
+            const queryString = queryParams.join('&');
+            const newUrl = `${baseUrl}?${queryString}`;
 
             // Chuyển hướng đến đường dẫn đã chọn
             if (selectedValue !== "") {
-                window.location.href = '/StatisticalReport/ReportEmployee?OrderBy=' + selectedValue;
+                window.location.href = newUrl;
             }
         }
     });
 </script>
+
 

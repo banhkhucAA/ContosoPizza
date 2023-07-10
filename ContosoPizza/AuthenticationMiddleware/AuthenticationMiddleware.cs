@@ -15,7 +15,7 @@ public class AuthenticationMiddleware
     {
         //chưa đăng nhập thì có 3 loại n dùng: Admin, Employee, Customer
         // Kiểm tra xem người dùng đã đăng nhập hay chưa
-        if (!context.Session.Keys.Contains("UserRole") && !context.Request.Path.StartsWithSegments("/LoginEmployee") && !context.Request.Path.StartsWithSegments("/Products")&&!context.Request.Path.StartsWithSegments("/LoginCustomer") && !context.Request.Path.StartsWithSegments("/Cart")&&!context.Request.Path.StartsWithSegments("/Orders/Create")&&!context.Request.Path.StartsWithSegments("/Customers/Create") && !context.Request.Path.StartsWithSegments("/EmailFormat") && !context.Request.Path.StartsWithSegments("/StatisticalReport"))
+        if (!context.Session.Keys.Contains("UserRole") && !context.Request.Path.StartsWithSegments("/LoginEmployee") && !context.Request.Path.StartsWithSegments("/Products")&&!context.Request.Path.StartsWithSegments("/LoginCustomer") && !context.Request.Path.StartsWithSegments("/Cart")&&!context.Request.Path.StartsWithSegments("/Orders/Create")&&!context.Request.Path.StartsWithSegments("/Customers/Create") && !context.Request.Path.StartsWithSegments("/EmailFormat") && !context.Request.Path.StartsWithSegments("/StatisticalReport") && !context.Request.Path.StartsWithSegments("/Home"))
         {
             // Người dùng chưa đăng nhập, điều hướng đến trang đăng nhập
             context.Response.Redirect("/LoginEmployee");

@@ -1,0 +1,38 @@
+body {
+  background:orange!important;
+  font-weight:bold!important;
+  color:black!important;
+}
+
+.ftco-footer {
+    font-size: 16px;
+    padding: 2em 0;
+    background: #101315;
+}
+
+.form-control {
+    border-bottom: 5px solid white !important
+}
+
+.border {
+    border: 10px solid #dee2e6 !important;
+}
+
+.btn.btn-primary:hover {
+    border: 1px solid #fac564;
+    background: skyblue!important;
+    color: #021912;
+}
+
+a {
+    -webkit-transition: .3s all ease;
+    -o-transition: .3s all ease;
+    transition: none;
+    color: #ff0000;
+}
+
+a:hover, a:active, a:focus {
+    color: #0088cc;
+    outline: none !important;
+    text-decoration: none !important;
+}

@@ -10,7 +10,7 @@
 @inject Microsoft.AspNetCore.Http.IHttpContextAccessor HttpContextAccessor
 
 <div class="row">
-    @if (HttpContextAccessor.HttpContext.Session.GetString("UserRole") == "Employee")
+    @if (HttpContextAccessor.HttpContext.Session.GetString("UserRole") == "Employee"||HttpContextAccessor.HttpContext.Session.GetString("UserRole") == "Admin")
     {
         <div class="col-md-4">
             <h1>Create</h1>
@@ -198,12 +198,60 @@
                         <div>Order placed at: @Model.Order.OrderPlacedAt</div>
                     }
                 }
-
-        <a href="/Orders/Index">Back to List</a>
-        </div>
+                @if (HttpContextAccessor.HttpContext.Session.GetString("UserRole") == "Employee")
+                {
+                    <form method="post">
+                        <div class="form-group">
+                            <input type="hidden" asp-for="Order.Id" />
+                            <input type="submit" value="Send email/Finish order" name="SendEmail" class="btn btn-primary" />
+                        </div>
+                    </form>
+                }
+        @if (HttpContextAccessor.HttpContext.Session.GetString("UserRole") == "Employee" || HttpContextAccessor.HttpContext.Session.GetString("UserRole") == "Customer")
+        {
+            <a href="/Orders/Index">Back to List</a>
+        }else
+        {
+            <a href="/StatisticalReport/ReportOrder?OrderBy=">Back to Order Report</a>
+        }
+    </div>
 </div> 
 
 
 @section Scripts {
-    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+    <script>
+        $(document).ready(function () {
+            var errorMessage = '@TempData["ErrorMessage"]';
+            if (errorMessage !== '') {
+                $('#errorModal').modal('show');
+            }
+            $('#errorModal .close').click(function () {
+                $('#errorModal').modal('hide');
+            });
+            $('#errorModal button[data-dismiss="modal"]').click(function () {
+                $('#errorModal').modal('hide');
+            });
+        });
+    </script>
 }
+<div class="modal fade" id="errorModal" tabindex="-1" role="dialog" aria-labelledby="errorModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="errorModalLabel">Notification</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                @TempData["ErrorMessage"]
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+            </div>
+        </div>
+    </div>
+</div>

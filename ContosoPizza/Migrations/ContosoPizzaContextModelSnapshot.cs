@@ -357,6 +357,10 @@ namespace ContosoPizza.Migrations
                         .HasColumnType("int")
                         .HasColumnName("CategoryID");
 
+                    b.Property<string>("Description")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<string>("Image")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");

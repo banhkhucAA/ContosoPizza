@@ -129,7 +129,7 @@ namespace ContosoPizza.Pages.Orders
                 
             _context.Orders.Add(Order);
             await _context.SaveChangesAsync();
-            if (_httpContextAccessor.HttpContext.Session.GetString("UserRole") == "Employee")
+            if (_httpContextAccessor.HttpContext.Session.GetString("UserRole") == "Employee")////employee
                 return Redirect($"/OrderDetails/Create?orderId={Order.Id}");
             else
             {
@@ -229,7 +229,7 @@ namespace ContosoPizza.Pages.Orders
             email.From.Add(MailboxAddress.Parse("nda2932002@gmail.com"));
             if (_httpContextAccessor.HttpContext.Session.Keys.Contains("UserRole"))
             {
-                if (_httpContextAccessor.HttpContext.Session.GetString("UserRole") == "Customer")
+                if (_httpContextAccessor.HttpContext.Session.GetString("UserRole") == "Customer")//thành viên
                 {
                     var customer = await _context.Customers.FirstOrDefaultAsync(c => c.Id == _httpContextAccessor.HttpContext.Session.GetInt32("UserId"));
                     if (customer != null)
@@ -242,7 +242,7 @@ namespace ContosoPizza.Pages.Orders
                         ErrorMessage = "Your email doesn't exist";
                     }
                 }
-            } else
+            } else////không là thành viên
             {
                 email.To.Add(MailboxAddress.Parse(myorder.NoneCustomerMemberEmailAddress));
                 emailstring = myorder.NoneCustomerMemberEmailAddress;
@@ -276,7 +276,7 @@ namespace ContosoPizza.Pages.Orders
             return await OnGet();
         }
 
-        private string GetEmailBody(Order myorder)
+        public string GetEmailBody(Order myorder)
         {
             double bill = 0;
 

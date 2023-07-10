@@ -9,16 +9,25 @@ using ContosoPizza.Data;
 using ContosoPizza.Models.Generated;
 using Microsoft.AspNetCore.Components.Forms;
 using Microsoft.EntityFrameworkCore;
+using MailKit.Security;
+using MimeKit.Text;
+using MimeKit;
+using static Org.BouncyCastle.Math.EC.ECCurve;
+using MailKit.Net.Smtp;
 
 namespace ContosoPizza.Pages.OrderDetails
 {
     public class CreateModel : PageModel
     {
         private readonly ContosoPizza.Data.ContosoPizzaContext _context;
+        private readonly IHttpContextAccessor _httpContextAccessor;
+        private readonly IConfiguration _config;
 
-        public CreateModel(ContosoPizza.Data.ContosoPizzaContext context)
+        public CreateModel(ContosoPizza.Data.ContosoPizzaContext context, IHttpContextAccessor httpContextAccessor, IConfiguration config)
         {
             _context = context;
+            _httpContextAccessor = httpContextAccessor;
+            _config = config;
         }
 
 
@@ -28,6 +37,7 @@ namespace ContosoPizza.Pages.OrderDetails
         public Order Order { get; set; }
         [BindProperty]
         public IList<OrderDetail> OrderDetails_Show { get; set; } = default!;
+        public string emailstring;
         public IActionResult OnGet(int? orderId)
         {
             var order = _context.Orders
@@ -66,6 +76,82 @@ namespace ContosoPizza.Pages.OrderDetails
         [BindProperty]
         public float PaymentMethodPriceAdd { get; set; }
         public async Task<IActionResult> OnPostAsync()
+        {
+            if (!string.IsNullOrEmpty(Request.Form["createButton"]))
+            {
+                await OnCreate();
+                return Redirect($"/OrderDetails/Create?orderId={Order.Id}");
+            }
+            else if (!string.IsNullOrEmpty(Request.Form["SendEmail"]))
+            {
+                await OnSendEmail(Order.Id);
+                return Redirect($"/OrderDetails/Create?orderId={Order.Id}");
+            }
+            else
+            {
+                return NotFound("No buttons are hit");
+            }    
+ 
+        }
+
+        private async Task<IActionResult> OnSendEmail(int id)
+        {
+            var order = await _context.Orders.Where(or => or.Id == id).FirstOrDefaultAsync();
+            var email = new MimeMessage();
+
+            email.From.Add(MailboxAddress.Parse("nda2932002@gmail.com"));
+            if (_httpContextAccessor.HttpContext.Session.Keys.Contains("UserRole"))
+            {
+                if (order.CustomerId!=null)//thành viên
+                {
+                    var customer = await _context.Customers.FirstOrDefaultAsync(c => c.Id == order.Customer.Id);
+                    if (customer != null)
+                    {
+                        email.To.Add(MailboxAddress.Parse(customer.Email));
+                        emailstring = customer.Email;
+                    }
+                    else
+                    {
+                        TempData["ErrorMessage"] = "Your email doesn't exist";
+                    }
+                }
+                else////không là thành viên
+                {
+                    email.To.Add(MailboxAddress.Parse(order.NoneCustomerMemberEmailAddress));
+                    emailstring = order.NoneCustomerMemberEmailAddress;
+                }
+            }
+            
+            email.Subject = "Order successfully";
+            email.Body = new TextPart(TextFormat.Html)
+            {
+                Text = GetEmailBody(order),
+            };
+
+            try
+            {
+                using (var smtp = new SmtpClient())
+                {
+                    smtp.Connect(_config.GetSection("EmailHost").Value, 587, SecureSocketOptions.StartTls);
+                    smtp.Authenticate(_config.GetSection("EmailUserName").Value, _config.GetSection("EmailPassword").Value);
+                    smtp.Send(email);
+                    smtp.Disconnect(true);
+
+                    // Thông báo gửi email thành công
+                    TempData["ErrorMessage"] = "Email sent successfully to " + emailstring + " !";
+                }
+            }
+            catch (Exception ex)
+            {
+                // Xử lý khi gửi email thất bại
+                TempData["ErrorMessage"] = "Failed to send email: " + ex.Message;
+            }
+
+
+            return OnGet(id);
+        }
+
+        private async Task<IActionResult> OnCreate()
         {
             var ProductPrice = _context.Products.Where(p => p.Id == OrderDetail.ProductId).Select(p => p.UnitPrice).FirstOrDefault();
             var DeliveryPrice = _context.DeliveryMethods.Where(p => p.Id == Order.DeliveryMethodId).Select(p => p.Price).FirstOrDefault();
@@ -120,8 +206,90 @@ namespace ContosoPizza.Pages.OrderDetails
             _context.Orders.Attach(Order).State = EntityState.Modified;
 
             await _context.SaveChangesAsync();
-
             return Redirect($"/OrderDetails/Create?orderId={Order.Id}");
+
+        }
+
+        public string GetEmailBody(Order myorder)
+        {
+            double bill = 0;
+            var orderDetails = _context.OrderDetails.Where(ordt => ordt.OrderId == myorder.Id).ToList();
+
+            string emailBody = "<div class=\"container\">" +
+                "<div class=\"row\">" +
+                "<div class=\"col-md-2\"></div>" +
+                "<div class=\"col-md-8\">" +
+                "<h1>Here are your order details, please contact us if there is any problem.</h1>" +
+                "<hr />" +
+                "</div>" +
+                "</div>" +
+                "<div class=\"row\">" +
+                "<div class=\"col-md-2\"></div>" +
+                "<div class=\"col-md-8\">" +
+                "<table class=\"table\">" +
+                "<thead>" +
+                "<tr>" +
+                "<th>Product Name</th>" +
+                "<th>&nbsp;&nbsp;&nbsp;&nbsp;Quantity&nbsp;&nbsp;&nbsp;&nbsp;</th>" +
+                "<th>&nbsp;&nbsp;&nbsp;&nbsp;Total Price&nbsp;&nbsp;&nbsp;&nbsp;</th>" +
+                "<th></th>" +
+                "</tr>" +
+                "</thead>" +
+                "<tbody>";
+
+            foreach (var item in orderDetails)
+            {
+                emailBody += "<tr>" +
+                    "<td>" + item.Product.ProductName + "</td>" +
+                    "<td>&nbsp;&nbsp;&nbsp;&nbsp;" + item.Quantity + "</td>" +
+                    "<td>&nbsp;&nbsp;&nbsp;&nbsp;" + item.TotalPrice + "</td>" +
+                    "</tr>";
+                bill += (float)item.TotalPrice;
+            }
+
+            emailBody += "</tbody>" +
+                "</table>" +
+                "</div>" +
+                "</div>" +
+                "<br>";
+
+            if (myorder != null)
+            {
+                var abc = _context.DeliveryMethods.Where(de => de.Id == myorder.DeliveryMethodId).Select(p => p.Price).FirstOrDefault();
+                var xyz = _context.PaymentMethods.Where(pm => pm.Id == myorder.PaymentMethodId).Select(p => p.Price).FirstOrDefault();
+
+                emailBody += "<div class=\"row\">" +
+                    "<div class=\"col-md-2\"></div>" +
+                    "<div class=\"col-md-8\">" +
+                    "<div>DeliveryMethod Price: " + abc + " $</div>" +
+                    "<div>PaymentMethod Price: " + xyz + " $</div>";
+
+                if (myorder.Coupon == null)
+                {
+                    emailBody += "<div>Total Discount: 0 $</div>" +
+                        "<div>Final Price: " + (Math.Round(bill + abc + xyz, 2)) + " $</div>";
+                }
+                else
+                {
+                    var discount = _context.Coupons.Where(c => c.Id == myorder.CouponId).Select(c => c.DiscountAmount).FirstOrDefault();
+                    emailBody += "<div>Total Discount: " + (Math.Round((float)bill * discount / 100, 2)) + " $</div>";
+                    var totalPrice = Math.Round(bill + abc + xyz - (float)(bill * discount / 100), 2);
+                    emailBody += "<div>Final Price: " + (Math.Round(totalPrice, 2)) + " $</div>";
+
+                    if (_httpContextAccessor.HttpContext.Session.GetString("UserRole") == "Employee")
+                    {
+                        emailBody += "<hr /><div>Order placed at: " + myorder.OrderPlacedAt + "</div>";
+                    }
+                }
+
+                emailBody += "</div>" +
+                    "</div>";
+            }
+
+            emailBody += "</div>" +
+                "</div>";
+
+            return emailBody;
         }
     }
 }

@@ -16,6 +16,7 @@ namespace ContosoPizza.Models.Generated
         [StringLength(20)]
         [Unicode(false)]
         public string ProductName { get; set; } = null!;
+        public string Description { get; set; }
         public string Materials { get;set; } = null!;
         public double UnitPrice { get; set; }
 

@@ -9,60 +9,83 @@
     <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
     <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
     <link rel="stylesheet" href="~/ContosoPizza.styles.css" asp-append-version="true" />
+    @*//*@
+    
+    <link href="https://fonts.googleapis.com/css?family=Poppins:300,400,500,600,700" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css?family=Josefin+Sans" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css?family=Nothing+You+Could+Do" rel="stylesheet">
+
+    <link rel="stylesheet" href="~/pizza-gh-pages/css/open-iconic-bootstrap.min.css" />
+    <link rel="stylesheet" href="~/pizza-gh-pages/css/animate.css">
+    <link rel="stylesheet" href="~/pizza-gh-pages/css/owl.carousel.min.css">
+    <link rel="stylesheet" href="~/pizza-gh-pages/css/owl.theme.default.min.css">
+    <link rel="stylesheet" href="~/pizza-gh-pages/css/magnific-popup.css">
+    <link rel="stylesheet" href="~/pizza-gh-pages/css/aos.css">
+    <link rel="stylesheet" href="~/pizza-gh-pages/css/ionicons.min.css">
+    <link rel="stylesheet" href="~/pizza-gh-pages/css/bootstrap-datepicker.css">
+    <link rel="stylesheet" href="~/pizza-gh-pages/css/jquery.timepicker.css">
+    <link rel="stylesheet" href="~/pizza-gh-pages/css/flaticon.css">
+    <link rel="stylesheet" href="~/pizza-gh-pages/css/icomoon.css">
+    <link rel="stylesheet" href="~/pizza-gh-pages/css/style.css">
+
+    <link rel="stylesheet" href="~/mycss/myFixCSS.css" />
+    <link rel="stylesheet" href="~/pizza-gh-pages/images/">
+    @*//*@
 </head>
 <body>
     <header>
-        <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-light bg-white border-bottom box-shadow mb-3">
+        <nav class="navbar navbar-expand-lg navbar-dark ftco_navbar bg-dark ftco-navbar-light" id="ftco-navbar">
             <div class="container">
-                <a class="navbar-brand" asp-area="" asp-page="/Index">ContosoPizza</a>
+                <a class="navbar-brand" href="/Home/Home"><span class="flaticon-pizza-1 mr-1"></span>Pizza<br><small>Delicous</small></a>
                 <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target=".navbar-collapse" aria-controls="navbarSupportedContent"
                         aria-expanded="false" aria-label="Toggle navigation">
-                    <span class="navbar-toggler-icon"></span>
+                    <span class="navbar-toggler-icon"></span>Menu
                 </button>
-                <div class="navbar-collapse collapse d-sm-inline-flex justify-content-between">
-                    <ul class="navbar-nav flex-grow-1">
-                        @if(HttpContextAccessor.HttpContext.Session.Keys.Contains("UserRole"))
+                <div class="collapse navbar-collapse" id="ftco-nav">
+                    <ul class="navbar-nav ml-auto">
+                        @if (HttpContextAccessor.HttpContext.Session.Keys.Contains("UserRole"))
                         {
                             <li class="nav-item">
-                                <a class="nav-link text-dark" href="/Customers/Edit?id=@HttpContextAccessor.HttpContext.Session.GetInt32("UserId").ToString()">Your Information</a>
+                                <a class="nav-link" href="/Customers/Edit?id=@HttpContextAccessor.HttpContext.Session.GetInt32("UserId").ToString()">Your Information</a>
                             </li>
                             <li class="nav-item">
-                                <a class="nav-link text-dark" href="/Coupons/Index">Available Coupons</a>
+                                <a class="nav-link" href="/Coupons/Index">Available Coupons</a>
                             </li>
                         }
-                            <li class="nav-item">
-                                <a class="nav-link text-dark" asp-area="" asp-page="/Products/Index">Products</a>
-                            </li>
+                        <li class="nav-item">
+                            <a class="nav-link" asp-area="" asp-page="/Products/Index">PRODUCTS</a>
+                        </li>
                         @if (HttpContextAccessor.HttpContext.Session.Keys.Contains("UserRole"))
                         {
                             @if (HttpContextAccessor.HttpContext.Session.GetString("UserRole") == "Customer")
                             {
-                                <li class="nav-item ms-auto">
-                                    <a class="nav-link text-dark" href="/Cart">YOUR CART</a>
+                                <li class="nav-item">
+                                    <a class="nav-link" href="/Cart">YOUR CART</a>
                                 </li>
                                 <li class="nav-item">
-                                    <a class="nav-link text-dark" asp-area="" asp-page="/Orders/Index">ORDERS HISTORY</a>
+                                    <a class="nav-link" asp-area="" asp-page="/Orders/Index">ORDERS HISTORY</a>
                                 </li>
                                 <li class="nav-item">
-                                    <a class="nav-link text-dark" asp-area="" asp-page="/Logout">LOGOUT</a>
+                                    <a class="nav-link" asp-area="" asp-page="/Logout">LOGOUT</a>
                                 </li>
                             }
                             else
                             {
-                                <li class="nav-item ms-auto">
-                                    <a class="nav-link text-dark" asp-area="" asp-page="/Logout">LOGOUT</a>
+                                <li class="nav-item">
+                                    <a class="nav-link" asp-area="" asp-page="/Logout">LOGOUT</a>
                                 </li>
                             }
-                        }else
+                        }
+                        else
                         {
-                            <li class="nav-item ms-auto">
-                                <a class="nav-link text-dark" href="/Cart">YOUR CART</a>
+                            <li class="nav-item">
+                                <a class="nav-link" href="/Cart">YOUR CART</a>
                             </li>
                             <li class="nav-item">
-                                <a class="nav-link text-dark" href="/LoginCustomer">LOGIN</a>
+                                <a class="nav-link" href="/LoginCustomer">LOGIN</a>
                             </li>
                             <li class="nav-item">
-                                <a class="nav-link text-dark" href="/Customers/Create">REGISTER</a>
+                                <a class="nav-link" href="/Customers/Create">REGISTER</a>
                             </li>
                         }
                     </ul>
@@ -70,21 +93,114 @@
             </div>
         </nav>
     </header>
-    <div class="container">
-        <main role="main" class="pb-3">
-            @RenderBody()
-        </main>
-    </div>
 
-    <footer class="border-top footer text-muted">
+
+     @RenderBody()
+
+
+    <footer class="ftco-footer ftco-section img">
+        <div class="overlay"></div>
         <div class="container">
-            &copy; 2023 - ContosoPizza - <a asp-area="" asp-page="/Privacy">Privacy</a>
+            <div class="row mb-5">
+                <div class="col-lg-3 col-md-6 mb-5 mb-md-5">
+                    <div class="ftco-footer-widget mb-4">
+                        <h2 class="ftco-heading-2">About Us</h2>
+                        <p>Far far away, behind the word mountains, far from the countries Vokalia and Consonantia, there live the blind texts.</p>
+                        <ul class="ftco-footer-social list-unstyled float-md-left float-lft mt-5">
+                            <li class="ftco-animate"><a href="#"><span class="icon-twitter"></span></a></li>
+                            <li class="ftco-animate"><a href="#"><span class="icon-facebook"></span></a></li>
+                            <li class="ftco-animate"><a href="#"><span class="icon-instagram"></span></a></li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="col-lg-4 col-md-6 mb-5 mb-md-5">
+                    <div class="ftco-footer-widget mb-4">
+                        <h2 class="ftco-heading-2">Recent Blog</h2>
+                        <div class="block-21 mb-4 d-flex">
+                            <a class="blog-img mr-4" style="background-image: url(images/image_1.jpg);"></a>
+                            <div class="text">
+                                <h3 class="heading"><a href="#">Even the all-powerful Pointing has no control about</a></h3>
+                                <div class="meta">
+                                    <div><a href="#"><span class="icon-calendar"></span> Sept 15, 2018</a></div>
+                                    <div><a href="#"><span class="icon-person"></span> Admin</a></div>
+                                    <div><a href="#"><span class="icon-chat"></span> 19</a></div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="block-21 mb-4 d-flex">
+                            <a class="blog-img mr-4" style="background-image: url(images/image_2.jpg);"></a>
+                            <div class="text">
+                                <h3 class="heading"><a href="#">Even the all-powerful Pointing has no control about</a></h3>
+                                <div class="meta">
+                                    <div><a href="#"><span class="icon-calendar"></span> Sept 15, 2018</a></div>
+                                    <div><a href="#"><span class="icon-person"></span> Admin</a></div>
+                                    <div><a href="#"><span class="icon-chat"></span> 19</a></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-2 col-md-6 mb-5 mb-md-5">
+                    <div class="ftco-footer-widget mb-4 ml-md-4">
+                        <h2 class="ftco-heading-2">Services</h2>
+                        <ul class="list-unstyled">
+                            <li><a href="#" class="py-2 d-block">Cooked</a></li>
+                            <li><a href="#" class="py-2 d-block">Deliver</a></li>
+                            <li><a href="#" class="py-2 d-block">Quality Foods</a></li>
+                            <li><a href="#" class="py-2 d-block">Mixed</a></li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="col-lg-3 col-md-6 mb-5 mb-md-5">
+                    <div class="ftco-footer-widget mb-4">
+                        <h2 class="ftco-heading-2">Have a Questions?</h2>
+                        <div class="block-23 mb-3">
+                            <ul>
+                                <li><span class="icon icon-map-marker"></span><span class="text">203 Fake St. Mountain View, San Francisco, California, USA</span></li>
+                                <li><a href="#"><span class="icon icon-phone"></span><span class="text">+2 392 3929 210</span></a></li>
+                                <li><a href="#"><span class="icon icon-envelope"></span><span class="text">info@yourdomain.com</span></a></li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-md-12 text-center">
+
+                    <p>
+                        <!-- Link back to Colorlib can't be removed. Template is licensed under CC BY 3.0. -->
+                        Copyright &copy;<script>document.write(new Date().getFullYear());</script> All rights reserved | This template is made with <i class="icon-heart" aria-hidden="true"></i> by <a href="https://colorlib.com" target="_blank">Colorlib</a>
+                        <!-- Link back to Colorlib can't be removed. Template is licensed under CC BY 3.0. -->
+                    </p>
+                </div>
+            </div>
         </div>
     </footer>
+
+    <div id="ftco-loader" class="show fullscreen"><svg class="circular" width="48px" height="48px"><circle class="path-bg" cx="24" cy="24" r="22" fill="none" stroke-width="4" stroke="#eeeeee" /><circle class="path" cx="24" cy="24" r="22" fill="none" stroke-width="4" stroke-miterlimit="10" stroke="#F96D00" /></svg></div>
+
 
     <script src="~/lib/jquery/dist/jquery.min.js"></script>
     <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
     <script src="~/js/site.js" asp-append-version="true"></script>
+
+    <script src="/pizza-gh-pages/js/jquery.min.js"></script>
+    <script src="/pizza-gh-pages/js/jquery-migrate-3.0.1.min.js"></script>
+    <script src="/pizza-gh-pages/js/popper.min.js"></script>
+    <script src="/pizza-gh-pages/js/bootstrap.min.js"></script>
+    <script src="/pizza-gh-pages/js/jquery.easing.1.3.js"></script>
+    <script src="/pizza-gh-pages/js/jquery.waypoints.min.js"></script>
+    <script src="/pizza-gh-pages/js/jquery.stellar.min.js"></script>
+    <script src="/pizza-gh-pages/js/owl.carousel.min.js"></script>
+    <script src="/pizza-gh-pages/js/jquery.magnific-popup.min.js"></script>
+    <script src="/pizza-gh-pages/js/aos.js"></script>
+    <script src="/pizza-gh-pages/js/jquery.animateNumber.min.js"></script>
+    <script src="/pizza-gh-pages/js/bootstrap-datepicker.js"></script>
+    <script src="/pizza-gh-pages/js/jquery.timepicker.min.js"></script>
+    <script src="/pizza-gh-pages/js/scrollax.min.js"></script>
+    <script src="/pizza-gh-pages/https://maps.googleapis.com/maps/api/js?key=AIzaSyBVWaKrjvy3MaE7SQ74_uJiULgl1JY0H2s&sensor=false"></script>
+    <script src="/pizza-gh-pages/js/google-map.js"></script>
+    <script src="/pizza-gh-pages/js/main.js"></script>
 
     @await RenderSectionAsync("Scripts", required: false)
 </body>

@@ -1,0 +1,172 @@
+﻿@page
+@model ContosoPizza.Pages.StatisticalReport.ReportFoodAndDrinksModel
+@{
+    ViewData["Title"] = "Report Foood and Drinks";
+    int count = 0;
+}
+
+<h1>Report Products</h1>
+
+<form>
+    <p>
+        Filter Date:
+        From: <input name="FromDate" type="date" asp-for="FromDate" value="" />
+        &nbsp;&nbsp;&nbsp;&nbsp;
+        To: <input name="ToDate" type="date" asp-for="ToDate" value="" />
+        <input type="submit" class="btn btn-primary" value="Search" />
+    </p>
+    <p>
+        Order By:
+        <select id="orderByProductInfo">
+            <option value="">Default</option>
+            <option value="UnitPrice">Unit Price</option>
+            <option value="OrderedNumber">Ordered Number</option>
+            <option value="OrderIncludeProduct">Orders Include Product</option>
+            <option value="TotalMoney">Total Money</option>
+            <option value="RealMoneyEarn">Real Money Earn</option>
+        </select>
+    </p>
+</form>
+
+<br />
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>
+                @Html.DisplayNameFor(model => model.ReportFoodAndDrinks[0].Name)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.ReportFoodAndDrinks[0].UnitPrice)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.ReportFoodAndDrinks[0].OrderedNumber)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.ReportFoodAndDrinks[0].OrderIncludeProduct)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.ReportFoodAndDrinks[0].TotalMoney)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.ReportFoodAndDrinks[0].RealMoneyEarn)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.ReportFoodAndDrinks[0].Image)              
+            </th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model.ReportFoodAndDrinks)
+        {
+
+            <tr>
+                <td>
+                    <a href="/Products/Details?id=@item.Id">@Html.DisplayFor(modelItem => item.Name)</a>
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.UnitPrice) $
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.OrderedNumber)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.OrderIncludeProduct)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.TotalMoney) $
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.RealMoneyEarn) $
+                </td>
+                <td>
+                    <img src="@item.Image" alt="Image" style="max-width: 200px; max-height: 200px;" />
+                </td>
+                <td></td>
+            </tr>
+
+        }
+    </tbody>
+</table>
+<div class="text-center">
+    Page: <input type="number" id="pageInput" style="color:black; font-weight:bold; font-size: 30px; max-width: 50px" value="1" min="1" step="1">
+</div>
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+    <script>
+        const orderBySelect = document.getElementById('orderByProductInfo');
+        const pageInput = document.getElementById('pageInput');
+        const searchButton = document.querySelector('input[type="submit"]');
+        let savedOrderBy = localStorage.getItem('orderByReportProduct') || ''; // Lấy giá trị orderBy đã được lưu trữ từ trước (nếu có)
+        let savedPage = localStorage.getItem('pageReportProduct') || ''; // Lấy giá trị page đã được lưu trữ từ trước (nếu có)
+        let savedFromDate = localStorage.getItem('fromDateReportProduct') || ''; // Lấy giá trị fromDate đã được lưu trữ từ trước (nếu có)
+        let savedToDate = localStorage.getItem('toDateReportProduct') || ''; // Lấy giá trị toDate đã được lưu trữ từ trước (nếu có)
+
+        // Đặt giá trị ban đầu cho select và input từ giá trị đã lưu trữ
+        orderBySelect.value = savedOrderBy;
+        pageInput.value = savedPage;
+        document.querySelector('input[name="FromDate"]').value = savedFromDate;
+        document.querySelector('input[name="ToDate"]').value = savedToDate;
+
+        orderBySelect.addEventListener('change', navigateToUrl);
+        pageInput.addEventListener('input', navigateToUrl);
+        searchButton.addEventListener('click', navigateToUrl);
+
+        function navigateToUrl(event) {
+            event.preventDefault(); // Ngăn chặn hành vi mặc định của button (tải lại trang)
+
+            const orderBy = orderBySelect.value;
+            const page = pageInput.value;
+            const fromDate = document.querySelector('input[name="FromDate"]').value;
+            const toDate = document.querySelector('input[name="ToDate"]').value;
+            const baseUrl = window.location.href.split('?')[0]; // Lấy đường dẫn gốc của trang
+            const queryParams = [];
+
+            if (orderBy) {
+                queryParams.push(`orderBy=${orderBy}`);
+                savedOrderBy = orderBy; // Lưu giá trị orderBy hiện tại
+                localStorage.setItem('orderByReportProduct', orderBy); // Lưu giá trị orderBy vào localStorage
+            } else {
+                savedOrderBy = ''; // Reset giá trị orderBy nếu không có lựa chọn
+                localStorage.removeItem('orderByReportProduct'); // Xóa giá trị orderBy từ localStorage
+            }
+
+            if (page) {
+                queryParams.push(`page=${page}`);
+                savedPage = page; // Lưu giá trị page hiện tại
+                localStorage.setItem('pageReportProduct', page); // Lưu giá trị page vào localStorage
+            } else {
+                savedPage = ''; // Reset giá trị page nếu không có giá trị
+                localStorage.removeItem('pageReportProduct'); // Xóa giá trị page từ localStorage
+            }
+
+            if (fromDate) {
+                queryParams.push(`fromdate=${fromDate}`);
+                savedFromDate = fromDate; // Lưu giá trị fromDate hiện tại
+                localStorage.setItem('fromDateReportProduct', fromDate); // Lưu giá trị fromDate vào localStorage
+            } else {
+                savedFromDate = ''; // Reset giá trị fromDate nếu không có giá trị
+                localStorage.removeItem('fromDateReportProduct'); // Xóa giá trị fromDate từ localStorage
+            }
+
+            if (toDate) {
+                queryParams.push(`todate=${toDate}`);
+                savedToDate = toDate; // Lưu giá trị toDate hiện tại
+                localStorage.setItem('toDateReportProduct', toDate); // Lưu giá trị toDate vào localStorage
+            } else {
+                savedToDate = ''; // Reset giá trị toDate nếu không có giá trị
+                localStorage.removeItem('toDateReportProduct'); // Xóa giá trị toDate từ localStorage
+            }
+
+            const queryString = queryParams.join('&');
+            const newUrl = `${baseUrl}?${queryString}`;
+
+            // Chuyển hướng trình duyệt đến đường dẫn mới
+            window.location.href = newUrl;
+        }
+    </script>
+}
