@@ -20,6 +20,7 @@
 
   <ItemGroup>
     <Folder Include="wwwroot\EmployeePictures\" />
+    <Folder Include="wwwroot\bootstrapAdmin\" />
     <Folder Include="wwwroot\sample-files\" />
   </ItemGroup>
 

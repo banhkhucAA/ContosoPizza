@@ -1,0 +1,57 @@
+﻿.table-bordered {
+    border: 2px solid black;
+}
+
+    .table-bordered td, .table-bordered th {
+        border: 2px solid black;
+    }
+
+.table thead th {
+    border-bottom: 2px solid black;
+}
+
+footer{
+    min-height:50px;
+    text-align:center;
+    align-items:center;
+    justify-content:center;
+    align-content:center;
+    align-self:center;
+}
+
+.table td, .table th {
+    border-top: 2px solid black;
+}
+
+select, input{
+    border-radius:10px;
+    color:black;
+    justify-content:center;
+    text-align:center;
+}
+
+.table{
+    color:black;
+}
+
+.form-control {
+    color: black;
+}
+
+.container-fluid{
+    min-height:86%;
+}
+
+.min-width-button-CRUD{
+    width:100px;
+}
+
+.search {
+    background-color: #4e73df !important;
+    border: none !important;
+    color: white !important;
+}
+
+.span-btn-search {
+    margin-top: 10px;
+}

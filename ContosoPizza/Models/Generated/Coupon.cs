@@ -17,6 +17,7 @@ namespace ContosoPizza.Models.Generated
         public DateTime? ExpireDate { get; set; }
 
         [InverseProperty("Coupon")]
+        public string? Description { get; set; }
         public virtual ICollection<Order> Orders { get; set; }
     }
 }

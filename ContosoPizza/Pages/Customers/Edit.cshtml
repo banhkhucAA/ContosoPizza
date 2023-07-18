@@ -5,18 +5,17 @@
 @{
     ViewData["Title"] = "Edit";
 }
+@if (HttpContextAccessor.HttpContext.Session.GetString("UserRole") == "Admin")
+{
+    <h1>Edit</h1>
 
-<h1>Edit</h1>
-
-<h4>Customer</h4>
-<hr />
-<div class="row">
-    <div class="col-md-4">
-        <form method="post">
-            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-            <input type="hidden" asp-for="Customer.Id" />
-            @if (HttpContextAccessor.HttpContext.Session.GetString("UserRole") != "Customer")
-            {
+    <h4>Customer</h4>
+    <hr />
+    <div class="row">
+        <div class="col-md-4">
+            <form method="post">
+                <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+                <input type="hidden" asp-for="Customer.Id" />
                 <div class="form-group">
                     <label asp-for="Customer.FirstName" class="control-label"></label>
                     <input asp-for="Customer.FirstName" class="form-control" />
@@ -47,52 +46,117 @@
                     <input asp-for="Customer.Pass" class="form-control" />
                     <span asp-validation-for="Customer.Pass" class="text-danger"></span>
                 </div>
-                <div class="form-group">
-                    <input type="submit" value="Save" class="btn btn-primary" />
-                </div>
-            }else
-            {
-                <div class="form-group">
-                    <label asp-for="Customer.FirstName" class="control-label"></label>
-                    <input asp-for="Customer.FirstName" class="form-control" readonly/>
-                    <span asp-validation-for="Customer.FirstName" class="text-danger"></span>
-                </div>
-                <div class="form-group">
-                    <label asp-for="Customer.LastName" class="control-label"></label>
-                    <input asp-for="Customer.LastName" class="form-control" readonly/>
-                    <span asp-validation-for="Customer.LastName" class="text-danger"></span>
-                </div>
-                <div class="form-group">
-                    <label asp-for="Customer.Email" class="control-label"></label>
-                    <input asp-for="Customer.Email" class="form-control" readonly/>
-                    <span asp-validation-for="Customer.Email" class="text-danger"></span>
-                </div>
-                <div class="form-group">
-                    <label asp-for="Customer.Address" class="control-label"></label>
-                    <input asp-for="Customer.Address" class="form-control" />
-                    <span asp-validation-for="Customer.Address" class="text-danger"></span>
-                </div>
-                <div class="form-group">
-                    <label asp-for="Customer.Phone" class="control-label"></label>
-                    <input asp-for="Customer.Phone" class="form-control" />
-                    <span asp-validation-for="Customer.Phone" class="text-danger"></span>
-                </div>
-                <div class="form-group">
-                    <label asp-for="Customer.Pass" class="control-label"></label>
-                    <input asp-for="Customer.Pass" class="form-control" />
-                    <span asp-validation-for="Customer.Pass" class="text-danger"></span>
-                </div>
-                <div class="form-group">
-                    <input type="submit" value="Save" class="btn btn-primary" />
-                </div>
-            }
-        </form>
+                <span class="row" style="padding-top:10px">
+                    <span class="form-group btn btn-success btn-icon-split">
+                        <span class="icon text-white-50">
+                            <i class="fas fa-check"></i>
+                        </span>
+                        <input type="submit" value="Save" style="background-color:#1cc88a; border:none;" />
+                    </span>
+                    &nbsp
+                    <div>
+                        |
+                        <a class="btn btn-primary" asp-page="./Index">Back to list</a>
+                    </div>
+                </span>
+            </form>
+        </div>
     </div>
-</div>
+}
 
-<div>
-    <a href="/Products">Back to List</a>
-</div>
+@if (HttpContextAccessor.HttpContext.Session.GetString("UserRole")=="Customer")
+{
+    <div class="row padding-to-all text-center tab-content ftco-animate">
+        <h1>Edit</h1>
+        <h4>Customer</h4>
+        <hr />
+        <div class="col-md-4 text-center">        
+            <form method="post">
+                <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+                <input type="hidden" asp-for="Customer.Id" />
+                @if (HttpContextAccessor.HttpContext.Session.GetString("UserRole") != "Customer")
+                {
+                    <div class="form-group">
+                        <label asp-for="Customer.FirstName" class="control-label"></label>
+                        <input asp-for="Customer.FirstName" class="form-control only-input" />
+                        <span asp-validation-for="Customer.FirstName" class="text-danger"></span>
+                    </div>
+                    <div class="form-group">
+                        <label asp-for="Customer.LastName" class="control-label"></label>
+                        <input asp-for="Customer.LastName" class="form-control only-input" />
+                        <span asp-validation-for="Customer.LastName" class="text-danger"></span>
+                    </div>
+                    <div class="form-group">
+                        <label asp-for="Customer.Address" class="control-label"></label>
+                        <input asp-for="Customer.Address" class="form-control only-input" />
+                        <span asp-validation-for="Customer.Address" class="text-danger"></span>
+                    </div>
+                    <div class="form-group">
+                        <label asp-for="Customer.Phone" class="control-label"></label>
+                        <input asp-for="Customer.Phone" class="form-control only-input" />
+                        <span asp-validation-for="Customer.Phone" class="text-danger"></span>
+                    </div>
+                    <div class="form-group">
+                        <label asp-for="Customer.Email" class="control-label"></label>
+                        <input asp-for="Customer.Email" class="form-control only-input" />
+                        <span asp-validation-for="Customer.Email" class="text-danger"></span>
+                    </div>
+                    <div class="form-group">
+                        <label asp-for="Customer.Pass" class="control-label"></label>
+                        <input asp-for="Customer.Pass" class="form-control only-input" />
+                        <span asp-validation-for="Customer.Pass" class="text-danger"></span>
+                    </div>
+                    <div class="form-group">
+                        <input type="submit" value="Save" class="btn btn-primary" />
+                    </div>
+                }else
+                {
+                    <div class="form-group">
+                        <label asp-for="Customer.FirstName" class="control-label"></label>
+                        <input asp-for="Customer.FirstName" class="form-control only-input" readonly />
+                        <span asp-validation-for="Customer.FirstName" class="text-danger"></span>
+                    </div>
+                    <div class="form-group">
+                        <label asp-for="Customer.LastName" class="control-label"></label>
+                        <input asp-for="Customer.LastName" class="form-control only-input" readonly />
+                        <span asp-validation-for="Customer.LastName" class="text-danger"></span>
+                    </div>
+                    <div class="form-group">
+                        <label asp-for="Customer.Email" class="control-label"></label>
+                        <input asp-for="Customer.Email" class="form-control only-input" readonly />
+                        <span asp-validation-for="Customer.Email" class="text-danger"></span>
+                    </div>
+                    <div class="form-group">
+                        <label asp-for="Customer.Address" class="control-label"></label>
+                        <input asp-for="Customer.Address" class="form-control only-input" />
+                        <span asp-validation-for="Customer.Address" class="text-danger"></span>
+                    </div>
+                    <div class="form-group">
+                        <label asp-for="Customer.Phone" class="control-label"></label>
+                        <input asp-for="Customer.Phone" class="form-control only-input" />
+                        <span asp-validation-for="Customer.Phone" class="text-danger"></span>
+                    </div>
+                    <div class="form-group">
+                        <label asp-for="Customer.Pass" class="control-label"></label>
+                        <input asp-for="Customer.Pass" class="form-control only-input" />
+                        <span asp-validation-for="Customer.Pass" class="text-danger"></span>
+                    </div>
+                    <div class="form-group">
+                        <input type="submit" value="Save"/>
+                    </div>
+                }
+            </form>
+        </div>
+        <div class="col-md-8">
+            <img src="/EmployeePictures/pizza-steve-edit-profile.png" width="800" height="550"/>
+        </div>
+        <div class="col-md-12">
+            <a href="/Products">Back to List</a>
+        </div>
+    </div>
+}
+
+
 
 @section Scripts {
     @{
@@ -122,7 +186,7 @@
                     <span aria-hidden="true">&times;</span>
                 </button>
             </div>
-            <div class="modal-body">
+            <div class="modal-body alert">
                 @Model.ErrorMessage
             </div>
             <div class="modal-footer">

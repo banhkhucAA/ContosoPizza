@@ -38,15 +38,19 @@ namespace ContosoPizza.Pages.LoginEmployee
             };
             var userRole = employee.Role;
             var userID = employee.Id;
+            var userName = employee.FirstName + " "+employee.LastName;
             if (employee.Role == "Admin")
             {
                 HttpContext.Session.SetString("UserRole", userRole);
+                HttpContext.Session.SetString("UserName", userName);
+                HttpContext.Session.SetInt32("UserId", userID);
                 // Đăng nhập thành công, chuyển hướng đến trang chính hoặc trang khác
                 return RedirectToPage("/Employees/Index");
             }
             else if (employee.Role == "Employee")
             {
                 HttpContext.Session.SetString("UserRole", userRole);
+                HttpContext.Session.SetString("UserName", userName);
                 HttpContext.Session.SetInt32("UserId", userID);
                 return RedirectToPage("/Orders/Index");
             }
@@ -54,6 +58,7 @@ namespace ContosoPizza.Pages.LoginEmployee
             {
                 userRole = "Employee";
                 HttpContext.Session.SetString("UserRole", userRole);
+                HttpContext.Session.SetString("UserName", userName);
                 HttpContext.Session.SetInt32("UserId", userID);
                 return RedirectToPage("/Orders/Index");
             }    

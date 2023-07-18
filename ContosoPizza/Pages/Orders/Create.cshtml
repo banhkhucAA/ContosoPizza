@@ -5,196 +5,214 @@
     ViewData["Title"] = "Create";
 }
 
-<div class="row">
-    <div class="col-md-4">
+@if (HttpContextAccessor.HttpContext.Session.GetString("UserRole") == "Employee")
+{
         <h1>Create</h1>
 
-        <h4>Order</h4>
-        <hr />
-        <form method="post">           
-            @if (HttpContextAccessor.HttpContext.Session.Keys.Contains("UserRole"))
-            {
-                @if (HttpContextAccessor.HttpContext.Session.GetString("UserRole") == "Employee")
-                {
-                    <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+    <h4>Product</h4>
+    <hr />
+    <div class="row">
+        <div class="col-md-4">
+            <form method="post" enctype="multipart/form-data">
+                <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+                <div class="form-group">
+                    <label asp-for="Product.ProductName" class="control-label"></label>
+                    <input asp-for="Product.ProductName" class="form-control" />
+                    <span asp-validation-for="Product.ProductName" class="text-danger"></span>
+                </div>
+                <div class="form-group">
+                    <label asp-for="Product.Description" class="control-label"></label>
+                    <input asp-for="Product.Description" class="form-control" />
+                    <span asp-validation-for="Product.Description" class="text-danger"></span>
+                </div>
+                <div class="form-group">
+                    <label asp-for="Product.UnitPrice" class="control-label"></label>
+                    <input asp-for="Product.UnitPrice" class="form-control" />
+                    <span asp-validation-for="Product.UnitPrice" class="text-danger"></span>
+                </div>
+                <div class="form-group">
+                    <label asp-for="Product.Materials" class="control-label"></label>
+                    <input asp-for="Product.Materials" class="form-control" />
+                    <span asp-validation-for="Product.Materials" class="text-danger"></span>
+                </div>
+                <div class="form-group">@*Bản chất là add vào CategoryId, chỉ là hiển thị cái SelectList lên thôi.*@
+                    <label asp-for="Product.CategoryId" class="control-label">Category</label>
+                    <select asp-for="Product.CategoryId" class="form-control" asp-items="Model.CategoryList"></select>
+                </div>           
+                <div class="form-group">
+                    <label>Upload Image</label>
+                    <input type="file" name="imageFile" class="form-control-file" />
+                </div>
+                <div class="form-group row">
+                    <span class="form-group btn btn-success btn-icon-split">
+                        <span class="icon text-white-50">
+                            <i class="fas fa-check"></i>
+                        </span>
+                        <input type="submit" value="Create" style="background-color:#1cc88a; border:none;" />
+                    </span>
+                    &nbsp
+                    <div>
+                        |
+                        <a class="btn btn-primary" asp-page="Index">Back to List</a>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <div>
+        <a asp-page="Index">Back to List</a>
+    </div>
+}
+
+@if (HttpContextAccessor.HttpContext.Session.GetString("UserRole") == "Customer"|| HttpContextAccessor.HttpContext.Session.GetString("UserRole") == null)
+{
+    <div class="text-center padding-to-all height-min-1200">
+        <div class="row justify-content-center align-items-center vh-100">
+            <h1 class="text-center">Create</h1>
+
+            <h4 class="text-center">Order</h4>
+            <div class="col-md-4">
+                <form method="post">                      
+                    @if (HttpContextAccessor.HttpContext.Session.GetString("UserRole") == "Customer")
+                    {
+                        <div class="form-group">
+                            <label asp-for="Order.OrderPlacedAt" class="control-label"></label>
+                            <input asp-for="Order.OrderPlacedAt" class="form-control only-input fix-select-background-not-orange" value="@DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss")" readonly />
+                            <span asp-validation-for="Order.OrderPlacedAt" class="text-danger"></span>
+                        </div>
+                        <input type="hidden" asp-for="Order.CustomerId" value="@HttpContextAccessor.HttpContext.Session.GetInt32("UserId")">
+                        <input type="hidden" asp-for="Order.OrderStatusId" value="@(((SelectList)ViewData["OrderStatusId"]).FirstOrDefault()?.Value ?? string.Empty)">
+                        <input type="hidden" asp-for="Order.IsCustomerMember" value="true"/>
+                        <div class="form-group">
+                            <label asp-for="Order.CouponId" class="control-label">Coupon Code</label>
+                            <select asp-for="Order.CouponId" class="form-control only-input fix-select-background-not-orange" asp-items="ViewBag.CouponId"></select>
+                        </div>
+                    }
+                    else if (HttpContextAccessor.HttpContext.Session.GetString("UserRole") == null)
+                    {
+                        <div class="form-group">
+                            <label asp-for="Order.OrderPlacedAt" class="control-label"></label>
+                            <input asp-for="Order.OrderPlacedAt" class="form-control only-input fix-select-background-not-orange" value="@DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss")" readonly />
+                            <span asp-validation-for="Order.OrderPlacedAt" class="text-danger"></span>
+                        </div>
+                        <div class="form-group" id="PhoneNumber">
+                            <label asp-for="Order.NoneCustomerMemberPhoneNumber" class="control-label">Phone Number</label>
+                            <input asp-for="Order.NoneCustomerMemberPhoneNumber" class="form-control only-input" />
+                        </div>
+                        <div class="form-group" id="EmailAddress">
+                            <label asp-for="Order.NoneCustomerMemberEmailAddress" class="control-label">Email Address</label>
+                            <input asp-for="Order.NoneCustomerMemberEmailAddress" class="form-control only-input" />
+                        </div>
+                        <input type="hidden" asp-for="Order.CustomerId" value="">
+                        <input type="hidden" asp-for="Order.OrderStatusId" value="6">
+                        <input type="hidden" asp-for="Order.IsCustomerMember" value="false" />
+                    }            
                     <div class="form-group">
-                        <label asp-for="Order.OrderPlacedAt" class="control-label"></label>
-                        <input asp-for="Order.OrderPlacedAt" class="form-control" value="@DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss")" />
-                        <span asp-validation-for="Order.OrderPlacedAt" class="text-danger"></span>
+                        <label asp-for="Order.DeliveryMethodId" class="control-label">DeliveryMethod</label>
+                        <select asp-for="Order.DeliveryMethodId" class="form-control only-input fix-select-background-not-orange" asp-items="ViewBag.DeliveryMethodId"></select>
                     </div>
                     <div class="form-group">
-                        <label asp-for="Order.OrderFullFilledAt" class="control-label"></label>
-                        <input asp-for="Order.OrderFullFilledAt" class="form-control" />
-                        <span asp-validation-for="Order.OrderFullFilledAt" class="text-danger"></span>
+                        <label asp-for="Order.PaymentMethodId" class="control-label">PaymentMethod</label>
+                        <select asp-for="Order.PaymentMethodId" class="form-control only-input fix-select-background-not-orange" asp-items="ViewBag.PaymentMethodId"></select>
                     </div>
                     <div class="form-group">
-                        <label asp-for="Order.EmployeeId" class="control-label"></label>
-                        <select asp-for="Order.EmployeeId" class="form-control" asp-items="@ViewBag.EmployeeId" readonly></select>
+                        <label asp-for="Order.PlacedAddress" class="control-label">PlacedAddress</label>
+                        <input asp-for="Order.PlacedAddress" class="form-control only-input" />
+                        <span asp-validation-for="Order.PlacedAddress" class="text-danger fix-text-danger"></span>
                     </div>
-                    <div class="form-group form-check">
-                        <label class="form-check-label">
-                            <input id="IsCustomerMember" class="form-check-input" asp-for="Order.IsCustomerMember" />
-                            @Html.DisplayNameFor(model => model.Order.IsCustomerMember)
-                            <input type="hidden" asp-for="Order.IsCustomerMember" /> <!-- Thêm input hidden để lưu trữ giá trị trước đó -->
-                        </label>
+                    <div class="form-group">
+                        <input type="submit" value="Create" name="createButton"/>
                     </div>
-                }
-            }
+                </form>
+            </div>
 
             @if (HttpContextAccessor.HttpContext.Session.GetString("UserRole") == "Employee")
             {
-                <div class="form-group" id="PhoneNumber">
-                    <label asp-for="Order.NoneCustomerMemberPhoneNumber" class="control-label">Phone Number</label>
-                    <input asp-for="Order.NoneCustomerMemberPhoneNumber" class="form-control" />
-                </div>
-                <div class="form-group" id="EmailAddress">
-                    <label asp-for="Order.NoneCustomerMemberEmailAddress" class="control-label">Email Address</label>
-                    <input asp-for="Order.NoneCustomerMemberEmailAddress" class="form-control" />
-                </div>
-                <div class="form-group" id="CustomerIdContainer" style="display: none;">
-                    <label asp-for="Order.CustomerId" class="control-label">Customer</label>
-                    <select asp-for="Order.CustomerId" class="form-control" asp-items="ViewBag.CustomerId"></select>
-                </div>
-                <div class="form-group" id="CouponIdContainer" style="display: none;">
-                    <label asp-for="Order.CouponId" class="control-label">Coupon Code</label>
-                    <select asp-for="Order.CouponId" class="form-control" asp-items="ViewBag.CouponId"></select>
-                </div>
-                <div class="form-group">
-                    <label asp-for="Order.OrderStatusId" class="control-label">OrderStatus</label>
-                    <select asp-for="Order.OrderStatusId" class="form-control" asp-items="ViewBag.OrderStatusId"></select>
-                </div>
+                <div class="col-md-8">
+                    <h1>Find</h1>
 
-            }else if (HttpContextAccessor.HttpContext.Session.GetString("UserRole") == "Customer")
-            {
-                <div class="form-group">
-                    <label asp-for="Order.OrderPlacedAt" class="control-label"></label>
-                    <input asp-for="Order.OrderPlacedAt" class="form-control" value="@DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss")" readonly/>
-                    <span asp-validation-for="Order.OrderPlacedAt" class="text-danger"></span>
-                </div>
-                <input type="hidden" asp-for="Order.CustomerId" value="@HttpContextAccessor.HttpContext.Session.GetInt32("UserId")">
-                <input type="hidden" asp-for="Order.OrderStatusId" value="@(((SelectList)ViewData["OrderStatusId"]).FirstOrDefault()?.Value ?? string.Empty)">
-                <input type="hidden" asp-for="Order.IsCustomerMember" value="true"/>
-                <div class="form-group">
-                    <label asp-for="Order.CouponId" class="control-label">Coupon Code</label>
-                    <select asp-for="Order.CouponId" class="form-control" asp-items="ViewBag.CouponId"></select>
+                <h4>Customer Member</h4>
+                <hr />
+                    <form method="post">
+                        <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+                        <div class="form-group">
+                            <label asp-for="Customer.Email" class="control-label"></label>
+                            <input asp-for="Customer.Email" class="form-control" placeholder="Enter Customer's email here" />
+                            <span asp-validation-for="Order.Customer.Email" class="text-danger"></span>
+                        </div>
+                        <div class="form-group">
+                            <input type="submit" value="Find" name="findButton" class="btn btn-primary" />
+                        </div>
+                    </form>
+                    <table class="table">
+                        <thead>
+                            <tr>
+                                <th>|</th>
+                                <th>
+                                    @Html.DisplayNameFor(model => model.Customer.Id)
+                                </th>
+                                <th>
+                                    @Html.DisplayNameFor(model => model.Customer.LastName)
+                                </th>
+                                <th>|</th>
+                                <th>
+                                    @Html.DisplayNameFor(model => model.Customer.Address)
+                                </th>
+                                <th>|</th>
+                                <th>
+                                    @Html.DisplayNameFor(model => model.Customer.Phone)
+                                </th>
+                                <th>|</th>
+                                <th>
+                                    @Html.DisplayNameFor(model => model.Customer.Email)
+                                </th>
+                                <th>|</th>
+                            </tr>
+                        </thead>
+
+                        <tbody>
+                            <tr>
+                                <th>|</th>
+                                <th>
+                                    @Html.DisplayFor(model => model.Customer.Id)
+                                </th>
+                                <th>
+                                    @Html.DisplayFor(model => model.Customer.LastName)
+                                </th>
+                                <th>|</th>
+                                <th>
+                                    @Html.DisplayFor(model => model.Customer.Address)
+                                </th>
+                                <th>|</th>
+                                <th>
+                                    @Html.DisplayFor(model => model.Customer.Phone)
+                                </th>
+                                <th>|</th>
+                                <th>
+                                    @Html.DisplayFor(model => model.Customer.Email)
+                                </th>
+                                <th>|</th>
+                            </tr>
+                        </tbody>
+                    </table>
                 </div>
             }
             else
             {
-                <div class="form-group">
-                    <label asp-for="Order.OrderPlacedAt" class="control-label"></label>
-                    <input asp-for="Order.OrderPlacedAt" class="form-control" value="@DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss")" readonly />
-                    <span asp-validation-for="Order.OrderPlacedAt" class="text-danger"></span>
+                <div class="col-md-8">
+                    <img src="/EmployeePictures/pizza-steve-create-order.png" width="800" height="550"/>
                 </div>
-                <div class="form-group" id="PhoneNumber">
-                    <label asp-for="Order.NoneCustomerMemberPhoneNumber" class="control-label">Phone Number</label>
-                    <input asp-for="Order.NoneCustomerMemberPhoneNumber" class="form-control" />
-                </div>
-                <div class="form-group" id="EmailAddress">
-                    <label asp-for="Order.NoneCustomerMemberEmailAddress" class="control-label">Email Address</label>
-                    <input asp-for="Order.NoneCustomerMemberEmailAddress" class="form-control" />
-                </div>
-                <input type="hidden" asp-for="Order.CustomerId" value="">
-                <input type="hidden" asp-for="Order.OrderStatusId" value="@(((SelectList)ViewData["OrderStatusId"]).FirstOrDefault()?.Value ?? string.Empty)">
-                <input type="hidden" asp-for="Order.IsCustomerMember" value="false" />
-            }            
-            <div class="form-group">
-                <label asp-for="Order.DeliveryMethodId" class="control-label">DeliveryMethod</label>
-                <select asp-for="Order.DeliveryMethodId" class="form-control" asp-items="ViewBag.DeliveryMethodId"></select>
-            </div>
-            <div class="form-group">
-                <label asp-for="Order.PaymentMethodId" class="control-label">PaymentMethod</label>
-                <select asp-for="Order.PaymentMethodId" class="form-control" asp-items="ViewBag.PaymentMethodId"></select>
-            </div>
-            <div class="form-group">
-                <label asp-for="Order.PlacedAddress" class="control-label">PlacedAddress</label>
-                <input asp-for="Order.PlacedAddress" class="form-control" />
-                <span asp-validation-for="Order.PlacedAddress" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <input type="submit" value="Create" name="createButton" class="btn btn-primary" />
-            </div>
-        </form>
+            }
+        </div>
     </div>
 
-    <div class="col-md-2"></div>
+    <div class="text-center">
+        <a class="a-back-to-list" href="/Cart">Back to your cart</a>
+    </div>
+}
+    
 
-    @if (HttpContextAccessor.HttpContext.Session.GetString("UserRole") == "Employee")
-    {
-        <div class="col-md-4">
-            <h1>Find</h1>
-
-        <h4>Customer Member</h4>
-        <hr />
-            <form method="post">
-                <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-                <div class="form-group">
-                    <label asp-for="Customer.Email" class="control-label"></label>
-                    <input asp-for="Customer.Email" class="form-control" placeholder="Enter Customer's email here" />
-                    <span asp-validation-for="Order.Customer.Email" class="text-danger"></span>
-                </div>
-                <div class="form-group">
-                    <input type="submit" value="Find" name="findButton" class="btn btn-primary" />
-                </div>
-            </form>
-            <table class="table">
-                <thead>
-                    <tr>
-                        <th>|</th>
-                        <th>
-                            @Html.DisplayNameFor(model => model.Customer.Id)
-                        </th>
-                        <th>
-                            @Html.DisplayNameFor(model => model.Customer.LastName)
-                        </th>
-                        <th>|</th>
-                        <th>
-                            @Html.DisplayNameFor(model => model.Customer.Address)
-                        </th>
-                        <th>|</th>
-                        <th>
-                            @Html.DisplayNameFor(model => model.Customer.Phone)
-                        </th>
-                        <th>|</th>
-                        <th>
-                            @Html.DisplayNameFor(model => model.Customer.Email)
-                        </th>
-                        <th>|</th>
-                    </tr>
-                </thead>
-
-                <tbody>
-                    <tr>
-                        <th>|</th>
-                        <th>
-                            @Html.DisplayFor(model => model.Customer.Id)
-                        </th>
-                        <th>
-                            @Html.DisplayFor(model => model.Customer.LastName)
-                        </th>
-                        <th>|</th>
-                        <th>
-                            @Html.DisplayFor(model => model.Customer.Address)
-                        </th>
-                        <th>|</th>
-                        <th>
-                            @Html.DisplayFor(model => model.Customer.Phone)
-                        </th>
-                        <th>|</th>
-                        <th>
-                            @Html.DisplayFor(model => model.Customer.Email)
-                        </th>
-                        <th>|</th>
-                    </tr>
-                </tbody>
-            </table>
-        </div>
-    }
-</div>
-
-<div>
-    <a asp-page="Index">Back to List</a>
-</div>
 
 @section Scripts {
     @{
@@ -246,7 +264,7 @@
                     <span aria-hidden="true">&times;</span>
                 </button>
             </div>
-            <div class="modal-body">
+            <div class="modal-body alert">
                 @Model.ErrorMessage
             </div>
             <div class="modal-footer">

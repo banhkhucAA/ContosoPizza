@@ -82,6 +82,9 @@ namespace ContosoPizza.Migrations
                         .IsUnicode(false)
                         .HasColumnType("varchar(10)");
 
+                    b.Property<string>("Description")
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<double>("DiscountAmount")
                         .HasColumnType("float");
 

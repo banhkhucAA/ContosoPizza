@@ -10,15 +10,24 @@ namespace ContosoPizza.Pages.Home
 
     public class HomeModel : PageModel
     {
+
         private readonly ContosoPizza.Data.ContosoPizzaContext _context;
         public HomeModel(ContosoPizza.Data.ContosoPizzaContext context)
         {
             _context = context;
         }
         public IList<Product> ProductsList { get; set; }
+        public IList<Product> MostFavourablePizzas { get; set; }
+        public IList<Product> MostFavourableDrinks { get; set; }
+        public IList<Product> MostFavourableBurgers { get; set; }
+        public IList<Product> MostFavourablePastas { get; set; }
         public async Task<IActionResult> OnGet()
         {
             ProductsList = await _context.Products.Where(p=>p.Id==25|| p.Id == 26 || p.Id == 27 || p.Id == 28 || p.Id == 29 || p.Id == 30).ToListAsync();
+            MostFavourablePizzas = ProductsList.Take(3).ToList();
+            MostFavourableDrinks = await _context.Products.Where(p => p.Id == 31 || p.Id == 32 || p.Id == 33).ToListAsync();
+            MostFavourableBurgers = await _context.Products.Where(p => p.Id == 34 || p.Id == 35 || p.Id == 36).ToListAsync();
+            MostFavourablePastas =  await _context.Products.Where(p => p.Id == 37 || p.Id == 38 || p.Id == 39).ToListAsync();
             return Page();
         }
 

@@ -106,6 +106,16 @@ namespace ContosoPizza.Pages.Orders
             {
                 return Page();
             }
+          if(Order.NoneCustomerMemberEmailAddress == null)
+            {
+                ErrorMessage = "Warning! The Email Address field can not be null";
+                return await OnGet();
+            }else if(Order.NoneCustomerMemberPhoneNumber == null)
+            {
+                ErrorMessage = "Warning! The Phone field can not be null";
+                return await OnGet();
+            }   
+                
             if (Order.IsCustomerMember==false && Order.CustomerId == null) Order.CouponId = null;
             else 
             {

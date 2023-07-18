@@ -28,7 +28,7 @@ namespace ContosoPizza.Pages.Customers
       
         public int Page { get;set; }
 
-        public int pageSize = 5;
+        public int pageSize = 10;
 
         public async Task OnGetAsync()
         {

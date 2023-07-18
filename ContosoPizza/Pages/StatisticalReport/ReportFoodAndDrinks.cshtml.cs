@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using ContosoPizza.Models.Generated;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.EntityFrameworkCore;
 using System.Drawing;
@@ -27,7 +28,7 @@ namespace ContosoPizza.Pages.StatisticalReport
 
         public async Task<IActionResult> OnGetAsync()
         {
-            if(!Request.Query.ContainsKey("fromdate") && !Request.Query.ContainsKey("fromdate"))
+            if(!Request.Query.ContainsKey("fromdate") && !Request.Query.ContainsKey("todate"))
             {
                 Products = (from p in _context.Products.ToList()
                             join ordt in _context.OrderDetails.ToList() on p.Id equals ordt.ProductId into pordt
@@ -47,8 +48,19 @@ namespace ContosoPizza.Pages.StatisticalReport
 
             if (Request.Query.ContainsKey("fromdate")&& !Request.Query.ContainsKey("todate"))
             {
-                Products = (from p in _context.Products.ToList()
-                            join ordt in _context.OrderDetails.Where(ordt => ordt.Order.OrderPlacedAt >= FromDate).ToList() on p.Id equals ordt.ProductId into pordt
+                var selectedOrderDetails = _context.OrderDetails.Where(o => o.Order.OrderPlacedAt >= FromDate).Select(o => o.ProductId).Distinct().ToList();
+                List<Product> ProductList = new List<Product>();
+                foreach (var item in selectedOrderDetails)
+                {
+                    var findProducts = await _context.Products.Where(p => p.Id == item).FirstOrDefaultAsync();
+                    if (findProducts != null)
+                    {
+                        ProductList.Add(findProducts);
+                    }
+                }
+
+                Products = (from p in ProductList.ToList()
+                            join ordt in _context.OrderDetails.ToList() on p.Id equals ordt.ProductId into pordt
                             select new FoodAndDrinksDto
                             {
                                 Id = p.Id,
@@ -65,8 +77,19 @@ namespace ContosoPizza.Pages.StatisticalReport
 
             if (!Request.Query.ContainsKey("fromdate") && Request.Query.ContainsKey("todate"))
             {
-                Products = (from p in _context.Products.ToList()
-                            join ordt in _context.OrderDetails.Where(ordt => ordt.Order.OrderPlacedAt <= ToDate).ToList() on p.Id equals ordt.ProductId into pordt
+                var selectedOrderDetails = _context.OrderDetails.Where(o => o.Order.OrderPlacedAt <= ToDate).Select(o=>o.ProductId).Distinct().ToList();
+                List<Product> ProductList = new List<Product>();
+                foreach(var item in selectedOrderDetails) 
+                {
+                    var findProducts = await _context.Products.Where(p => p.Id == item).FirstOrDefaultAsync();
+                    if (findProducts != null) 
+                    {
+                        ProductList.Add(findProducts);
+                    }
+                }
+
+                Products = (from p in ProductList.ToList()
+                            join ordt in _context.OrderDetails.ToList() on p.Id equals ordt.ProductId into pordt
                             select new FoodAndDrinksDto
                             {
                                 Id = p.Id,
@@ -83,8 +106,19 @@ namespace ContosoPizza.Pages.StatisticalReport
 
             if (Request.Query.ContainsKey("fromdate") && Request.Query.ContainsKey("todate"))
             {
-                Products = (from p in _context.Products.ToList()
-                            join ordt in _context.OrderDetails.Where(ordt => ordt.Order.OrderPlacedAt >= FromDate && ordt.Order.OrderPlacedAt <= ToDate).ToList() on p.Id equals ordt.ProductId into pordt
+                var selectedOrderDetails = _context.OrderDetails.Where(o => o.Order.OrderPlacedAt >= FromDate && o.Order.OrderPlacedAt <= ToDate).Select(o => o.ProductId).Distinct().ToList();
+                List<Product> ProductList = new List<Product>();
+                foreach (var item in selectedOrderDetails)
+                {
+                    var findProducts = await _context.Products.Where(p => p.Id == item).FirstOrDefaultAsync();
+                    if (findProducts != null)
+                    {
+                        ProductList.Add(findProducts);
+                    }
+                }
+
+                Products = (from p in ProductList.ToList()
+                            join ordt in _context.OrderDetails.ToList() on p.Id equals ordt.ProductId into pordt
                             select new FoodAndDrinksDto
                             {
                                 Id = p.Id,

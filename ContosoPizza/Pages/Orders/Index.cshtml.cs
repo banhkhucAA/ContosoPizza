@@ -103,14 +103,21 @@ namespace ContosoPizza.Pages.Orders
                 Page = 1; // Trang mặc định là 1
             }
 
-            if (_context.Orders != null)
+            if (_context.Orders != null && _httpContextAccessor.HttpContext.Session.GetString("UserRole") == "Employee")
             {
                 int offset = Math.Max((Page - 1) * pageSize, 0);
                 Order = Order
                     .Skip(offset)
                     .Take(pageSize)
                     .ToList();
-            }
+            }else 
+            {
+                int offset = Math.Max((Page - 1) * pageSize, 0);
+                Order = Order
+                    .Skip(offset)
+                    .Take(2)
+                    .ToList();
+            }    
 
             ErrorMessage = _httpContextAccessor.HttpContext.Session.GetString("ErrorMessage");
             _httpContextAccessor.HttpContext.Session.Remove("ErrorMessage");

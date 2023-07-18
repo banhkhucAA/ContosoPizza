@@ -5,16 +5,9 @@
     int count = 0;
 }
 
-<h1>Report Products</h1>
+<h1 class="text-center">Report Products</h1>
 
-<form>
-    <p>
-        Filter Date:
-        From: <input name="FromDate" type="date" asp-for="FromDate" value="" />
-        &nbsp;&nbsp;&nbsp;&nbsp;
-        To: <input name="ToDate" type="date" asp-for="ToDate" value="" />
-        <input type="submit" class="btn btn-primary" value="Search" />
-    </p>
+<form class="text-center">
     <p>
         Order By:
         <select id="orderByProductInfo">
@@ -25,6 +18,12 @@
             <option value="TotalMoney">Total Money</option>
             <option value="RealMoneyEarn">Real Money Earn</option>
         </select>
+
+        Filter Date:
+        From: <input name="FromDate" type="date" asp-for="FromDate" value="" />
+        &nbsp;&nbsp;&nbsp;&nbsp;
+        To: <input name="ToDate" type="date" asp-for="ToDate" value="" />
+        <input type="submit" class="btn btn-primary" value="Search" />
     </p>
 </form>
 

@@ -1,51 +1,94 @@
 ﻿@page
 @model ContosoPizza.Pages.Products.DetailsModel
+@inject Microsoft.AspNetCore.Http.IHttpContextAccessor HttpContextAccessor
 
 @{
     ViewData["Title"] = "Details";
 }
 
-<h1>Details</h1>
 
-<div>
-    <h4>Product</h4>
-    <hr />
-    <dl class="row">
-        <dt class="col-sm-2">
-            @Html.DisplayNameFor(model => model.Product.ProductName)
-        </dt>
-        <dd class="col-sm-10">
-            @Html.DisplayFor(model => model.Product.ProductName)
-        </dd>
-        <dt class="col-sm-2">
-            @Html.DisplayNameFor(model => model.Product.UnitPrice)
-        </dt>
-        <dd class="col-sm-10">
-            @Html.DisplayFor(model => model.Product.UnitPrice)
-        </dd>
-        <dt class="col-sm-2">
-            @Html.DisplayNameFor(model => model.Product.Category)
-        </dt>
-        <dd class="col-sm-10">
-            @Model.Product.Category.CategoryName
-        </dd>
-        <dt class="col-sm-2">
-            @Html.DisplayNameFor(model => model.Product.Materials)
-        </dt>
-        <dd class="col-sm-10">
-            @Model.Product.Materials
-        </dd>
-        <dt class="col-sm-2">
-            @Html.DisplayNameFor(model => model.Product.Image)
-        </dt>
-        <dd class="col-sm-10">
-            <img src="@Model.Product.Image" alt="Image" style="max-width: 200px; max-height: 200px;" />
-        </dd>
-    </dl>
+
+<div class="padding-to-all row tab-content ftco-animate">
+    <div class="col-md-6">
+        <div class="col-sm-12 text-center">
+            <h1>Details</h1>
+            <h4>Product</h4>
+            <hr />
+        </div>
+        <dl class="row col-sm-12">
+            <dt class="col-sm-3">
+                @Html.DisplayNameFor(model => model.Product.ProductName)
+            </dt>
+            <dd class="col-sm-9">
+                @Html.DisplayFor(model => model.Product.ProductName)
+            </dd>
+            <dt class="col-sm-3">
+                @Html.DisplayNameFor(model => model.Product.Description)
+            </dt>
+            <dd class="col-sm-9">
+                @Html.DisplayFor(model => model.Product.Description)
+            </dd>
+            <dt class="col-sm-3">
+                @Html.DisplayNameFor(model => model.Product.UnitPrice)
+            </dt>
+            <dd class="col-sm-9">
+                @Html.DisplayFor(model => model.Product.UnitPrice)
+            </dd>
+            <dt class="col-sm-3">
+                @Html.DisplayNameFor(model => model.Product.Category)
+            </dt>
+            <dd class="col-sm-9">
+                @Model.Product.Category.CategoryName
+            </dd>
+            <dt class="col-sm-3">
+                @Html.DisplayNameFor(model => model.Product.Materials)
+            </dt>
+            <dd class="col-sm-9">
+                @Model.Product.Materials
+            </dd>
+            <dt class="col-sm-3">
+                @Html.DisplayNameFor(model => model.Product.Image)
+            </dt>
+            <dd class="col-sm-9">
+                <img src="@Model.Product.Image" alt="Image" style="max-width: 200px; max-height: 200px;" />
+            </dd>
+        </dl>
+    </div>
+    <div class="col-md-6">
+        <div class="col-sm-12 text-center">
+            <h1>See other products</h1>
+            <h4>@Model.Other_similar_products_to_recent_product[0].Category.CategoryName</h4>
+            <hr />
+        </div>
+        <div class="column text-center">
+            @foreach (var item in @Model.Other_similar_products_to_recent_product)
+            {
+                <a href="/Products/Details?id=@item.Id">
+                    <img src="@item.Image" width="200" height="200">
+                </a>
+            }
+        </div>
+    </div>
 </div>
-<div>
-    <a asp-page="./Edit" asp-route-id="@Model.Product?.Id">Edit</a> |
-    <a href="./?Page=@(Model.skippedcount/5+1)">Back to List</a>
-</div>
+
+@if (HttpContextAccessor.HttpContext.Session.GetString("UserRole") == "Admin")
+{
+    <div>
+        <a>
+            <a class="btn btn-primary btn-icon-split" asp-page="./Edit" asp-route-id="@Model.Product?.Id">
+                <span class="icon text-white-50">
+                    <i class="fas fa-flag"></i>
+                </span>
+                <span class="text min-width-button-CRUD">Edit</span>
+            </a>
+        </a> |
+        <a class="btn btn-primary" href="./?Page=@(Model.skippedcount/5+1)">Back to List</a>
+    </div>
+}else
+{
+    <div class="text-center">
+        <a class="a-back-to-list" href="./?Page=@(Model.skippedcount/5+1)">Back to List</a>
+    </div>
+}
 
 

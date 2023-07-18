@@ -6,78 +6,99 @@
 }
 @{
     double Bill = 0;
-    int TotalQuantity = 0;
+    decimal TotalQuantity = 0;
 }
-<h1>Cart</h1>
+<div class="padding-to-all height-min-1200 container tab-content ftco-animate">
+    <h1 class="text-center">Cart</h1>
 
-<div class="row">
-    @if (Model.OrderDetails_Show != null)
-    {
-        <table class="table">
-            <thead>
-                @if (Model.OrderDetails_Show.Count > 0)
-                {
-                    <tr>
-                        <th>@Html.DisplayNameFor(model => model.OrderDetails_Show[0].ProductName)</th>
-                        <th>@Html.DisplayNameFor(model => model.OrderDetails_Show[0].Quantity)</th>
-                        <th>@Html.DisplayNameFor(model => model.OrderDetails_Show[0].TotalPrice)</th>
-                        <th>@Html.DisplayNameFor(model => model.OrderDetails_Show[0].Image)</th>
-                        <th></th>
-                    </tr>
-                }
-            </thead>
-            <form method="post">
-            <tbody>
-                    @for (int i = 0; i < Model.OrderDetails_Show.Count; i++)
-                    {
-                        var item = Model.OrderDetails_Show[i];
-                    <tr>
-                        <td>
-                                @Html.DisplayFor(modelItem => item.ProductName)
-                        </td>
-                        <td>
-                            <input type="number" name="cartItems[@i].Quantity" value="@item.Quantity" min="1" max="100" />
-                            <input type="hidden" name="cartItems[@i].ProductId" value="@item.ProductId" />
-                        </td>
-                        <td>
-                                @Html.DisplayFor(modelItem => item.TotalPrice)
-                        </td>
-                        <td>
-                            <img src="@item.Image" alt="Image" style="max-width: 200px; max-height: 200px;" />
-                        </td>
-                        <td>
-                            <input type="submit" name="Delete" value="Delete" class="btn btn-primary" asp-route-id="@item.ProductId" />
-                        </td>
-                    </tr>
-                        {
-                            TotalQuantity += item.Quantity;
-                            Bill += item.TotalPrice;
-                        }
-                    }
-                <tr>
-                    <td colspan="5" class="text-center">
-                            @if (Model.OrderDetails_Show.Count > 0)
-                            {
-                                <div>
-                                <input type="submit" class="btn btn-primary" name="UpdateQuantity" value="Update" />
-                                    <a href="/Orders/Create" class="btn btn-primary">Create your order</a>
-                                </div>
-                            }
-                            else
-                            {
-                                <p>There are no Products in your Cart.</p>
-                                <a href="/Products">Go to Products</a>
-                            }
-                    </td>
-                </tr>
-            </tbody>
-            </form>
-        </table>
-        @if (Model.OrderDetails_Show.Count > 0)
+    <div class="row">
+        @if (Model.OrderDetails_Show != null)
         {
-            <div>Total Quantity: @TotalQuantity</div>
-            <div>Current Bill: @Bill $</div>
+            <table class="table">
+                <thead>
+                    @if (Model.OrderDetails_Show.Count > 0)
+                    {
+                        <tr>
+                            <th>@Html.DisplayNameFor(model => model.OrderDetails_Show[0].ProductName)</th>
+                            <th>@Html.DisplayNameFor(model => model.OrderDetails_Show[0].Quantity)</th>
+                            <th>@Html.DisplayNameFor(model => model.OrderDetails_Show[0].TotalPrice)</th>
+                            <th>@Html.DisplayNameFor(model => model.OrderDetails_Show[0].Image)</th>
+                            <th></th>
+                        </tr>
+                    }
+                </thead>
+                <form method="post">
+                <tbody>
+                        @for (int i = 0; i < Model.OrderDetails_Show.Count; i++)
+                        {
+                            var item = Model.OrderDetails_Show[i];
+                        <tr>
+                            <td>
+                                <a class="a-back-to-list" href="Products/Details?id=@item.ProductId">@Html.DisplayFor(modelItem => item.ProductName)</a>
+                            </td>
+                            <td>
+                                <input type="number" name="cartItems[@i].Quantity" value="@item.Quantity" min="1" max="100" />
+                                <input type="hidden" name="cartItems[@i].ProductId" value="@item.ProductId" />
+                            </td>
+                            <td>
+                                    @Html.DisplayFor(modelItem => item.TotalPrice)
+                            </td>
+                            <td>
+                                <img src="@item.Image" alt="Image" style="max-width: 200px; max-height: 200px;" />
+                            </td>
+                            <td>
+                                <input type="submit" name="Delete" value="Delete" asp-route-id="@item.ProductId" />
+                            </td>
+                        </tr>
+                        }
+                    <tr>
+                                @if (Model.OrderDetails_Show.Count > 0)
+                                {
+                                    <td colspan="5" class="text-center">
+                                        <div>
+                                            <input type="submit" name="UpdateQuantity" value="Update" />
+                                            <a href="/Orders/Create" class="fix-a-href">Create your order</a>
+                                        </div>
+                                    </td>
+                                }
+                                else
+                                {
+                                    <div class="text-center">
+                                        <p>There are no Products in your Cart.</p>
+                                        <a href="/Products">Go to Products</a>
+                                        <div class="col-md-12 fix_bottom_img">
+                                            <img src="~/EmployeePictures/pizza-steve-gotoproducts_transparent.png">
+                                        </div>
+                                    </div>
+                                }                
+                    </tr>
+                </tbody>
+                </form>
+            </table>
+            @if (Model.OrderDetails_DisplayQuantityPrice.Count > 0)
+            {
+                @foreach (var item in Model.OrderDetails_DisplayQuantityPrice)
+                {
+                    TotalQuantity += item.Quantity;
+                    Bill += item.TotalPrice;
+                }
+                TotalQuantity = Math.Round(TotalQuantity, 2);
+                Bill = Math.Round(Bill, 2);
+                <div class="text-center product-text">
+                    <div>Total Quantity: @TotalQuantity</div>
+                    <div>Current Bill: @Bill $</div>
+                </div>
+            }
         }
+    </div>
+
+    @if (Model.OrderDetails_Show.Count > 0)
+    {
+        <div class="text-center fix_bottom">
+            <p>
+                Page: <input type="number" id="pageInput" style="color:black; font-weight:bold; font-size: 30px; max-width: 50px" min="1" step="1">
+            </p>
+        </div>
     }
 </div>
 
@@ -98,6 +119,37 @@
                 $('#errorModal').modal('hide');
             });
         });
+
+        var currentPage_cart = localStorage.getItem('currentPage_cart') || 1;
+
+        if (!currentPage_cart) {
+            currentPage_cart = 1;
+        } else {
+            currentPage_cart = parseInt(currentPage_cart); // Chuyển đổi thành số nguyên
+        }
+
+        // Cập nhật giá trị ban đầu của ô input
+        document.getElementById('pageInput').value = currentPage_cart;
+
+        // Lắng nghe sự kiện khi người dùng thay đổi giá trị trong ô input
+        document.getElementById('pageInput').addEventListener('input', function (event) {
+            currentPage_cart = event.target.value; //target dùng để nhận biết xem là ô nào vừa thay đổi
+        });
+
+        // Lắng nghe sự kiện khi người dùng kết thúc nhập giá trị vào ô input (nhấn Enter)
+        document.getElementById('pageInput').addEventListener('change', function (event) {
+            updateLink(currentPage_cart);
+        });
+
+        function updateLink(value) {
+            // Lưu giá trị trang hiện tại vào localStorage
+            localStorage.setItem('currentPage_cart', value);
+
+            window.location.href = `?Page=${value}`;
+        }
+
+        currentPage_cart = 1;
+        localStorage.setItem('currentPage_cart', currentPage_cart);
     </script>
 }
 <div class="modal fade" id="errorModal" tabindex="-1" role="dialog" aria-labelledby="errorModalLabel" aria-hidden="true">
@@ -109,7 +161,7 @@
                     <span aria-hidden="true">&times;</span>
                 </button>
             </div>
-            <div class="modal-body">
+            <div class="modal-body alert">
                 @TempData["ErrorMessage"]
             </div>
             <div class="modal-footer">

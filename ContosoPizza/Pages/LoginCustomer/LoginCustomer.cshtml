@@ -7,27 +7,27 @@
 
 
 <div class="d-flex justify-content-center align-items-center vh-100">
-        <div class="column text-center col-md-6">
+        <div class="col-md-8">
+            <img src="/EmployeePictures/pizzasteve-login_register.png" width="800" height="550">
+        </div>
+        <div class="column text-center col-md-4">
             <h1>Login</h1>
-            <form method="post" class="p-5 border rounded">
+            <form method="post" class="p-5 rounded">
                 <div class="mb-3">
                     <label for="email" class="form-label">Email:</label>
-                    <input type="email" class="form-control" id="email" name="Email" required>
+                    <input type="email" class="form-control text-center only-input" id="email" name="Email" required>
                 </div>
                 <div class="mb-3">
                     <label for="password" class="form-label">Password:</label>
-                    <input type="password" class="form-control" id="password" name="Password" required>
+                <input type="password" class="form-control text-center only-input" id="password" name="Password" required>
                 </div>
                 <div class="mb-3">
-                    <button type="submit" class="btn btn-primary">Login</button>
+                    <input type="submit" value="Login">
                 </div>
                 <div class="mb-3">
-                    Don't have an account? <a href="/Customers/Create">Register here</a>
+                    Don't have an account? <a class="black-text" href="/Customers/Create">Register here</a>
                 </div>
             </form>
-        </div>
-        <div class="col-md-6">
-            <img src="/EmployeePictures/PIZZASTEVE_transparent.png" width="650" height="480">
         </div>
 </div>
 
@@ -61,7 +61,7 @@
                     <span aria-hidden="true">&times;</span>
                 </button>
             </div>
-            <div class="modal-body">
+            <div class="modal-body alert">
                 @Model.ErrorMessage
             </div>
             <div class="modal-footer">
@@ -70,3 +70,4 @@
         </div>
     </div>
 </div>
+=

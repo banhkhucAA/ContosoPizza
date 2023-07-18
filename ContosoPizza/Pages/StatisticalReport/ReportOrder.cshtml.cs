@@ -27,6 +27,10 @@ namespace ContosoPizza.Pages.StatisticalReport
         public float FailedOrdersMoney { get; set; }
         public int DeliveredSuccessfullyOrders { get; set; }
         public int DeliveredCanceled_FailedOrders { get; set; }
+
+        public int UnfinishedOrders { get; set; }
+        public float UnfinishedMoney { get; set; }
+        public int UnfinishedOrdersDeliveries { get; set; }
         public int Page { get; set; }
         public int pageSize = 5;
         [BindProperty(SupportsGet =true)]
@@ -57,6 +61,10 @@ namespace ContosoPizza.Pages.StatisticalReport
                 FailedOrdersMoney = (float)Math.Round((decimal)orders.Where(b => (b.OrderStatus.StatusName == "Canceled" || b.OrderStatus.StatusName == "Returned" || b.OrderStatus.StatusName == "DeActive") && b.OrderPlacedAt >= FromDate).Sum(b => b.BillPrice), 2);
                 DeliveredSuccessfullyOrders = orders.Where(b => b.OrderStatus.StatusName == "Delivered" && b.DeliveryMethod.Method == "Shipping" && b.OrderPlacedAt >= FromDate).Count();
                 DeliveredCanceled_FailedOrders = orders.Where(b => (b.OrderStatus.StatusName == "Canceled" || b.OrderStatus.StatusName == "Returned" || b.OrderStatus.StatusName == "DeActive") && b.DeliveryMethod.Method == "Shipping" && b.OrderPlacedAt >= FromDate).Count();
+                UnfinishedOrders = orders.Where(b => b.OrderStatus.IsActive == true && b.OrderPlacedAt >= FromDate).Count();
+                UnfinishedMoney = (float)Math.Round((decimal)orders.Where(b => b.OrderStatus.IsActive == true && b.OrderPlacedAt >= FromDate).Sum(b=>b.BillPrice),2);
+                UnfinishedOrdersDeliveries = orders.Where(b => b.OrderStatus.IsActive == true && b.OrderPlacedAt >= FromDate && b.DeliveryMethod.Method == "Shipping").Count();
+
             }
 
             if (Request.Query.ContainsKey("ToDate") && !Request.Query.ContainsKey("FromDate"))
@@ -70,6 +78,9 @@ namespace ContosoPizza.Pages.StatisticalReport
                 FailedOrdersMoney = (float)Math.Round((decimal)orders.Where(b => (b.OrderStatus.StatusName == "Canceled" || b.OrderStatus.StatusName == "Returned" || b.OrderStatus.StatusName == "DeActive") && b.OrderPlacedAt <= ToDate).Sum(b => b.BillPrice), 2);
                 DeliveredSuccessfullyOrders = orders.Where(b => b.OrderStatus.StatusName == "Delivered" && b.DeliveryMethod.Method == "Shipping" && b.OrderPlacedAt <= ToDate).Count();
                 DeliveredCanceled_FailedOrders = orders.Where(b => (b.OrderStatus.StatusName == "Canceled" || b.OrderStatus.StatusName == "Returned" || b.OrderStatus.StatusName == "DeActive") && b.DeliveryMethod.Method == "Shipping" && b.OrderPlacedAt <= ToDate).Count();
+                UnfinishedOrders = orders.Where(b => b.OrderStatus.IsActive == true && b.OrderPlacedAt <= ToDate).Count();
+                UnfinishedMoney = (float)Math.Round((decimal)orders.Where(b => b.OrderStatus.IsActive == true && b.OrderPlacedAt <= ToDate).Sum(b => b.BillPrice), 2);
+                UnfinishedOrdersDeliveries = orders.Where(b => b.OrderStatus.IsActive == true && b.OrderPlacedAt <= ToDate && b.DeliveryMethod.Method == "Shipping").Count();
             }
 
             if (Request.Query.ContainsKey("ToDate") && Request.Query.ContainsKey("FromDate"))
@@ -83,6 +94,9 @@ namespace ContosoPizza.Pages.StatisticalReport
                 FailedOrdersMoney = (float)Math.Round((decimal)orders.Where(b => (b.OrderStatus.StatusName == "Canceled" || b.OrderStatus.StatusName == "Returned" || b.OrderStatus.StatusName == "DeActive") && b.OrderPlacedAt >= FromDate && b.OrderPlacedAt <= ToDate).Sum(b => b.BillPrice), 2);
                 DeliveredSuccessfullyOrders = orders.Where(b => b.OrderStatus.StatusName == "Delivered" && b.DeliveryMethod.Method == "Shipping" && b.OrderPlacedAt >= FromDate && b.OrderPlacedAt <= ToDate).Count();
                 DeliveredCanceled_FailedOrders = orders.Where(b => (b.OrderStatus.StatusName == "Canceled" || b.OrderStatus.StatusName == "Returned" || b.OrderStatus.StatusName == "DeActive") && b.DeliveryMethod.Method == "Shipping" && b.OrderPlacedAt >= FromDate && b.OrderPlacedAt <= ToDate).Count();
+                UnfinishedOrders = orders.Where(b => b.OrderStatus.IsActive == true && b.OrderPlacedAt >= FromDate && b.OrderPlacedAt <= ToDate).Count();
+                UnfinishedMoney = (float)Math.Round((decimal)orders.Where(b => b.OrderStatus.IsActive == true && b.OrderPlacedAt >= FromDate && b.OrderPlacedAt <= ToDate).Sum(b => b.BillPrice), 2);
+                UnfinishedOrdersDeliveries = orders.Where(b => b.OrderStatus.IsActive == true && b.OrderPlacedAt >= FromDate && b.OrderPlacedAt <= ToDate && b.DeliveryMethod.Method == "Shipping").Count();
             }
 
             if (!Request.Query.ContainsKey("FromDate") && !Request.Query.ContainsKey("ToDate"))
@@ -95,6 +109,9 @@ namespace ContosoPizza.Pages.StatisticalReport
                 FailedOrdersMoney = (float)Math.Round((decimal)orders.Where(b => b.OrderStatus.StatusName == "Canceled" || b.OrderStatus.StatusName == "Returned" || b.OrderStatus.StatusName == "DeActive").Sum(b => b.BillPrice), 2);
                 DeliveredSuccessfullyOrders = orders.Where(b => b.OrderStatus.StatusName == "Delivered" && b.DeliveryMethod.Method == "Shipping").Count();
                 DeliveredCanceled_FailedOrders = orders.Where(b => (b.OrderStatus.StatusName == "Canceled" || b.OrderStatus.StatusName == "Returned" || b.OrderStatus.StatusName == "DeActive") && b.DeliveryMethod.Method == "Shipping").Count();
+                UnfinishedOrders = orders.Where(b => b.OrderStatus.IsActive == true).Count();
+                UnfinishedMoney = (float)Math.Round((decimal)orders.Where(b => b.OrderStatus.IsActive == true).Sum(b => b.BillPrice), 2);
+                UnfinishedOrdersDeliveries = orders.Where(b => b.OrderStatus.IsActive == true && b.DeliveryMethod.Method == "Shipping").Count();
             }
 
 

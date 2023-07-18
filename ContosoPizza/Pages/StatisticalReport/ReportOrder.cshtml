@@ -5,16 +5,9 @@
     
 }
 
-<h1>Report Orders</h1>
+<h1 class="text-center">Report Orders</h1>
 
-<form>
-    <p>
-        Filter Date:
-        From: <input name="FromDate" type="date" asp-for="FromDate" value="" />
-        &nbsp;&nbsp;&nbsp;&nbsp;
-        To: <input name="ToDate" type="date" asp-for="ToDate" value="" />
-        <input type="submit" class="btn btn-primary" value="Search" />
-    </p>
+<form class="text-center">
     <p>
         Order By Price:
         <select id="orderByOrderInfo">
@@ -22,39 +15,51 @@
             <option value="OrderByBillPrice">Bill Price</option>
             <option value="OrderByDiscountAmount">Discount Amount</option>
         </select>
+
+        Filter Date:
+        From: <input name="FromDate" type="date" asp-for="FromDate" value="" />
+        &nbsp;&nbsp;&nbsp;&nbsp;
+        To: <input name="ToDate" type="date" asp-for="ToDate" value="" />
+        <input type="submit" class="btn btn-primary" value="Search" />
     </p>
 </form>
 
 <h2 class="text-center">Summary of Orders</h2>
-<div class="row">
+<div class="column">
         <div class="text-center">Total orders: @Model.TotalOrders</div>
-        <div class="text-center">Total money from orders: @Model.TotalMoneyOrders</div>
-        <table class="table-bordered">
-            <thead>
-                <tr>
-                    <th class="col-md-2 text-center">#</th>
-                    <th class="col-md-5 text-center">Succesfull Orders</th>
-                    <th class="col-md-5 text-center">Cancelled/ Failed/ Deactive Orders</th>
-                </tr>
-            </thead>
-            <tbody>
-                <tr>
-                    <th class="col-md-2 text-center">Quantities</th>
-                    <th class="col-md-5 text-center">@Model.TotalSuccessOrders</th>
-                    <th class="col-md-5 text-center">@Model.TotalFailedOrders</th>
-                </tr>
-                <tr>
-                    <th class="col-md-2 text-center">Money</th>
-                    <th class="col-md-5 text-center">@Model.SuccesfullOrdersMoney $</th>
-                    <th class="col-md-5 text-center">@Model.FailedOrdersMoney $</th>
-                </tr>
-                <tr>
-                    <th class="col-md-2 text-center">Deliveries</th>
-                <th class="col-md-5 text-center">@Model.DeliveredSuccessfullyOrders</th>
-                <th class="col-md-5 text-center">@Model.DeliveredCanceled_FailedOrders</th>
-                </tr>            
-            </tbody>
-        </table>
+        <div class="text-center">Total money from orders: @Model.TotalMoneyOrders $</div>
+        <div class="col-md-12">
+            <table class="table-bordered mx-auto" style="max-width:80%">
+                <thead>
+                    <tr>
+                        <th class="col-md-3 text-center">#</th>
+                        <th class="col-md-3 text-center">Succesfull Orders</th>
+                        <th class="col-md-3 text-center">Cancelled/ Failed/ Deactive Orders</th>
+                        <th class="col-md-3 text-center">Unfinished Orders</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <th class="col-md-3 text-center">Quantities</th>
+                        <th class="col-md-3 text-center">@Model.TotalSuccessOrders</th>
+                        <th class="col-md-3 text-center">@Model.TotalFailedOrders</th>
+                        <th class="col-md-3 text-center">@Model.UnfinishedOrders</th>
+                    </tr>
+                    <tr>
+                        <th class="col-md-3 text-center">Money</th>
+                        <th class="col-md-3 text-center">@Model.SuccesfullOrdersMoney $</th>
+                        <th class="col-md-3 text-center">@Model.FailedOrdersMoney $</th>
+                        <th class="col-md-3 text-center">@Model.UnfinishedMoney $</th>
+                    </tr>
+                    <tr>
+                        <th class="col-md-3 text-center">Deliveries</th>
+                        <th class="col-md-3 text-center">@Model.DeliveredSuccessfullyOrders</th>
+                        <th class="col-md-3 text-center">@Model.DeliveredCanceled_FailedOrders</th>
+                        <th class="col-md-3 text-center">@Model.UnfinishedOrdersDeliveries </th>
+                    </tr>            
+                </tbody>
+            </table>
+    </div>
 </div>
 
 <br />

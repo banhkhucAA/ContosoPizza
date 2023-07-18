@@ -64,9 +64,10 @@ namespace ContosoPizza.Pages.Products
             }
 
             var category_list = await _context.Categories.Select(cat=>cat.CategoryName).ToListAsync();
+
             Categories = new SelectList(category_list);
 
-            int pageSize = 5;
+            int pageSize = 6;
 
             if (Request.Query.ContainsKey("Page"))
             {

@@ -5,103 +5,291 @@
     ViewData["Title"] = "Index";
 }
 
+@if (HttpContextAccessor.HttpContext.Session.GetString("UserRole") == "Employee" || HttpContextAccessor.HttpContext.Session.GetString("UserRole") == "Admin")
+{
+    <h1 class="text-center product-text" style="padding-bottom:50px">Products</h1>
+    <form class="text-center product-text">
+        <p>
+            Categories:
+            <select class="beauty-select-input" asp-for="Food_Category" asp-items="Model.Categories">
+                <option value="">All</option>
+            </select>
+            &nbsp;&nbsp;
+            FoodName and Description:
+            <select asp-for="Food_Type">
+                <option value="">All</option>
+                <option value="Beef">Beef</option>
+                <option value="Chicken">Chicken</option>
+                <option value="Fish">Fish</option>
+                <option value="Salad">Salad</option>
+                <option value="Vegetable">Vegetable</option>
+            </select>
+            &nbsp;&nbsp;
+            Search: <input type="text" asp-for="SearchString" />
+            <span class="form-group btn btn-primary btn-icon-split span-btn-search">
+                <span class="icon text-white-50">
+                    <i class="fas fa-search"></i>
+                </span>
+                <input type="submit" value="Search" class="search" />
+            </span>
+        </p>
+    </form>
 
-<h1>Index</h1>
+    <p class="text-center">
 
-<div style="padding:5">
-<form>
-    <p>
-        Categories: <select asp-for="Food_Category" asp-items="Model.Categories">
-            <option value="">All</option>
-        </select>
-        &nbsp;&nbsp;
-        FoodName and Description:<select asp-for="Food_Type">
-            <option value="">All</option>
-            <option value="Beef">Beef</option>
-            <option value="Chicken">Chicken</option>
-            <option value="Fish">Fish</option>
-            <option value="Salad">Salad</option>
-            <option value="Vegetable">Vegetable</option>
-        </select>
-        &nbsp;&nbsp;
-        Search: <input type="text" asp-for="SearchString" />
-        <input type="submit" value="Filter" />
-    </p>
-</form>
-
-<p>
-    @if (HttpContextAccessor.HttpContext.Session.Keys.Contains("UserRole"))
-    {
-        if (HttpContextAccessor.HttpContext.Session.GetString("UserRole") == "Admin")
+        @if (HttpContextAccessor.HttpContext.Session.GetString("UserRole") == "Admin")
         {
-            <a asp-page="Create">Create New</a>
+             <a class="btn btn-primary" asp-page="Create">Create New</a>
         }
-    }
-</p>
-<table class="table">
-    <thead>
-        <tr>
-            <th>
-                @Html.DisplayNameFor(model => model.Product[0].ProductName)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Product[0].UnitPrice)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Product[0].Category)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Product[0].Materials)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Product[0].Image)
-            </th>
-            <th></th>
-        </tr>
-    </thead>
-    <tbody>
-@foreach (var item in Model.Product) {
-        <tr>
-            <td>
-                @Html.DisplayFor(modelItem => item.ProductName)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.UnitPrice)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Category.CategoryName)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Materials)@*//trường hợp này đã join Catergory vào Product nên sẽ có thông tin, không cần phải dùng Model (Model)*@
-            </td>
-            <td>
-                    <img src="@item.Image" alt="Image" style="max-width: 200px; max-height: 200px;" />
-            </td>
-                @if (HttpContextAccessor.HttpContext.Session.GetString("UserRole") == "Admin")
-                {
-                    <td>
-                        <a asp-page="./Edit" asp-route-id="@item.Id">Edit</a> |
-                        <a asp-page="./Details" asp-route-id="@item.Id">Details</a> |
-                        <a asp-page="./Delete" asp-route-id="@item.Id">Delete</a>
-                    </td>
-                }
-                else if (HttpContextAccessor.HttpContext.Session.GetString("UserRole") == "Customer"||!HttpContextAccessor.HttpContext.Session.Keys.Contains("UserRole"))
-                {
-                    <td>
-                        <form method="post">
-                            <input type="submit" class="btn-primary btn" value="Add to cart" asp-route-id="@item.Id">
-                        </form>
-                    </td>
-                }
-        </tr>
-}
-    </tbody>
-</table>
 
-<div class="text-center">
-    Page: <input type="number" id="pageInput" style="color:black; font-weight:bold; font-size: 30px; max-width: 50px" min="1" step="1">
-</div>
-</div>
+    </p>
+
+    <table class="table">
+        <thead>
+            <tr>
+                <th>
+                    @Html.DisplayNameFor(model => model.Product[0].ProductName)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.Product[0].UnitPrice)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.Product[0].Category.CategoryName)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.Product[0].Materials)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.Product[0].Image)
+                </th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var item in Model.Product)
+            {
+                <tr>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.ProductName)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.UnitPrice)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.Category.CategoryName)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.Materials)
+                    </td>
+                    <td>
+                        <img src="@item.Image" width="200" height="200">
+                    </td>
+                    @if (HttpContextAccessor.HttpContext.Session.GetString("UserRole") == "Admin")
+                    {
+                        <td>
+                            <div>
+                                <a class="btn btn-primary btn-icon-split" asp-page="./Edit" asp-route-id="@item.Id">
+                                    <span class="icon text-white-50">
+                                        <i class="fas fa-flag"></i>
+                                    </span>
+                                    <span class="text min-width-button-CRUD">Edit</span>
+                                </a>
+                            </div>
+                            <div>
+                                <a class="btn btn-info btn-icon-split" asp-page="./Details" asp-route-id="@item.Id">
+                                    <span class="icon text-white-50">
+                                        <i class="fas fa-info-circle"></i>
+                                    </span>
+                                    <span class="text min-width-button-CRUD">Details</span>
+                                </a>
+                            </div>
+                            <div>
+                                <a class="btn btn-danger btn-icon-split" asp-page="./Delete" asp-route-id="@item.Id">
+                                    <span class="icon text-white-50">
+                                        <i class="fas fa-trash"></i>
+                                    </span>
+                                    <span class="text min-width-button-CRUD">Delete</span>
+                                </a>
+                            </div>
+                        </td>
+                    }
+                </tr>
+            }
+        </tbody>
+    </table>
+
+    <div class="text-center fix_bottom">
+        Page: <input type="number" id="pageInput" style="color:black; font-weight:bold; font-size: 30px; max-width: 50px" min="1" step="1">
+    </div>
+}
+else
+{
+    <div class="height-min-1200 padding-to-all" >
+        <h1 class="text-center product-text" style="padding-bottom:50px">Products</h1>
+        <form class="text-center product-text">
+            <p>
+                Categories: <select class="beauty-select-input" asp-for="Food_Category" asp-items="Model.Categories">
+                    <option value="">All</option>
+                </select>
+                &nbsp;&nbsp;
+                FoodName and Description: <select asp-for="Food_Type">
+                    <option value="">All</option>
+                    <option value="Beef">Beef</option>
+                    <option value="Chicken">Chicken</option>
+                    <option value="Fish">Fish</option>
+                    <option value="Salad">Salad</option>
+                    <option value="Vegetable">Vegetable</option>
+                </select>
+                &nbsp;&nbsp;
+                Search: <input type="text" asp-for="SearchString" />
+                <input type="submit" value="Filter" />
+            </p>
+        </form>
+
+        <p>
+            @if (HttpContextAccessor.HttpContext.Session.Keys.Contains("UserRole"))
+            {
+                if (HttpContextAccessor.HttpContext.Session.GetString("UserRole") == "Admin")
+                {
+                    <a asp-page="Create">Create New</a>
+                }
+            }
+        </p>
+        @if (Model.Product.Count >= 4)
+            {
+                <div class="col-md-12 d-flex align-items-center">
+                    <div class="tab-content ftco-animate" id="v-pills-tabContent">
+                        <div class="tab-pane fade show active" id="v-pills-1" role="tabpanel" aria-labelledby="v-pills-1-tab">
+                        <div class="row">
+                                @foreach (var item in Model.Product)
+                                {
+                                    @if (Model.Product.Count >= 4)
+                                    {
+                                        <div class="col-md-4 text-center">
+                                            <div class="menu-wrap">
+                                                <a href="/Products/Details?id=@item.Id" class="menu-img img mb-4" style="background-image: url(@item.Image);"></a>
+                                            <div class="text product-text">
+                                                    <h3><a href="/Products/Details?id=@item.Id">@item.ProductName</a></h3>
+                                                    <p>@item.Description</p>
+                                                    <p>Category: @item.Category.CategoryName</p>
+                                                    <p class="price"><span>$@item.UnitPrice</span></p>
+                                                    @if (HttpContextAccessor.HttpContext.Session.GetString("UserRole") == "Customer" || !HttpContextAccessor.HttpContext.Session.Keys.Contains("UserRole"))
+                                                    {
+                                                        <p>
+                                                            <form method="post">
+                                                                <input type="submit" value="Add to cart" asp-route-id="@item.Id">
+                                                            </form>
+                                                        </p>
+                                                    }
+                                                </div>
+                                            </div>
+                                        </div>
+                                    }
+                                }
+                            </div>
+                    </div>
+                </div>
+            </div>
+            }
+
+            @foreach (var item in Model.Product)
+            {
+                @if (Model.Product.Count == 1)
+                {
+                    <div class="col-md-12 align-items-center" style="height:800px">
+                        <div class="menu-wrap text-center">
+                            <a href="#" class="menu-img img mb-4" style="background-image: url(@item.Image);"></a>
+                            <div class="text">
+                                <h3><a href="/Products/Details?id=@item.Id">@item.ProductName</a></h3>
+                                <p>@item.Description</p>
+                                <p>Category: @item.Category.CategoryName</p>
+                                <p class="price"><span>$@item.UnitPrice</span></p>
+                                @if (HttpContextAccessor.HttpContext.Session.GetString("UserRole") == "Customer" || !HttpContextAccessor.HttpContext.Session.Keys.Contains("UserRole"))
+                                {
+                                    <p>
+                                        <form method="post">
+                                            <input type="submit" value="Add to cart" asp-route-id="@item.Id">
+                                        </form>
+                                    </p>
+                                }
+                            </div>
+                        </div>
+                    </div>
+                }
+            }
+
+            @if (Model.Product.Count == 2)
+            {
+                <div class="row" style="height:1000px">
+                @foreach (var item in Model.Product)
+                { 
+                    <div class="col-md-6 align-items-center "style=" justify-content:flex-start">
+                        <div class="menu-wrap text-center">
+                            <a href="/Products/Details?id=@item.Id" class="menu-img img mb-4" style="background-image: url(@item.Image);"></a>
+                            <div class="text">
+                                <h3><a href="/Products/Details?id=@item.Id">@item.ProductName</a></h3>
+                                <p>@item.Description</p>
+                                    <p>Category: @item.Category.CategoryName</p>
+                                <p class="price"><span>$@item.UnitPrice</span></p>
+                                @if (HttpContextAccessor.HttpContext.Session.GetString("UserRole") == "Customer" || !HttpContextAccessor.HttpContext.Session.Keys.Contains("UserRole"))
+                                {
+                                    <p>
+                                        <form method="post">
+                                            <input type="submit" value="Add to cart" asp-route-id="@item.Id">
+                                        </form>
+                                    </p>
+                                }
+                            </div>
+                        </div>
+                    </div>
+        
+                }
+                </div>
+            }
+
+            @if (Model.Product.Count == 3)
+            {
+                <div class="row" style="height:1000px">
+                    @foreach (var item in Model.Product)
+                    {
+
+                        <div class="col-md-4 align-items-center">
+                            <div class="menu-wrap text-center">
+                                <a href="/Products/Details?id=@item.Id" class="menu-img img mb-4" style="background-image: url(@item.Image);"></a>
+                                <div class="text">
+                                    <h3><a href="/Products/Details?id=@item.Id">@item.ProductName</a></h3>
+                                    <p>@item.Description</p>
+                                    <p>Category: @item.Category.CategoryName</p>
+                                    <p class="price"><span>$@item.UnitPrice</span></p>
+                                    @if (HttpContextAccessor.HttpContext.Session.GetString("UserRole") == "Customer" || !HttpContextAccessor.HttpContext.Session.Keys.Contains("UserRole"))
+                                    {
+                                        <p>
+                                            <form method="post">
+                                                <input type="submit" value="Add to cart" asp-route-id="@item.Id">
+                                            </form>
+                                        </p>
+                                    }
+                                </div>
+                            </div>
+                        </div>
+
+                    }
+                </div>
+            }
+        @if(Model.Product.Count==0)
+        {
+            <div class="text-center fix_bottom_img col-md-12">
+                <img src="~/EmployeePictures/pizza-steve-cantsearch.png">
+            </div>
+        }
+        @if (Model.Product.Count != 0)
+        {
+            <div class="text-center" style="padding-top:50px">
+                Page: <input type="number" id="pageInput" style="color:black; font-weight:bold; font-size: 30px; max-width: 50px" min="1" step="1">
+            </div>
+        }
+    </div>
+}
 
 @section Scripts {
     @{
@@ -148,9 +336,6 @@
 
             window.location.href = `?Page=${value}&Food_Category=@Model.Food_Category&Food_Type=@Model.Food_Type&SearchString=@Model.SearchString`;
         }
-
-        currentPage = 1;
-        localStorage.setItem('currentPage', currentPage);
     </script>
 }
 <div class="modal fade" id="errorModal" tabindex="-1" role="dialog" aria-labelledby="errorModalLabel" aria-hidden="true">
@@ -162,7 +347,7 @@
                     <span aria-hidden="true">&times;</span>
                 </button>
             </div>
-            <div class="modal-body">
+            <div class="modal-body alert">
                 @Model.ErrorMessage
             </div>
             <div class="modal-footer">

@@ -19,6 +19,11 @@
                 <span asp-validation-for="Product.ProductName" class="text-danger"></span>
             </div>
             <div class="form-group">
+                <label asp-for="Product.Description" class="control-label"></label>
+                <input asp-for="Product.Description" class="form-control" />
+                <span asp-validation-for="Product.Description" class="text-danger"></span>
+            </div>
+            <div class="form-group">
                 <label asp-for="Product.UnitPrice" class="control-label"></label>
                 <input asp-for="Product.UnitPrice" class="form-control" />
                 <span asp-validation-for="Product.UnitPrice" class="text-danger"></span>
@@ -36,8 +41,18 @@
                 <label>Upload Image</label>
                 <input type="file" name="imageFile" class="form-control-file" />
             </div>
-            <div class="form-group">
-                <input type="submit" value="Create" class="btn btn-primary" />
+            <div class="form-group row">
+                <span class="form-group btn btn-success btn-icon-split">
+                    <span class="icon text-white-50">
+                        <i class="fas fa-check"></i>
+                    </span>
+                    <input type="submit" value="Create" style="background-color:#1cc88a; border:none;" />
+                </span>
+                &nbsp
+                <div>
+                    |
+                    <a class="btn btn-primary" asp-page="Index">Back to List</a>
+                </div>
             </div>
         </form>
     </div>
@@ -75,7 +90,7 @@
                     <span aria-hidden="true">&times;</span>
                 </button>
             </div>
-            <div class="modal-body">
+            <div class="modal-body alert">
                 @Model.ErrorMessage
             </div>
             <div class="modal-footer">

@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.EntityFrameworkCore;
 using ContosoPizza.Data;
 using ContosoPizza.Models.Generated;
+using Microsoft.AspNetCore.Mvc.Rendering;
 
 namespace ContosoPizza.Pages.Employees
 {
@@ -20,7 +21,6 @@ namespace ContosoPizza.Pages.Employees
         }
 
         public IList<Employee> Employee { get;set; } = default!;
-
         public async Task OnGetAsync()
         {
             if (_context.Employees != null)

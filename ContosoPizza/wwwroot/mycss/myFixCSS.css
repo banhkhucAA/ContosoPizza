@@ -1,38 +1,199 @@
 body {
-  background:orange!important;
-  font-weight:bold!important;
-  color:black!important;
+    background: #fac550 !important;
+    font-weight: bold !important;
+    color: white !important;
+    font-size: 18px !important;
 }
 
-.ftco-footer {
-    font-size: 16px;
-    padding: 2em 0;
-    background: #101315;
+.black-text{
+    color:black!important
 }
 
-.form-control {
-    border-bottom: 5px solid white !important
+.menu-wrap .text .price {
+    font-size: 16px !important;
+    font-weight: bold !important;
+}
+
+    .menu-wrap .text .price span {
+        color: black !important;
+    }
+
+select, input[type=text], input[type="number"], input[type="date"], input[type="email"], input[type="password"] {
+    word-wrap: normal !important;
+    background-color: lemonchiffon !important;
+    border-radius: 10px !important;
+    text-align: center;
+}
+
+input[type="submit"]{
+    border: 1px solid white;
+    background: lemonchiffon;
+    border-width: 2px;
+    color: black;
+    border-radius: 10px !important;
+    font-weight:bold;
+    font-size:15px;
+    padding:15px;
+    /*fix-button-create-your-order*/
+}
+
+    input[type="submit"]:hover {
+        background: none;
+        border-color: #fac564;
+        border: 2px solid white;
+        color: black;
+    }
+
+.form-control{
+    border-bottom: 5px solid white !important;
+    background-color:orange;
 }
 
 .border {
-    border: 10px solid #dee2e6 !important;
+    border: 5px solid black !important;
 }
 
-.btn.btn-primary:hover {
-    border: 1px solid #fac564;
-    background: skyblue!important;
-    color: #021912;
+.padding-to-all{
+    padding:10px;
+    position:relative;
 }
 
-a {
-    -webkit-transition: .3s all ease;
-    -o-transition: .3s all ease;
-    transition: none;
-    color: #ff0000;
+.height-min-1200{
+    min-height:1200px;
 }
 
-a:hover, a:active, a:focus {
-    color: #0088cc;
-    outline: none !important;
-    text-decoration: none !important;
+.height-min-1000 {
+    min-height: 1000px;
 }
+
+a{
+    color:white!important;
+    font-weight:bold;
+}
+
+a:hover{
+    color:yellow!important;
+}
+
+.padding-to-all .fix_bottom {
+    position: absolute;
+    bottom: 10px;
+    left: 50%;
+    transform: translateX(-50%);
+}
+
+.padding-to-all .fix_bottom_img {
+    position: absolute;
+    top: 200px;
+    left: 50%;
+    transform: translateX(-50%);
+}
+
+.only-input{
+    color:black!important;
+    text-align: center!important;
+}
+
+.fix-a-href {
+    border: 1px solid white;
+    border-width:2px;
+    border-radius: 10px !important;
+    background: lemonchiffon !important;
+    color:black!important;
+    font-weight:bold;
+    font-size:15px;
+    padding:18px;
+}
+
+    .fix-a-href:hover {
+        background: none !important;
+        border-color: #fac564 !important;
+        border: 2px solid white !important;
+        color: black !important;
+    }
+
+.fix-select-background-not-orange {
+    background: lemonchiffon !important;
+    border-radius: 10px !important;
+}
+
+.text-danger *{
+    color:red!important;
+}
+
+.table th, .table td {
+    border-top: 5px solid white!important;
+    color:black;
+}
+
+tbody, td, tfoot, th, thead, tr {
+    border-bottom: 5px solid white !important;
+}
+
+.coupon {
+    border: 5px dotted #bbb;
+    width: 80%;
+    border-radius: 15px;
+    margin: 0 auto;
+    max-width: 600px;
+}
+
+.container-coupon {
+    padding: 2px 16px;
+    background-color: black!important;
+}
+
+.promo-coupon {
+    background: #ccc;
+    padding: 3px;
+    color:white;
+}
+
+.expire-coupon {
+    color: red;
+}
+
+h3 small {
+    text-transform: uppercase;
+    font-size: 15px;
+    display: block;
+    text-align: center;
+    color: #ff6900;
+    letter-spacing: 4px;
+    font-weight: bold;
+}
+
+.flaticon-pizza-1{
+    color:white;
+    font-weight:bold;
+}
+
+.background-image-order {
+    width: 100%;
+    height: 100%;
+    background-image: url(/BackgroundImages/background-order.png);
+    background-size: cover;
+    background-position: center;
+}
+
+.product-text{
+    color:black;
+}
+
+.ftco-menu .nav-pills .nav-link.active, .ftco-menu .nav-pills .nav-link:hover {
+    background: #a33232!important;
+
+}
+
+.border-navs-home {
+    border: 2px solid white !important;
+}
+
+.a-back-to-list:hover{
+    color:black!important;
+}
+
+.alert{
+    color:black;
+}
+

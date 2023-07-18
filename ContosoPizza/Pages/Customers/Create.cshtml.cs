@@ -22,8 +22,6 @@ namespace ContosoPizza.Pages.Customers
 
         public async Task<IActionResult> OnGet()
         {
-            skippedCount = await _context.Customers.CountAsync();
-            HttpContext.Session.SetInt32("SkippedCount", skippedCount);
             return Page();
         }
 
@@ -45,15 +43,12 @@ namespace ContosoPizza.Pages.Customers
             {
                 ErrorMessage = "This email has already been used";
                 return await OnGet();
-            }    
-
-            var skippedCount = HttpContext.Session.GetInt32("SkippedCount");
-            var curentPage = (skippedCount+1) / 5 + 1;
+            }
 
             _context.Customers.Add(Customer);
             await _context.SaveChangesAsync();
 
-            return Redirect($"./Index?Page={curentPage}");
+            return RedirectToPage("./Index");
 
         }
     }

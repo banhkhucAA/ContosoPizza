@@ -12,6 +12,7 @@ namespace ContosoPizza.Pages.Products
 {
     public class DetailsModel : PageModel
     {
+
         private readonly ContosoPizza.Data.ContosoPizzaContext _context;
 
         public DetailsModel(ContosoPizza.Data.ContosoPizzaContext context)
@@ -20,6 +21,7 @@ namespace ContosoPizza.Pages.Products
         }
 
       public Product Product { get; set; } = default!;
+        public IList<Product> Other_similar_products_to_recent_product { get; set; }
         public int skippedcount = 0;
         public async Task<IActionResult> OnGetAsync(int? id)
         {
@@ -29,6 +31,8 @@ namespace ContosoPizza.Pages.Products
             }
 
             var product = await _context.Products.Include(p => p.Category).FirstOrDefaultAsync(m => m.Id == id);
+
+            Other_similar_products_to_recent_product = await _context.Products.Where(p => p.CategoryId == product.CategoryId && p.Id != product.Id).Take(6).ToListAsync();
             if (product == null)
             {
                 return NotFound();
