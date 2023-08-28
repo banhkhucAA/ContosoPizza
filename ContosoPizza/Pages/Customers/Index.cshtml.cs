@@ -9,6 +9,7 @@ using ContosoPizza.Data;
 using ContosoPizza.Models.Generated;
 using System.Drawing.Printing;
 using Microsoft.AspNetCore.Mvc.Rendering;
+using Castle.Core.Internal;
 
 namespace ContosoPizza.Pages.Customers
 {
@@ -25,7 +26,8 @@ namespace ContosoPizza.Pages.Customers
 
         public IList<Customer> Customer { get; set; } = default!;
         public string ErrorMessage { get; set; } = default !;
-      
+        [BindProperty(SupportsGet = true)]
+        public string Email { get; set; }
         public int Page { get;set; }
 
         public int pageSize = 10;
@@ -43,13 +45,22 @@ namespace ContosoPizza.Pages.Customers
                 Page = 1; // Trang mặc định là 1
             }
 
+            Customer = _context.Customers.ToList();
+
+            if (!Email.IsNullOrEmpty())
+            {
+                Customer = Customer
+                    .Where(e => e.Email.Contains(Email))
+                    .ToList();
+            }    
+
             if (_context.Customers != null)
             {
                 int offset = Math.Max((Page - 1) * pageSize, 0);
-                Customer = await _context.Customers
+                Customer = Customer
                 .Skip(offset)
                     .Take(pageSize)
-                    .ToListAsync();
+                    .ToList();
             }
 
             ErrorMessage = _contextAccessor.HttpContext.Session.GetString("ErrorMessage");

@@ -54,19 +54,35 @@ namespace ContosoPizza.Pages.Products
 
             if(product!=null)
             {
-                var find_OrdersId =  _context.OrderDetails.Where(ord=>ord.ProductId==id).Select(or=>or.OrderId).ToList();
-                foreach(var item in find_OrdersId)
+                var find_OrdersId =  _context.OrderDetails.Where(ord=>ord.ProductId==id && ord.Order.OrderStatus.IsActive == true).ToList();
+                if (find_OrdersId.Count != 0)
                 {
-                    var find_order_status = _context.Orders.Include(ors => ors.OrderStatus).Where(or => or.Id == item && or.OrderStatus.IsActive);
-                    if(find_order_status.Any())
+                    foreach (var item in find_OrdersId)
                     {
-                        ErrorMessage = "Can't delete. This product has been used in active orders";
-                        return await OnGetAsync(id);
+                        var find_order_status = _context.Orders.Include(ors => ors.OrderStatus).Where(or => or.Id == item.OrderId);
+                        if (find_order_status.Any())
+                        {
+                            ErrorMessage = "Can't delete. This product has been used in active orders";
+                            return await OnGetAsync(id);
+                        }
                     }
                 }
-                Product = product;
-                _context.Products.Remove(Product);
-                await _context.SaveChangesAsync();
+                else
+                {
+                    Product = product;
+                    _context.Products.Remove(Product);
+                    var findDeleteOrder = _context.OrderDetails.Where(ord => ord.ProductId == id).ToList();
+                    if(findDeleteOrder.Count != 0) 
+                    {
+                        foreach(var item in findDeleteOrder)
+                        {
+                            var deleteOrder = _context.Orders.FirstOrDefault(or=>or.Id==item.OrderId);
+                            if(deleteOrder != null)
+                            _context.Orders.Remove(deleteOrder);
+                        }    
+                    }
+                    await _context.SaveChangesAsync();
+                }
             }    
 
             return RedirectToPage("./Index");

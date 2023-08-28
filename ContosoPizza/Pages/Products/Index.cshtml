@@ -8,32 +8,44 @@
 @if (HttpContextAccessor.HttpContext.Session.GetString("UserRole") == "Employee" || HttpContextAccessor.HttpContext.Session.GetString("UserRole") == "Admin")
 {
     <h1 class="text-center product-text" style="padding-bottom:50px">Products</h1>
-    <form class="text-center product-text">
-        <p>
-            Categories:
-            <select class="beauty-select-input" asp-for="Food_Category" asp-items="Model.Categories">
-                <option value="">All</option>
-            </select>
-            &nbsp;&nbsp;
-            FoodName and Description:
-            <select asp-for="Food_Type">
-                <option value="">All</option>
-                <option value="Beef">Beef</option>
-                <option value="Chicken">Chicken</option>
-                <option value="Fish">Fish</option>
-                <option value="Salad">Salad</option>
-                <option value="Vegetable">Vegetable</option>
-            </select>
-            &nbsp;&nbsp;
-            Search: <input type="text" asp-for="SearchString" />
-            <span class="form-group btn btn-primary btn-icon-split span-btn-search">
-                <span class="icon text-white-50">
-                    <i class="fas fa-search"></i>
-                </span>
-                <input type="submit" value="Search" class="search" />
+    <form class="text-center" id="foodForm" method="get">
+        <div class="row mx-auto col-md-10 justify-content-center">
+            <div class="col-md-6">
+                <label class="text-center">Food Categories:</label>
+                <select id="foodCategorySelect" class="beauty-select-input text-center">
+                    <option value="">All</option>
+                    <optgroup label="Main Course">
+                        <option value="Main Course_Beef">Beef</option>
+                        <option value="Main Course_Chicken">Chicken</option>
+                        <option value="Main Course_Fish">Fish</option>
+                        <option value="Main Course_Lobster">Lobster</option>
+                    </optgroup>
+                    <optgroup label="Appetizer">
+                        <option value="Appetizer_Spaghetti">Spaghetti</option>
+                        <option value="Appetizer_Salad">Salad</option>
+                        <option value="Appetizer_Vegetable">Vegetable</option>
+                    </optgroup>
+                    <optgroup label="Beverage">
+                        <option value="Beverage_Carbonated">Carbonated Drink</option>
+                        <option value="Beverage_Juice">Fresh Juice</option>
+                    </optgroup>
+                </select>
+            </div>
+        </div>
+        <input type="hidden" name="Food_Category" value="">
+        <input type="hidden" name="Food_Type" value="">
+        &nbsp;&nbsp;
+        Search: <input type="text" asp-for="SearchString" />
+        <span class="form-group btn btn-primary btn-icon-split span-btn-search">
+            <span class="icon text-white-50">
+                <i class="fas fa-search"></i>
             </span>
-        </p>
+            <input type="submit" value="Search" class="search" />
+        </span>
     </form>
+
+
+
 
     <p class="text-center">
 
@@ -48,10 +60,10 @@
         <thead>
             <tr>
                 <th>
-                    @Html.DisplayNameFor(model => model.Product[0].ProductName)
+                    Product Name
                 </th>
                 <th>
-                    @Html.DisplayNameFor(model => model.Product[0].UnitPrice)
+                    Unit Price
                 </th>
                 <th>
                     @Html.DisplayNameFor(model => model.Product[0].Category.CategoryName)
@@ -73,7 +85,7 @@
                         @Html.DisplayFor(modelItem => item.ProductName)
                     </td>
                     <td>
-                        @Html.DisplayFor(modelItem => item.UnitPrice)
+                        $@Html.DisplayFor(modelItem => item.UnitPrice)
                     </td>
                     <td>
                         @Html.DisplayFor(modelItem => item.Category.CategoryName)
@@ -112,6 +124,18 @@
                                 </a>
                             </div>
                         </td>
+                    }else if(HttpContext.Session.GetString("UserRole")=="Employee")
+                    {
+                        <td>
+                            <div>
+                                <a class="btn btn-info btn-icon-split" asp-page="./Details" asp-route-id="@item.Id">
+                                    <span class="icon text-white-50">
+                                        <i class="fas fa-info-circle"></i>
+                                    </span>
+                                    <span class="text min-width-button-CRUD">Details</span>
+                                </a>
+                            </div>
+                        </td>
                     }
                 </tr>
             }
@@ -124,26 +148,42 @@
 }
 else
 {
-    <div class="height-min-1200 padding-to-all" >
+    <div style="height:auto" class="padding-to-all" >
         <h1 class="text-center product-text" style="padding-bottom:50px">Products</h1>
-        <form class="text-center product-text">
-            <p>
-                Categories: <select class="beauty-select-input" asp-for="Food_Category" asp-items="Model.Categories">
-                    <option value="">All</option>
-                </select>
-                &nbsp;&nbsp;
-                FoodName and Description: <select asp-for="Food_Type">
-                    <option value="">All</option>
-                    <option value="Beef">Beef</option>
-                    <option value="Chicken">Chicken</option>
-                    <option value="Fish">Fish</option>
-                    <option value="Salad">Salad</option>
-                    <option value="Vegetable">Vegetable</option>
-                </select>
-                &nbsp;&nbsp;
-                Search: <input type="text" asp-for="SearchString" />
-                <input type="submit" value="Filter" />
-            </p>
+        <form class="text-center" id="foodForm" method="get">
+            <div class="row mx-auto col-md-10 justify-content-center">
+                <div class="col-md-6">
+                    <label class="text-center">Food Categories:</label>
+                    <select id="foodCategorySelect" class="beauty-select-input text-center">
+                        <option value="">All</option>
+                        <optgroup label="Main Course">
+                            <option value="Main Course_Beef">Beef</option>
+                            <option value="Main Course_Chicken">Chicken</option>
+                            <option value="Main Course_Fish">Fish</option>
+                            <option value="Main Course_Lobster">Lobster</option>
+                        </optgroup>
+                        <optgroup label="Appetizer">
+                            <option value="Appetizer_Spaghetti">Spaghetti</option>
+                            <option value="Appetizer_Salad">Salad</option>
+                            <option value="Appetizer_Vegetable">Vegetable</option>
+                        </optgroup>
+                        <optgroup label="Beverage">
+                            <option value="Beverage_CarbonatedDrink">Carbonated Drink</option>
+                            <option value="Beverage_FreshJuice">Fresh Juice</option>
+                        </optgroup>
+                    </select>
+                </div>
+            </div>
+            <input type="hidden" name="Food_Category" value="">
+            <input type="hidden" name="Food_Type" value="">
+            &nbsp;&nbsp;
+            Search: <input type="text" asp-for="SearchString" />
+            <span class="form-group btn btn-primary btn-icon-split span-btn-search">
+                <span class="icon text-white-50">
+                    <i class="fas fa-search"></i>
+                </span>
+                <input type="submit" value="Search" class="search" />
+            </span>
         </form>
 
         <p>
@@ -196,9 +236,9 @@ else
             {
                 @if (Model.Product.Count == 1)
                 {
-                    <div class="col-md-12 align-items-center" style="height:800px">
+                    <div class="col-md-12 align-items-center" style="height:auto">
                         <div class="menu-wrap text-center">
-                            <a href="#" class="menu-img img mb-4" style="background-image: url(@item.Image);"></a>
+                            <a href="/Products/Details?id=@item.Id" class="menu-img img mb-4" style="background-image: url(@item.Image);"></a>
                             <div class="text">
                                 <h3><a href="/Products/Details?id=@item.Id">@item.ProductName</a></h3>
                                 <p>@item.Description</p>
@@ -220,7 +260,7 @@ else
 
             @if (Model.Product.Count == 2)
             {
-                <div class="row" style="height:1000px">
+                <div class="row" style="height:auto">
                 @foreach (var item in Model.Product)
                 { 
                     <div class="col-md-6 align-items-center "style=" justify-content:flex-start">
@@ -249,7 +289,7 @@ else
 
             @if (Model.Product.Count == 3)
             {
-                <div class="row" style="height:1000px">
+                <div class="row" style="height:auto">
                     @foreach (var item in Model.Product)
                     {
 
@@ -278,7 +318,7 @@ else
             }
         @if(Model.Product.Count==0)
         {
-            <div class="text-center fix_bottom_img col-md-12">
+            <div class="text-center col-md-12" style="height:auto">
                 <img src="~/EmployeePictures/pizza-steve-cantsearch.png">
             </div>
         }
@@ -296,8 +336,53 @@ else
         await Html.RenderPartialAsync("_ValidationScriptsPartial");
     }
     <script>
+        const foodForm = document.getElementById('foodForm');
+        const foodCategorySelect = document.getElementById('foodCategorySelect');
+        const foodCategoryInput = document.querySelector('input[name="Food_Category"]');
+        const foodTypeInput = document.querySelector('input[name="Food_Type"]');
+
+        // Hàm để gán giá trị cho "Food_Category" và "Food_Type"
+        function setFoodCategoryAndType(category, food) {
+            foodCategoryInput.value = category.replace('_', '%20'); // Thay thế _ bằng %20 trong giá trị gán cho input ẩn
+            foodTypeInput.value = food.replace('_', '%20'); // Thay thế _ bằng %20 trong giá trị gán cho input ẩn
+        }
+
+        // Lấy giá trị đã lưu trong session storage và cập nhật lại ô select
+        const savedFoodCategory = sessionStorage.getItem('foodCategoryValue');
+        if (savedFoodCategory) {
+            foodCategorySelect.value = savedFoodCategory;
+            const [category, food] = savedFoodCategory.split('_');
+            setFoodCategoryAndType(category, food);
+        }
+
+        // Xử lý sự kiện "change" của select
+        foodCategorySelect.addEventListener('change', function () {
+            const selectedValue = foodCategorySelect.value;
+
+            // Tách giá trị đã chọn thành danh mục và tùy chọn
+            const [category, food] = selectedValue.split('_');
+
+            // Lưu giá trị đã chọn vào session storage
+            sessionStorage.setItem('foodCategoryValue', selectedValue);
+
+            // Gán giá trị cho "Food_Category" và "Food_Type"
+            setFoodCategoryAndType(category, food);
+        });
+
+        // Xử lý sự kiện "submit" của form
+        foodForm.addEventListener('submit', function (event) {
+            // Nếu người dùng chọn "All", đặt giá trị của "Food_Type" về null
+            if (foodCategorySelect.value === "") {
+                foodTypeInput.value = null;
+            }
+
+            // Lưu giá trị đã chọn vào session storage trước khi submit
+            const selectedValue = foodCategorySelect.value;
+            sessionStorage.setItem('foodCategoryValue', selectedValue);
+        });
+
         $(document).ready(function () {
-            var errorMessage = '@Model.ErrorMessage';
+            var errorMessage = '@TempData["ErrorMessage"]';
             if (errorMessage !== '') {
                 $('#errorModal').modal('show');
             }
@@ -348,7 +433,7 @@ else
                 </button>
             </div>
             <div class="modal-body alert">
-                @Model.ErrorMessage
+                @TempData["ErrorMessage"]
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>

@@ -77,7 +77,7 @@ namespace ContosoPizza.Pages.Products
             if (existProductName != null)
             {
                 ErrorMessage = "This Product Name: " + Product.ProductName + " has already existed";
-                return Page();
+                return OnGet();
             }
 
             _context.Products.Add(Product);

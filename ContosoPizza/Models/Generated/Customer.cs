@@ -19,7 +19,6 @@ namespace ContosoPizza.Models.Generated
         [StringLength(10)]
         [Unicode(false)]
         public string LastName { get; set; } = null!;
-        [StringLength(30)]
         [Unicode(false)]
         public string Address { get; set; } = null!;
         [StringLength(10)]

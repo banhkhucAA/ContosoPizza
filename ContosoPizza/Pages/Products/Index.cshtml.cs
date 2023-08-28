@@ -50,7 +50,7 @@ namespace ContosoPizza.Pages.Products
 
             if (!string.IsNullOrEmpty(Food_Type))
             {
-                query = query.Where(f => f.ProductName.Contains(Food_Type));
+                query = query.Where(f => f.ProductName.Contains(Food_Type) || f.Materials.Contains(Food_Type));
             }
 
             if (!string.IsNullOrEmpty(Food_Category))
@@ -87,8 +87,7 @@ namespace ContosoPizza.Pages.Products
                     .Take(pageSize)
                     .ToListAsync();
             }
-            ErrorMessage = HttpContext.Session.GetString("ErrorMessage");
-            Console.WriteLine("Error Message currently is: " + ErrorMessage);
+            TempData["ErrorMessage"] = HttpContext.Session.GetString("ErrorMessage");
             HttpContext.Session.Remove("ErrorMessage");
         }
         public async Task<IActionResult> OnPostAsync(int? id)

@@ -51,6 +51,12 @@ namespace ContosoPizza.Pages.Coupons
                 ErrorMessage = "This Coupon Code: " + Coupon.CouponCode + " has already existed";
                 return Page();
             }
+
+            if(Coupon.ExpireDate<DateTime.Now)
+            {
+                ErrorMessage = "Can't update a coupon that has expired date smaller than today";
+                return Page();
+            }    
             _context.Attach(Coupon).State = EntityState.Modified;
 
             try

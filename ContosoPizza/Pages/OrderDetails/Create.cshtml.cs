@@ -14,6 +14,8 @@ using MimeKit.Text;
 using MimeKit;
 using static Org.BouncyCastle.Math.EC.ECCurve;
 using MailKit.Net.Smtp;
+using ContosoPizza.Pages.Cart;
+using MailKit.Search;
 
 namespace ContosoPizza.Pages.OrderDetails
 {
@@ -36,17 +38,11 @@ namespace ContosoPizza.Pages.OrderDetails
         [BindProperty]
         public Order Order { get; set; }
         [BindProperty]
-        public IList<OrderDetail> OrderDetails_Show { get; set; } = default!;
+        public List<OrderDetail> OrderDetails_Show { get; set; } = default!;
         public string emailstring;
         public IActionResult OnGet(int? orderId)
         {
             var order = _context.Orders
-                .Include(o => o.Coupon)
-                .Include(o => o.Customer)
-                .Include(o => o.DeliveryMethod)
-                .Include(o => o.OrderStatus)
-                .Include(o => o.PaymentMethod)
-                .Include(o => o.Employee)
                 .FirstOrDefault(x => x.Id == orderId);
 
             var orderDetails = _context.OrderDetails.Where(x => x.OrderId == orderId).Include(p=>p.Product).ToList();
@@ -75,7 +71,7 @@ namespace ContosoPizza.Pages.OrderDetails
         public float DeliveryPriceAdd { get; set; }
         [BindProperty]
         public float PaymentMethodPriceAdd { get; set; }
-        public async Task<IActionResult> OnPostAsync()
+        public async Task<IActionResult> OnPostAsync(int? id)
         {
             if (!string.IsNullOrEmpty(Request.Form["createButton"]))
             {
@@ -87,11 +83,106 @@ namespace ContosoPizza.Pages.OrderDetails
                 await OnSendEmail(Order.Id);
                 return Redirect($"/OrderDetails/Create?orderId={Order.Id}");
             }
+            else if (!string.IsNullOrEmpty(Request.Form["UpdateQuantity"]))
+            {
+                await OnUpdateQuantity();
+                return Redirect($"/OrderDetails/Create?orderId={OrderDetails_Show[0].OrderId}");
+            }
+            else if (!string.IsNullOrEmpty(Request.Form["DeleteProduct"]))
+            {
+                await OnDeleteProduct(id);
+                return Redirect($"/OrderDetails/Create?orderId={OrderDetails_Show[0].OrderId}");
+            }
             else
             {
-                return NotFound("No buttons are hit");
+                return NotFound();
             }    
  
+        }
+
+        private async Task<IActionResult> OnDeleteProduct(int? id)
+        {
+            foreach (var item in OrderDetails_Show)
+            {
+                var findProduct = await _context.OrderDetails.Where(p => p.Id == id).FirstOrDefaultAsync();
+                if (findProduct != null)
+                {
+                    _context.OrderDetails.Remove(findProduct);
+                }
+            }
+            var order = _context.Orders
+                .FirstOrDefault(x => x.Id == OrderDetails_Show[0].OrderId);
+            var DeliveryPrice = _context.DeliveryMethods.Where(p => p.Id == order.DeliveryMethodId).Select(p => p.Price).FirstOrDefault();
+            DeliveryPriceAdd = (float)DeliveryPrice;
+            var PaymentPrice = _context.PaymentMethods.Where(p => p.Id == order.PaymentMethodId).Select(p => p.Price).FirstOrDefault();
+            PaymentMethodPriceAdd = (float)PaymentPrice;
+
+            if (order.CouponId == null)
+            {
+                DiscountAmountAdd = 0;
+            }
+            else
+            {
+                var DiscountPrice = _context.Coupons.Where(p => p.Id == order.CouponId).Select(p => p.DiscountAmount).FirstOrDefault();
+                DiscountAmountAdd = (float)DiscountPrice;
+            }
+
+            var newBillPrice = OrderDetails_Show.Sum(x => x.TotalPrice);
+
+            var newOrderBillPrice = newBillPrice;
+
+
+            order.BillPrice = (float?)Math.Round((float)(newBillPrice + DeliveryPrice + PaymentPrice - (float)(newBillPrice * DiscountAmountAdd / 100)), 2);
+            order.BillPrice = (float)Math.Round((float)order.BillPrice, 2);
+
+            _context.Orders.Update(order);
+            await _context.SaveChangesAsync();
+
+            return Page();
+        }
+
+        private async Task<IActionResult> OnUpdateQuantity()
+        {
+            foreach (var item in OrderDetails_Show)
+            {
+                var productPrice = await _context.Products.Where(p => p.Id == item.ProductId).Select(p => p.UnitPrice).FirstOrDefaultAsync();
+                var cartItem = OrderDetails_Show.FirstOrDefault(c => c.ProductId == item.ProductId);
+                if (cartItem != null)
+                {
+                    item.Quantity = cartItem.Quantity;
+                    item.TotalPrice = cartItem.Quantity * productPrice;
+                }
+                _context.OrderDetails.Update(item);
+            }
+            var order = _context.Orders
+                .FirstOrDefault(x => x.Id == OrderDetails_Show[0].OrderId);
+            var DeliveryPrice = _context.DeliveryMethods.Where(p => p.Id == order.DeliveryMethodId).Select(p => p.Price).FirstOrDefault();
+            DeliveryPriceAdd = (float)DeliveryPrice;
+            var PaymentPrice = _context.PaymentMethods.Where(p => p.Id == order.PaymentMethodId).Select(p => p.Price).FirstOrDefault();
+            PaymentMethodPriceAdd = (float)PaymentPrice;
+
+            if (order.CouponId == null)
+            {
+                DiscountAmountAdd = 0;
+            }
+            else
+            {
+                var DiscountPrice = _context.Coupons.Where(p => p.Id == order.CouponId).Select(p => p.DiscountAmount).FirstOrDefault();
+                DiscountAmountAdd = (float)DiscountPrice;
+            }
+
+            var newBillPrice = OrderDetails_Show.Sum(x => x.TotalPrice);
+
+            var newOrderBillPrice = newBillPrice;
+            
+
+            order.BillPrice = (float?)Math.Round((float)(newBillPrice + DeliveryPrice + PaymentPrice - (float)(newBillPrice * DiscountAmountAdd / 100)), 2);
+            order.BillPrice = (float)Math.Round((float)order.BillPrice, 2);
+
+            _context.Orders.Update(order);
+            await _context.SaveChangesAsync();
+
+            return Page();
         }
 
         private async Task<IActionResult> OnSendEmail(int id)

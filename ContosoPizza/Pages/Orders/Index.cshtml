@@ -6,15 +6,16 @@
 @inject Microsoft.AspNetCore.Http.IHttpContextAccessor HttpContextAccessor
 
 <div class="padding-to-all tab-content ftco-animate height-min-1000">
-    <h1 class="text-center">Order history</h1>
-
-@if(HttpContextAccessor.HttpContext.Session.GetString("UserRole")=="Customer")
-{
+    
+    @if(HttpContextAccessor.HttpContext.Session.GetString("UserRole")=="Customer")
+    {
+        <h1 class="text-center">Order history</h1>
         <form class="text-center">
             <p>
                 OrderStatus:
                 <select asp-for="searchOrderStatus" asp-items="Model.searchOrderStatuses">
-                    <option value="">All</option>
+                    <option value="">Active Orders</option>
+                    <option value="All">All Orders</option>                     
                 </select>
                 &nbsp;&nbsp;
                 DeliveryMethod:
@@ -29,10 +30,10 @@
             </p>
             <p>
                 From Date:
-                <input type="date" asp-for="FromDate" />
+                <input type="date" asp-for="FromDate" id="fromDateInput" />
                 &nbsp;&nbsp;
                 To Date:
-                <input type="date" asp-for="ToDate" />
+                <input type="date" asp-for="ToDate" id="toDateInput" />
             </p>
             <input type="submit" value="Search" class="search" />
         </form>
@@ -41,16 +42,13 @@
             <div class="col-md-12 text-center">
                 <img src="/EmployeePictures/pizza-steve-no-orders.png" alt="No Orders" />
             </div>
+
+            <div class="text-center fix_bottom">
+                Page: <input type="number" id="pageInput" style="color:black; font-weight:bold; font-size: 30px; max-width: 50px" min="1" step="1">
+            </div>
         }
         else
         {
-            @if (HttpContextAccessor.HttpContext.Session.GetString("UserRole") == "Employee")
-            {
-                <p>
-                    <a asp-page="Create">Create New</a>
-                </p>
-            }
-
             <div class="row">
                 <div class="text-center col-md-6">
                     <img src="/EmployeePictures/pizza-steve-order-history.png" alt="Order History" width="800" height="550" style="padding-top:100px" />
@@ -74,16 +72,12 @@
                                     <p>Delivery Method: @item.DeliveryMethod.Method</p>
                                     <p>Payment Method: @item.PaymentMethod.Method</p>
                                     <p>Placed Address: @item.PlacedAddress</p>
-                                    <p>Bill Price: @item.BillPrice</p>
+                                    <p>Bill Price: $@item.BillPrice </p>                                 
                                 </div>
                                 <div class="container-coupon">
                                     @if (HttpContextAccessor.HttpContext.Session.GetString("UserRole") == "Employee")
                                     {
-                                        <form method="post">
-                                            <a asp-page="./Edit" asp-route-id="@item.Id" class="btn btn-primary">Edit</a> |
-                                            <a href="/OrderDetails/Create?orderId=@item.Id" class="btn btn-primary">Details</a> |
-                                            <input type="submit" name="Delete" value="Delete" asp-route-id="@item.Id" class="btn btn-primary">
-                                        </form>
+
                                     }
                                     else
                                     {
@@ -97,18 +91,20 @@
             </div>
 
             <div class="text-center fix_bottom">
-                Page: <input type="number" id="pageInput" style="color:black; font-weight:bold; font-size: 30px; max-width: 50px" min="1" step="1" onchange="updateLink(this.value)">
+                Page: <input type="number" id="pageInput" style="color:black; font-weight:bold; font-size: 30px; max-width: 50px" min="1" step="1">
             </div>
         }
 
     }
     else if (HttpContextAccessor.HttpContext.Session.GetString("UserRole") == "Employee")
     {
+        <h1 class="text-center">Orders Processing</h1>
         <form class="text-center">
             <p>
                 OrderStatus:
                 <select asp-for="searchOrderStatus" asp-items="Model.searchOrderStatuses">
-                    <option value="">All</option>
+                    <option value="">Active Orders</option>
+                    <option value="All">All Orders</option>
                 </select>
                 &nbsp;&nbsp;
                 DeliveryMethod:
@@ -123,10 +119,10 @@
             </p>
             <p>
                 From Date:
-                <input type="date" asp-for="FromDate" />
+                <input id="fromDateInput" type="date" asp-for="FromDate" />
                 &nbsp;&nbsp;
                 To Date:
-                <input type="date" asp-for="ToDate" />
+                <input id="toDateInput" type="date" asp-for="ToDate" />
                 &nbsp;&nbsp;
                 <span class="form-group btn btn-primary btn-icon-split span-btn-search">
                     <span class="icon text-white-50">
@@ -145,13 +141,13 @@
             <thead>
                 <tr>
                     <th>
+                        Warning
+                    </th>
+                    <th>
                         Creator/ Editor
                     </th>
                     <th>
                         @Html.DisplayNameFor(model => model.Order[0].Coupon)
-                    </th>
-                    <th>
-                        @Html.DisplayNameFor(model => model.Order[0].Customer)
                     </th>
                     <th>
                         @Html.DisplayNameFor(model => model.Order[0].OrderStatus)
@@ -176,14 +172,21 @@
                 {
                     <tr>
                         <td>
+                            <span id="status-@item.Id">
+                                @if (item.IsOverWaitingTime == true || item.IsOverMakingTime == true || item.IsOverDeliveringTime == true)
+                                {
+                                    <span href="#" class="btn btn-warning btn-circle" data-toggle="tooltip" data-placement="top" title="@item.OrderNotification">
+                                        <i class="fas fa-exclamation-triangle"></i>
+                                    </span>
+                                }
+                            </span>
+                        </td>
+                        <td>                        
                             @Html.DisplayFor(modelItem => item.Employee.FirstName)
                             @Html.DisplayFor(modelItem => item.Employee.LastName)
                         </td>
                         <td>
                             @Html.DisplayFor(modelItem => item.Coupon.CouponCode)
-                        </td>
-                        <td>
-                            @Html.DisplayFor(modelItem => item.Customer.Id)
                         </td>
                         <td>
                             @Html.DisplayFor(modelItem => item.OrderStatus.StatusName)
@@ -198,16 +201,37 @@
                             @Html.DisplayFor(modelItem => item.PlacedAddress)
                         </td>
                         <td>
-                            @Html.DisplayFor(modelItem => item.BillPrice) $
+                            $@Html.DisplayFor(modelItem => item.BillPrice)
                         </td>
                         <td>
                             @if (HttpContextAccessor.HttpContext.Session.GetString("UserRole") == "Employee")
                             {
-                                <form method="post">
-                                    <a asp-page="./Edit" asp-route-id="@item.Id" class="btn btn-primary">Edit</a> |
-                                    <a href="/OrderDetails/Create?orderId=@item.Id" class="btn btn-primary">Details</a> |
-                                    <input type="submit" name="Delete" value="Delete" asp-route-id="@item.Id" class="btn btn-primary">
-                                </form>
+                                <div>
+                                    <a class="btn btn-primary btn-icon-split" asp-page="./Edit" asp-route-id="@item.Id">
+                                        <span class="icon text-white-50">
+                                            <i class="fas fa-flag"></i>
+                                        </span>
+                                        <span class="text min-width-button-CRUD">Edit</span>
+                                    </a>
+                                </div>
+                                <div>
+                                    <a class="btn btn-info btn-icon-split" asp-page="./Details" asp-route-id="@item.Id">
+                                        <span class="icon text-white-50">
+                                            <i class="fas fa-info-circle"></i>
+                                        </span>
+                                        <span class="text min-width-button-CRUD">Details</span>
+                                    </a>
+                                </div>
+                                <div>
+                                    <form asp-route-id="@item.Id" method="post">
+                                        <span class="btn btn-danger btn-icon-split">
+                                            <span class="icon text-white-50">
+                                                <i class="fas fa-trash"></i>
+                                            </span>
+                                            <input name="Delete" type="submit" value="Delete" class="text min-width-button-CRUD" style="background-color:red; border:none; color:white;">
+                                        </span>
+                                    </form>
+                                </div>
                             }
                             else
                             {
@@ -231,8 +255,9 @@
     @{
         await Html.RenderPartialAsync("_ValidationScriptsPartial");
     }
-    <script>
-        $(document).ready(function () {
+    <script>      
+       $(document).ready(function () {
+            $('[data-toggle="tooltip"]').tooltip();
             var errorMessage = '@TempData["ErrorMessage"]';
             if (errorMessage !== '') {
                 $('#errorModal').modal('show');
@@ -260,15 +285,18 @@
             updateLink(currentPage);
         });
 
-        function updateLink(value) {
+
+        function updateLink(currentPage) {
+            var fromDateValue = document.getElementById('fromDateInput').value;
+            var toDateValue = document.getElementById('toDateInput').value;
+
             // Lưu giá trị trang hiện tại vào localStorage
-            localStorage.setItem('currentPage', value);
+            localStorage.setItem('currentPage', currentPage);
 
-            window.location.href = `?Page=${value}&searchOrderStatus=@Model.searchOrderStatus&searchDeliveryMethod=@Model.searchDeliveryMethod&searchPaymentMethod=@Model.searchPaymentMethod&FromDate=@Model.FromDate&ToDate=@Model.ToDate`;
+            // Cập nhật URL với giá trị fromDateValue và toDateValue
+            window.location.href = `?Page=${currentPage}&searchOrderStatus=@Model.searchOrderStatus&searchDeliveryMethod=@Model.searchDeliveryMethod&searchPaymentMethod=@Model.searchPaymentMethod&FromDate=${fromDateValue}&ToDate=${toDateValue}`;
         }
-
-        currentPage = 1;
-        localStorage.setItem('currentPage', currentPage);
+        
     </script>
 }
 <div class="modal fade" id="errorModal" tabindex="-1" role="dialog" aria-labelledby="errorModalLabel" aria-hidden="true">

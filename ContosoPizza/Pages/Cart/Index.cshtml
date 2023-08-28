@@ -8,7 +8,7 @@
     double Bill = 0;
     decimal TotalQuantity = 0;
 }
-<div class="padding-to-all height-min-1200 container tab-content ftco-animate">
+<div style="height:auto" class="padding-to-all container tab-content ftco-animate">
     <h1 class="text-center">Cart</h1>
 
     <div class="row">
@@ -19,9 +19,9 @@
                     @if (Model.OrderDetails_Show.Count > 0)
                     {
                         <tr>
-                            <th>@Html.DisplayNameFor(model => model.OrderDetails_Show[0].ProductName)</th>
+                            <th>Product Name</th>
                             <th>@Html.DisplayNameFor(model => model.OrderDetails_Show[0].Quantity)</th>
-                            <th>@Html.DisplayNameFor(model => model.OrderDetails_Show[0].TotalPrice)</th>
+                            <th>Total Price</th>
                             <th>@Html.DisplayNameFor(model => model.OrderDetails_Show[0].Image)</th>
                             <th></th>
                         </tr>
@@ -32,26 +32,26 @@
                         @for (int i = 0; i < Model.OrderDetails_Show.Count; i++)
                         {
                             var item = Model.OrderDetails_Show[i];
-                        <tr>
-                            <td>
-                                <a class="a-back-to-list" href="Products/Details?id=@item.ProductId">@Html.DisplayFor(modelItem => item.ProductName)</a>
-                            </td>
-                            <td>
-                                <input type="number" name="cartItems[@i].Quantity" value="@item.Quantity" min="1" max="100" />
-                                <input type="hidden" name="cartItems[@i].ProductId" value="@item.ProductId" />
-                            </td>
-                            <td>
-                                    @Html.DisplayFor(modelItem => item.TotalPrice)
-                            </td>
-                            <td>
-                                <img src="@item.Image" alt="Image" style="max-width: 200px; max-height: 200px;" />
-                            </td>
-                            <td>
-                                <input type="submit" name="Delete" value="Delete" asp-route-id="@item.ProductId" />
-                            </td>
-                        </tr>
+                            <tr>
+                                <td>
+                                    <a class="a-back-to-list" href="Products/Details?id=@item.ProductId">@Html.DisplayFor(modelItem => item.ProductName)</a>
+                                </td>
+                                <td>
+                                    <input type="number" name="cartItems[@i].Quantity" value="@item.Quantity" min="1" max="100" />
+                                    <input type="hidden" name="cartItems[@i].ProductId" value="@item.ProductId" />
+                                </td>
+                                <td>
+                                        $@Html.DisplayFor(modelItem => item.TotalPrice)
+                                </td>
+                                <td>
+                                    <img src="@item.Image" alt="Image" style="max-width: 200px; max-height: 200px;" />
+                                </td>
+                                <td>
+                                    <input type="submit" name="Delete" value="Delete" asp-route-id="@item.ProductId" />
+                                </td>
+                            </tr>
                         }
-                    <tr>
+                            <tr>
                                 @if (Model.OrderDetails_Show.Count > 0)
                                 {
                                     <td colspan="5" class="text-center">
@@ -66,12 +66,12 @@
                                     <div class="text-center">
                                         <p>There are no Products in your Cart.</p>
                                         <a href="/Products">Go to Products</a>
-                                        <div class="col-md-12 fix_bottom_img">
+                                        <div class="col-md-12" style="height:auto">
                                             <img src="~/EmployeePictures/pizza-steve-gotoproducts_transparent.png">
                                         </div>
                                     </div>
                                 }                
-                    </tr>
+                            </tr>
                 </tbody>
                 </form>
             </table>
@@ -90,16 +90,17 @@
                 </div>
             }
         }
+        @if (Model.OrderDetails_Show.Count > 0)
+        {
+            <div class="text-center">
+                <p>
+                    Page: <input type="number" id="pageInput" style="color:black; font-weight:bold; font-size: 30px; max-width: 50px" min="1" step="1">
+                </p>
+            </div>
+        }
     </div>
 
-    @if (Model.OrderDetails_Show.Count > 0)
-    {
-        <div class="text-center fix_bottom">
-            <p>
-                Page: <input type="number" id="pageInput" style="color:black; font-weight:bold; font-size: 30px; max-width: 50px" min="1" step="1">
-            </p>
-        </div>
-    }
+    
 </div>
 
 @section Scripts {

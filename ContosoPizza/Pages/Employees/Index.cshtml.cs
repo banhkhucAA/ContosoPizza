@@ -8,6 +8,7 @@ using Microsoft.EntityFrameworkCore;
 using ContosoPizza.Data;
 using ContosoPizza.Models.Generated;
 using Microsoft.AspNetCore.Mvc.Rendering;
+using Castle.Core.Internal;
 
 namespace ContosoPizza.Pages.Employees
 {
@@ -19,6 +20,8 @@ namespace ContosoPizza.Pages.Employees
         {
             _context = context;
         }
+        [BindProperty(SupportsGet = true)]
+        public string SearchName { get; set; }
 
         public IList<Employee> Employee { get;set; } = default!;
         public async Task OnGetAsync()
@@ -26,6 +29,13 @@ namespace ContosoPizza.Pages.Employees
             if (_context.Employees != null)
             {
                 Employee = await _context.Employees.ToListAsync();
+            }
+
+            if(!SearchName.IsNullOrEmpty()) 
+            {
+                Employee = await _context.Employees
+                        .Where(employee => employee.FirstName.Contains(SearchName) || employee.LastName.Contains(SearchName))
+                        .ToListAsync();
             }
         }
     }

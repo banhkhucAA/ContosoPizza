@@ -106,9 +106,8 @@ namespace ContosoPizza.Migrations
 
                     b.Property<string>("Address")
                         .IsRequired()
-                        .HasMaxLength(30)
                         .IsUnicode(false)
-                        .HasColumnType("varchar(30)");
+                        .HasColumnType("varchar(max)");
 
                     b.Property<string>("Email")
                         .IsRequired()
@@ -232,6 +231,15 @@ namespace ContosoPizza.Migrations
                     b.Property<bool>("IsCustomerMember")
                         .HasColumnType("bit");
 
+                    b.Property<bool?>("IsOverDeliveringTime")
+                        .HasColumnType("bit");
+
+                    b.Property<bool?>("IsOverMakingTime")
+                        .HasColumnType("bit");
+
+                    b.Property<bool?>("IsOverWaitingTime")
+                        .HasColumnType("bit");
+
                     b.Property<string>("NoneCustomerMemberEmailAddress")
                         .HasColumnType("nvarchar(max)");
 
@@ -240,6 +248,9 @@ namespace ContosoPizza.Migrations
 
                     b.Property<DateTime?>("OrderFullFilledAt")
                         .HasColumnType("datetime");
+
+                    b.Property<string>("OrderNotification")
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<DateTime?>("OrderPlacedAt")
                         .HasColumnType("datetime");
@@ -255,6 +266,27 @@ namespace ContosoPizza.Migrations
                     b.Property<string>("PlacedAddress")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime?>("UpdatedCancelledAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime?>("UpdatedDeActiveAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime?>("UpdatedDeliveredAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime?>("UpdatedDeliveringAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime?>("UpdatedMakingAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime?>("UpdatedReturnedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime?>("UpdatedWaitingAt")
+                        .HasColumnType("datetime2");
 
                     b.HasKey("Id");
 

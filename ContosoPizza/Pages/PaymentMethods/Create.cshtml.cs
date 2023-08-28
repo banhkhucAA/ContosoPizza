@@ -41,7 +41,7 @@ namespace ContosoPizza.Pages.PaymentMethods
             var existPaymentName = await _context.PaymentMethods.Where(c => c.Method == PaymentMethod.Method).FirstOrDefaultAsync();
             if (existPaymentName != null)
             {
-                ErrorMessage = "This Category Name: " + PaymentMethod.Method + " has already existed";
+                ErrorMessage = "This payment method name: " + PaymentMethod.Method + " has already existed";
                 return Page();
             }
             _context.PaymentMethods.Add(PaymentMethod);

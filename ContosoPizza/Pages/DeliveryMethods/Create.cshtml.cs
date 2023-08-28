@@ -42,7 +42,7 @@ namespace ContosoPizza.Pages.DeliveryMethods
             var existDeliveryName = await _context.DeliveryMethods.Where(c => c.Method == DeliveryMethod.Method).FirstOrDefaultAsync();
             if (existDeliveryName != null)
             {
-                ErrorMessage = "This Category Name: " + DeliveryMethod.Method + " has already existed";
+                ErrorMessage = "This delivery method name: " + DeliveryMethod.Method + " has already existed";
                 return Page();
             }
             _context.DeliveryMethods.Add(DeliveryMethod);

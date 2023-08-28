@@ -54,7 +54,7 @@ namespace ContosoPizza.Pages.Coupons
             var coupon = await _context.Coupons.FindAsync(id);
             if (coupon != null)
             {
-                var used_coupon_in_active_orders = await _context.Orders.Include(ors => ors.OrderStatus).Where(or => or.CouponId == coupon.Id).ToListAsync();
+                var used_coupon_in_active_orders = await _context.Orders.Include(ors => ors.OrderStatus).Where(or => or.CouponId == coupon.Id && or.OrderStatus.IsActive==true).ToListAsync();
                 if (used_coupon_in_active_orders.Count()!=0)
                 {
                     foreach(var item in used_coupon_in_active_orders)
@@ -63,17 +63,22 @@ namespace ContosoPizza.Pages.Coupons
                         if (item.OrderStatus.IsActive==true)
                         {
                             ErrorMessage = "Can't delete because this coupon is used in active orders. Example with the order placed at: " + item.OrderPlacedAt;
-                            Console.WriteLine(ErrorMessage);
                             return await OnGetAsync(id);
-                        }
+                        }                      
                     }
                 }
-                else 
+                else
                 {
                     Coupon = coupon;
+                    foreach(var item in _context.Orders.Where(or => or.CouponId == coupon.Id && or.OrderStatus.IsActive == false))
+                    {
+                        _context.Orders.Remove(item);
+                    }
                     _context.Coupons.Remove(Coupon);
                     await _context.SaveChangesAsync();
+                    return RedirectToPage("./Index");
                 }
+
             }               
             return RedirectToPage("./Index");
         }

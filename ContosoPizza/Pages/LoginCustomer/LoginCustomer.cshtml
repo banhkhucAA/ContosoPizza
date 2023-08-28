@@ -15,11 +15,11 @@
             <form method="post" class="p-5 rounded">
                 <div class="mb-3">
                     <label for="email" class="form-label">Email:</label>
-                    <input type="email" class="form-control text-center only-input" id="email" name="Email" required>
+                    <input placeholder="Enter your email" type="email" class="form-control text-center only-input" id="email" name="Email" required>
                 </div>
                 <div class="mb-3">
                     <label for="password" class="form-label">Password:</label>
-                <input type="password" class="form-control text-center only-input" id="password" name="Password" required>
+                    <input placeholder="Enter your password" type="password" class="form-control text-center only-input" id="password" name="Password" required>
                 </div>
                 <div class="mb-3">
                     <input type="submit" value="Login">
@@ -39,7 +39,7 @@
     }
     <script>
         $(document).ready(function () {
-            var errorMessage = '@Model.ErrorMessage';
+            var errorMessage = '@TempData["ErrorMessage"]';
             if (errorMessage !== '') {
                 $('#errorModal').modal('show');
             }
@@ -62,7 +62,7 @@
                 </button>
             </div>
             <div class="modal-body alert">
-                @Model.ErrorMessage
+                @TempData["ErrorMessage"]
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>

@@ -70,5 +70,11 @@
             <span class="text min-width-button-CRUD">Edit</span>
         </a>
     </a> | 
-    <a class="btn btn-primary" asp-page="./Index">Back to list Employees</a>
+    @if (HttpContext.Session.GetString("UserRole") == "Admin")
+    {
+        <a class="btn btn-primary" asp-page="./Index">Back to list Employees</a>
+    }else
+    {
+        <a class="btn btn-primary" href="/Orders/Index">Back to list Orders</a>
+    }
 </div>

@@ -10,6 +10,7 @@ using ContosoPizza.Models.Generated;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using System.Drawing.Printing;
 using Microsoft.AspNetCore.Http;
+using Org.BouncyCastle.Asn1;
 
 namespace ContosoPizza.Pages.Orders
 {
@@ -61,11 +62,20 @@ namespace ContosoPizza.Pages.Orders
                 Order = await _context.Orders                    
                     .Where(o=>o.CustomerId== _httpContextAccessor.HttpContext.Session.GetInt32("UserId"))
                     .ToListAsync();
-            }    
+            }
 
-            if (!string.IsNullOrEmpty(searchOrderStatus))
+            CheckOverTime(Order);
+            await _context.SaveChangesAsync();
+
+            if (searchOrderStatus==null)
             {
-                Order = Order.Where(or => or.OrderStatus.StatusName == searchOrderStatus).ToList();
+                Order = Order.Where(or => or.OrderStatus.IsActive == true).ToList();
+            }else
+            {
+                if(searchOrderStatus!="All")
+                {
+                    Order = Order.Where(or => or.OrderStatus.StatusName == searchOrderStatus).ToList();
+                }               
             }
             if (!string.IsNullOrEmpty(searchDeliveryMethod))
             {
@@ -75,15 +85,19 @@ namespace ContosoPizza.Pages.Orders
             {
                 Order = Order.Where(or => or.PaymentMethod.Method == searchPaymentMethod).ToList();
             }
-            if (FromDate.HasValue)
+            if (FromDate.HasValue&&!ToDate.HasValue)
             {
                 Order = Order.Where(or => or.OrderPlacedAt >= FromDate).ToList();
-            }
-            if (ToDate.HasValue)
+            }else if(!FromDate.HasValue && ToDate.HasValue)
             {
                 Order = Order.Where(or => or.OrderPlacedAt <= ToDate).ToList();
+            }else if(FromDate.HasValue && ToDate.HasValue)
+            {
+                Order = Order.Where(or => or.OrderPlacedAt <= ToDate && or.OrderPlacedAt >= FromDate).ToList();
             }
-
+            
+            
+            await _context.SaveChangesAsync();
             var select_items = _context.OrderStatuses.Select(ors => ors.StatusName);
             searchOrderStatuses = new SelectList(select_items);
 
@@ -117,12 +131,72 @@ namespace ContosoPizza.Pages.Orders
                     .Skip(offset)
                     .Take(2)
                     .ToList();
-            }    
+            }
 
-            ErrorMessage = _httpContextAccessor.HttpContext.Session.GetString("ErrorMessage");
+            TempData["ErrorMessage"] = _httpContextAccessor.HttpContext.Session.GetString("ErrorMessage");
             _httpContextAccessor.HttpContext.Session.Remove("ErrorMessage");
 
             return Page();
+        }
+
+        private void CheckOverTime(IList<Order> Order)
+        {
+            foreach (var item in Order)
+            {
+                if (item.OrderStatus.StatusName == "Waiting")
+                {
+                    if (DateTime.Now - item.UpdatedWaitingAt >= TimeSpan.FromMinutes(10))
+                    {
+                        item.IsOverWaitingTime = true;
+                        item.IsOverDeliveringTime = false;
+                        item.IsOverMakingTime = false;
+                        item.OrderNotification = "This order has been waiting for more than 10 minutes \n.The specific time is: "+ (DateTime.Now - item.UpdatedWaitingAt).ToString();
+                    }else
+                    {
+                        item.IsOverWaitingTime = false;
+                        item.IsOverDeliveringTime = false;
+                        item.IsOverMakingTime = false;
+                        item.OrderNotification = "No Note";
+                    }    
+                }
+
+                if (item.OrderStatus.StatusName == "Making")
+                {
+                    if (DateTime.Now - item.UpdatedMakingAt >= TimeSpan.FromMinutes(15))
+                    {
+                        item.IsOverMakingTime = true;
+                        item.IsOverWaitingTime = false;
+                        item.IsOverDeliveringTime = false;
+                        item.OrderNotification = "This order has been making for more than 15 minutes \n.The specific time is: "+ (DateTime.Now - item.UpdatedMakingAt).ToString();
+                    }else
+                    {
+                        item.IsOverWaitingTime = false;
+                        item.IsOverDeliveringTime = false;
+                        item.IsOverMakingTime = false;
+                        item.OrderNotification = "No Note";
+                    }    
+                }
+
+                if (item.OrderStatus.StatusName == "Delivering")
+                {
+                    if (DateTime.Now - item.UpdatedDeliveringAt >= TimeSpan.FromMinutes(15))
+                    {
+                        item.IsOverDeliveringTime = true;
+                        item.IsOverMakingTime = false;
+                        item.IsOverWaitingTime=false;
+                        item.OrderNotification = "This order has been delivering for more than 15 minutes \n.The specific time is: "+ (DateTime.Now - item.UpdatedDeliveringAt).ToString();
+                    }else
+                    {
+                        item.IsOverWaitingTime = false;
+                        item.IsOverDeliveringTime = false;
+                        item.IsOverMakingTime = false;
+                        item.OrderNotification = "No Note";
+                    }    
+                }
+
+                _context.Update(item);
+
+            }
         }
 
 

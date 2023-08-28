@@ -41,14 +41,20 @@ namespace ContosoPizza.Pages.Customers
             var ExistEmail = await _context.Customers.FirstOrDefaultAsync(c=>c.Email==Customer.Email);
             if(ExistEmail!=null)
             {
-                ErrorMessage = "This email has already been used";
+                TempData["ErrorMessage"] = "This email has already been used";
                 return await OnGet();
             }
 
             _context.Customers.Add(Customer);
             await _context.SaveChangesAsync();
 
-            return RedirectToPage("./Index");
+            TempData["ErrorMessage"] = "Create a new account successfully";
+            if(HttpContext.Session.GetString("UserRole")=="Admin")
+                return RedirectToPage("./Index");
+            else
+            {
+                return Redirect("/LoginCustomer");
+            }    
 
         }
     }

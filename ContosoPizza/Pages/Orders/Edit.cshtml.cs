@@ -117,7 +117,7 @@ namespace ContosoPizza.Pages.Orders
                         Console.WriteLine("couponId: " + Order.CouponId + " customerId:" + Order.CustomerId);
                         return await OnGetAsync(Order.Id);
                     }
-                    var expire_coupon_id = _context.Coupons.Where(cou => cou.ExpireDate < DateTime.UtcNow).Select(cou => cou.Id).ToList();
+                    var expire_coupon_id = _context.Coupons.Where(cou => cou.ExpireDate < DateTime.Now).Select(cou => cou.Id).ToList();
                     foreach (var item in expire_coupon_id)
                     {
                         if (item == Order.CouponId)
@@ -147,7 +147,42 @@ namespace ContosoPizza.Pages.Orders
                 Order.BillPrice = (float?)Math.Round((float)(Order.BillPrice + DeliveryPrice + PaymentPrice - (float)(discountPrice * Order.BillPrice / 100)), 2);
                 Order.BillPrice = (float)Math.Round((float)Order.BillPrice, 2);
 
-                _context.Orders.Attach(Order).State = EntityState.Modified;
+                var findOrderStatusId = await _context.OrderStatuses.FirstOrDefaultAsync(or => or.Id == Order.OrderStatusId);
+                var findOrder = await _context.Orders.FirstOrDefaultAsync(or => or.Id == Order.Id);
+
+                if (findOrderStatusId != null && findOrder != null)
+                {
+                    if (findOrderStatusId.StatusName == "Making" && findOrder.OrderStatus.StatusName!="Making")
+                    {
+                        Order.UpdatedMakingAt = DateTime.Now;
+                    }
+                    else if (findOrderStatusId.StatusName == "Delivering" && findOrder.OrderStatus.StatusName != "Delivering")
+                    {
+                        Order.UpdatedDeliveringAt = DateTime.Now;
+                    }
+                    else if (findOrderStatusId.StatusName == "Delivered" && findOrder.OrderStatus.StatusName != "Delivered")
+                    {
+                        Order.UpdatedDeliveredAt = DateTime.Now;
+                    }
+                    else if (findOrderStatusId.StatusName == "Canceled" && findOrder.OrderStatus.StatusName != "Canceled")
+                    {
+                        Order.UpdatedCancelledAt = DateTime.Now;
+                    }
+                    else if (findOrderStatusId.StatusName == "Returned" && findOrder.OrderStatus.StatusName != "Returned")
+                    {
+                        Order.UpdatedReturnedAt = DateTime.Now;
+                    }
+                    else if (findOrderStatusId.StatusName == "Waiting" && findOrder.OrderStatus.StatusName != "Waiting")
+                    {
+                        Order.UpdatedWaitingAt = DateTime.Now;
+                    }
+                    else if (findOrderStatusId.StatusName == "DeActive" && findOrder.OrderStatus.StatusName != "DeActive")
+                    {
+                        Order.UpdatedDeActiveAt = DateTime.Now;
+                    }
+                    _context.Entry(findOrder).State = EntityState.Detached; 
+                    _context.Orders.Update(Order);
+                }
 
                 try
                 {

@@ -66,6 +66,17 @@ namespace ContosoPizza.Models.Generated
         public bool IsCustomerMember { get; set; }
         public string? NoneCustomerMemberPhoneNumber { get; set; }
         public string? NoneCustomerMemberEmailAddress { get; set; }
+        public DateTime? UpdatedMakingAt { get; set; }
+        public DateTime? UpdatedWaitingAt { get; set; }
+        public DateTime? UpdatedDeliveringAt { get; set; }
+        public DateTime? UpdatedDeliveredAt { get; set; }
+        public DateTime? UpdatedCancelledAt { get; set; }
+        public DateTime? UpdatedReturnedAt { get; set; }
+        public DateTime? UpdatedDeActiveAt { get; set; }
+        public bool? IsOverWaitingTime { get; set; } = false;
+        public bool? IsOverMakingTime { get; set; } = false;
+        public bool? IsOverDeliveringTime { get; set; } = false;
+        public string? OrderNotification { get; set; }
 
     }
 }

@@ -9,66 +9,131 @@
 
 
 <div class="padding-to-all row tab-content ftco-animate">
-    <div class="col-md-6">
-        <div class="col-sm-12 text-center">
-            <h1>Details</h1>
-            <h4>Product</h4>
-            <hr />
+    @if (HttpContext.Session.GetString("UserRole") == null || HttpContext.Session.GetString("UserRole") == "Customer")
+    {
+        <div class="col-md-6">
+            <div class="col-sm-12 text-center">
+                <h1>Details</h1>
+                <h4>Product</h4>
+                <hr />
+            </div>
+            <dl class="row col-sm-12">
+                <dt class="col-sm-3">
+                    Product Name
+                </dt>
+                <dd class="col-sm-9">
+                    @Html.DisplayFor(model => model.Product.ProductName)
+                </dd>
+                <dt class="col-sm-3">
+                    @Html.DisplayNameFor(model => model.Product.Description)
+                </dt>
+                <dd class="col-sm-9">
+                    @Html.DisplayFor(model => model.Product.Description)
+                </dd>
+                <dt class="col-sm-3">
+                    @Html.DisplayNameFor(model => model.Product.UnitPrice)
+                </dt>
+                <dd class="col-sm-9">
+                    $@Html.DisplayFor(model => model.Product.UnitPrice)
+                </dd>
+                <dt class="col-sm-3">
+                    @Html.DisplayNameFor(model => model.Product.Category)
+                </dt>
+                <dd class="col-sm-9">
+                    @Model.Product.Category.CategoryName
+                </dd>
+                <dt class="col-sm-3">
+                    @Html.DisplayNameFor(model => model.Product.Materials)
+                </dt>
+                <dd class="col-sm-9">
+                    @Model.Product.Materials
+                </dd>
+                <dt class="col-sm-3">
+                    @Html.DisplayNameFor(model => model.Product.Image)
+                </dt>
+                <dd class="col-sm-9">
+                    <img src="@Model.Product.Image" alt="Image" style="max-width: 200px; max-height: 200px;" />
+                </dd>
+            </dl>
         </div>
-        <dl class="row col-sm-12">
-            <dt class="col-sm-3">
-                @Html.DisplayNameFor(model => model.Product.ProductName)
-            </dt>
-            <dd class="col-sm-9">
-                @Html.DisplayFor(model => model.Product.ProductName)
-            </dd>
-            <dt class="col-sm-3">
-                @Html.DisplayNameFor(model => model.Product.Description)
-            </dt>
-            <dd class="col-sm-9">
-                @Html.DisplayFor(model => model.Product.Description)
-            </dd>
-            <dt class="col-sm-3">
-                @Html.DisplayNameFor(model => model.Product.UnitPrice)
-            </dt>
-            <dd class="col-sm-9">
-                @Html.DisplayFor(model => model.Product.UnitPrice)
-            </dd>
-            <dt class="col-sm-3">
-                @Html.DisplayNameFor(model => model.Product.Category)
-            </dt>
-            <dd class="col-sm-9">
-                @Model.Product.Category.CategoryName
-            </dd>
-            <dt class="col-sm-3">
-                @Html.DisplayNameFor(model => model.Product.Materials)
-            </dt>
-            <dd class="col-sm-9">
-                @Model.Product.Materials
-            </dd>
-            <dt class="col-sm-3">
-                @Html.DisplayNameFor(model => model.Product.Image)
-            </dt>
-            <dd class="col-sm-9">
-                <img src="@Model.Product.Image" alt="Image" style="max-width: 200px; max-height: 200px;" />
-            </dd>
-        </dl>
-    </div>
-    <div class="col-md-6">
-        <div class="col-sm-12 text-center">
-            <h1>See other products</h1>
-            <h4>@Model.Other_similar_products_to_recent_product[0].Category.CategoryName</h4>
-            <hr />
+        <div class="col-md-6">
+            <div class="col-sm-12 text-center">
+                <h1>See other products</h1>
+                <h4>@Model.Other_similar_products_to_recent_product[0].Category.CategoryName</h4>
+                <hr />
+            </div>
+            <div class="column text-center">
+                @foreach (var item in @Model.Other_similar_products_to_recent_product)
+                {
+                    <a href="/Products/Details?id=@item.Id">
+                        <img src="@item.Image" width="200" height="200">
+                    </a>
+                }
+            </div>
         </div>
-        <div class="column text-center">
-            @foreach (var item in @Model.Other_similar_products_to_recent_product)
-            {
-                <a href="/Products/Details?id=@item.Id">
-                    <img src="@item.Image" width="200" height="200">
-                </a>
-            }
+    }else
+    {
+        <div class="col-md-5">
+            <div class="col-sm-12 text-center">
+                <h1>Details</h1>
+                <h4>Product</h4>
+                <hr />
+            </div>
+            <dl class="row col-sm-12">
+                <dt class="col-sm-4">
+                    Product Name
+                </dt>
+                <dd class="col-sm-8">
+                    @Html.DisplayFor(model => model.Product.ProductName)
+                </dd>
+                <dt class="col-sm-4">
+                    @Html.DisplayNameFor(model => model.Product.Description)
+                </dt>
+                <dd class="col-sm-8">
+                    @Html.DisplayFor(model => model.Product.Description)
+                </dd>
+                <dt class="col-sm-4">
+                    @Html.DisplayNameFor(model => model.Product.UnitPrice)
+                </dt>
+                <dd class="col-sm-8">
+                    $@Html.DisplayFor(model => model.Product.UnitPrice)
+                </dd>
+                <dt class="col-sm-4">
+                    @Html.DisplayNameFor(model => model.Product.Category)
+                </dt>
+                <dd class="col-sm-8">
+                    @Model.Product.Category.CategoryName
+                </dd>
+                <dt class="col-sm-4">
+                    @Html.DisplayNameFor(model => model.Product.Materials)
+                </dt>
+                <dd class="col-sm-8">
+                    @Model.Product.Materials
+                </dd>
+                <dt class="col-sm-4">
+                    @Html.DisplayNameFor(model => model.Product.Image)
+                </dt>
+                <dd class="col-sm-8">
+                    <img src="@Model.Product.Image" alt="Image" style="max-width: 200px; max-height: 200px;" />
+                </dd>
+            </dl>
         </div>
-    </div>
+        <div class="col-md-7">
+            <div class="col-sm-12 text-center">
+                <h1>See other products</h1>
+                <h4>@Model.Other_similar_products_to_recent_product[0].Category.CategoryName</h4>
+                <hr />
+            </div>
+            <div class="column text-center">
+                @foreach (var item in @Model.Other_similar_products_to_recent_product)
+                {
+                    <a href="/Products/Details?id=@item.Id">
+                        <img src="@item.Image" width="200" height="200">
+                    </a>
+                }
+            </div>
+        </div>
+    }
 </div>
 
 @if (HttpContextAccessor.HttpContext.Session.GetString("UserRole") == "Admin")
@@ -82,12 +147,12 @@
                 <span class="text min-width-button-CRUD">Edit</span>
             </a>
         </a> |
-        <a class="btn btn-primary" href="./?Page=@(Model.skippedcount/5+1)">Back to List</a>
+        <a class="btn btn-primary" href="./?Page=@(Model.skippedcount/6+1)">Back to List</a>
     </div>
 }else
 {
     <div class="text-center">
-        <a class="a-back-to-list" href="./?Page=@(Model.skippedcount/5+1)">Back to List</a>
+        <a class="a-back-to-list" href="./?Page=@(Model.skippedcount/6+1)">Back to List</a>
     </div>
 }
 

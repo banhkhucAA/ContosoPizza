@@ -14,7 +14,7 @@
         From: <input name="FromDate" type="date" asp-for="FromDate" value="" />
         &nbsp;&nbsp;&nbsp;&nbsp;
         To: <input name="ToDate" type="date" asp-for="ToDate" value="" />
-        <input type="submit" class="btn btn-primary" value="Search" />
+        <input type="hidden" class="btn btn-primary" value="Search" />
     </p>
     <p>
         Order by:
@@ -33,22 +33,22 @@
     <thead> 
         <tr>
             <th>
-                @Html.DisplayNameFor(model => model.reportEmployeeDtos[0].FullName)
+                Full Name
             </th>
             <th>
                 @Html.DisplayNameFor(model => model.reportEmployeeDtos[0].Role)
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.reportEmployeeDtos[0].DoneOrders)
+                Done Orders
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.reportEmployeeDtos[0].FailedOrders)
+                Failed Orders
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.reportEmployeeDtos[0].TotalMoneyOrders)
+                Total Money Orders
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.reportEmployeeDtos[0].SuccessfullMoneyOrders)
+                Successfull Money Orders
             </th>
             <th>
                 @Html.DisplayNameFor(model => model.reportEmployeeDtos[0].Discrepancy)
@@ -78,13 +78,13 @@
                         @Html.DisplayFor(modelItem => item.FailedOrders)
                     </td>
                     <td>
-                        @Html.DisplayFor(modelItem => item.TotalMoneyOrders)
+                        $@Html.DisplayFor(modelItem => item.TotalMoneyOrders)
                     </td>
                     <td>
-                        @Html.DisplayFor(modelItem => item.SuccessfullMoneyOrders)
+                        $@Html.DisplayFor(modelItem => item.SuccessfullMoneyOrders)
                     </td>
                     <td>
-                        @Html.DisplayFor(modelItem => item.Discrepancy)
+                        $@Html.DisplayFor(modelItem => item.Discrepancy)
                     </td>                 
                     <td>
                         <img src="@item.Image" alt="Image" style="max-width: 200px; max-height: 200px;" />
@@ -107,13 +107,13 @@
                         @Html.DisplayFor(modelItem => item.FailedOrders)
                     </td>
                     <td>
-                        @Html.DisplayFor(modelItem => item.TotalMoneyOrders)
+                        $@Html.DisplayFor(modelItem => item.TotalMoneyOrders)
                     </td>
                     <td>
-                        @Html.DisplayFor(modelItem => item.SuccessfullMoneyOrders)
+                        $@Html.DisplayFor(modelItem => item.SuccessfullMoneyOrders)
                     </td>
                     <td>
-                        @Html.DisplayFor(modelItem => item.Discrepancy)
+                        $@Html.DisplayFor(modelItem => item.Discrepancy)
                     </td>
                     <td></td>
                 </tr>
@@ -126,7 +126,7 @@
 <script> 
 
     document.addEventListener('DOMContentLoaded', function () {
-        const searchButton = document.querySelector('input[type="submit"]');
+        const searchButton = document.querySelector('input[type="hidden"]');
         let savedFromDate = localStorage.getItem('fromDate_EmployeeReport') || ''; // Lấy giá trị fromDate đã được lưu trữ từ trước (nếu có)
         let savedToDate = localStorage.getItem('toDate_EmployeeReport') || ''; // Lấy giá trị toDate đã được lưu trữ từ trước (nếu có)
         document.querySelector('input[name="FromDate"]').value = savedFromDate;

@@ -36,6 +36,8 @@ namespace ContosoPizza.Pages.Orders
         public Order Order { get; set; } = default!;
         [BindProperty]
         public Customer Customer { get; set; }
+        [BindProperty]
+        public List<CouponsOrdersDto?> CouponsOrdersDto { get; set; }
         public string ErrorMessage { get; set; }
         public List<OrderDetailDto> OrderDetails_Show { get; set; }
         public string emailstring;
@@ -58,8 +60,35 @@ namespace ContosoPizza.Pages.Orders
 
             // Đặt SelectList với danh sách đã chỉnh sửa
             ViewData["OrderStatusId"] = new SelectList(orderStatuses, "Id", "StatusName");
-            
-            var coupons = await _context.Coupons.ToListAsync();
+
+            var coupons = await _context.Coupons
+                    .Where(c => c.ExpireDate >= DateTime.Now || c.ExpireDate == null)
+                    .ToListAsync();
+
+            if (HttpContext.Session.GetString("UserRole") == "Customer")
+            {
+                var usedCoupons = await _context.Orders
+                    .Where(c => c.CustomerId == HttpContext.Session.GetInt32("UserId"))
+                    .Select(c => c.CouponId)
+                    .ToListAsync();
+
+                coupons = coupons
+                    .Where(c => !usedCoupons.Contains(c.Id))
+                    .ToList();
+            }
+
+            else if(HttpContext.Session.GetString("UserRole") == "Employee" && Request.Query.ContainsKey("customerId"))
+            {
+                var usedCoupons = await _context.Orders
+                    .Where(c => c.CustomerId == HttpContext.Session.GetInt32("customerId"))
+                    .Select(c => c.CouponId)
+                    .ToListAsync();
+
+                coupons = coupons
+                    .Where(c => !usedCoupons.Contains(c.Id))
+                    .ToList();
+            }    
+
             var selectCouponItems = new List<SelectListItem>()
             {
                 new SelectListItem{Value=null,Text="None"}
@@ -95,6 +124,7 @@ namespace ContosoPizza.Pages.Orders
                                     .FirstOrDefault();
             ViewData["EmployeeId"] = new SelectList(new List<EmployeeData> { employeeData }, "Id", "FullName");
 
+
             return Page();
         }
 
@@ -106,27 +136,36 @@ namespace ContosoPizza.Pages.Orders
             {
                 return Page();
             }
-          if(Order.NoneCustomerMemberEmailAddress == null)
-            {
-                ErrorMessage = "Warning! The Email Address field can not be null";
-                return await OnGet();
-            }else if(Order.NoneCustomerMemberPhoneNumber == null)
-            {
-                ErrorMessage = "Warning! The Phone field can not be null";
-                return await OnGet();
-            }   
                 
-            if (Order.IsCustomerMember==false && Order.CustomerId == null) Order.CouponId = null;
+            if (Order.IsCustomerMember==false && Order.CustomerId == null)
+            {
+                Order.CouponId = null;
+                if (Order.NoneCustomerMemberEmailAddress == null)
+                {
+                    ErrorMessage = "Warning! The Email Address field can not be null";
+                    return await OnGet();
+                }
+                else if (Order.NoneCustomerMemberPhoneNumber == null)
+                {
+                    ErrorMessage = "Warning! The Phone field can not be null";
+                    return await OnGet();
+                }
+            }    
             else 
             {
-                var already_used_Coupon = _context.Orders.Where(or => or.CouponId == Order.CouponId && or.CustomerId==Order.CustomerId &&or.Id!=Order.Id && Order.CouponId!=null).FirstOrDefault();
+                var already_used_Coupon = _context.Orders
+                    .Where(or => or.CouponId == Order.CouponId 
+                    && or.CustomerId == Order.CustomerId 
+                    && Order.CouponId!=null)
+                    .FirstOrDefault();
+
                 if(already_used_Coupon!=null)
                 {
                     ErrorMessage = "This coupon has already been used, please try another one.";
                     Console.WriteLine("couponId: " + Order.CouponId + " customerId:" + Order.CustomerId);
                     return await OnGet();
                 }
-                var expire_coupon_id = _context.Coupons.Where(cou=> cou.ExpireDate < DateTime.UtcNow).Select(cou=>cou.Id).ToList();
+                var expire_coupon_id = _context.Coupons.Where(cou=> cou.ExpireDate < DateTime.Now).Select(cou=>cou.Id).ToList();
                 foreach(var item in expire_coupon_id)
                 {
                     if(item==Order.CouponId)
@@ -135,15 +174,46 @@ namespace ContosoPizza.Pages.Orders
                         return await OnGet();
                     }    
                 }    
-            } 
-                
+            }
+
+            var findOrderStatusId = await _context.OrderStatuses.FirstOrDefaultAsync(or => or.Id == Order.OrderStatusId);
+
+            if(findOrderStatusId.StatusName=="Making") 
+            {
+                Order.UpdatedMakingAt = DateTime.Now;
+            }
+            else if (findOrderStatusId.StatusName == "Delivering")
+            {
+                Order.UpdatedDeliveringAt = DateTime.Now;
+            }
+            else if (findOrderStatusId.StatusName == "Delivered")
+            {
+                Order.UpdatedDeliveredAt = DateTime.Now;
+            }
+            else if (findOrderStatusId.StatusName == "Canceled")
+            {
+                Order.UpdatedCancelledAt = DateTime.Now;
+            }
+            else if (findOrderStatusId.StatusName == "Returned")
+            {
+                Order.UpdatedReturnedAt = DateTime.Now;
+            }
+            else if(findOrderStatusId.StatusName == "Waiting")
+            {
+                Order.UpdatedWaitingAt = DateTime.Now;
+            }
+            else if (findOrderStatusId.StatusName == "DeActive")
+            {
+                Order.UpdatedDeActiveAt = DateTime.Now;
+            }          
+
             _context.Orders.Add(Order);
             await _context.SaveChangesAsync();
             if (_httpContextAccessor.HttpContext.Session.GetString("UserRole") == "Employee")////employee
                 return Redirect($"/OrderDetails/Create?orderId={Order.Id}");
             else
             {
-                TempData["ErrorMessage"] = "Create your order successfully.";
+                
                 var orderDetailsJson = HttpContext.Session.GetString("OrderDetail_Show");
                 if (!string.IsNullOrEmpty(orderDetailsJson))
                 {
@@ -158,9 +228,28 @@ namespace ContosoPizza.Pages.Orders
                             TotalPrice = eachorderDetails.TotalPrice,
                         };
                         _context.OrderDetails.Add(orderDetails);
-                        Order.BillPrice += (float)orderDetails.TotalPrice;
-                        _context.Orders.Update(Order);                       
+                        Order.BillPrice += (float)orderDetails.TotalPrice;                      
                     }
+                    var Order_DeliveryPrice = await _context.DeliveryMethods
+                        .Where(d => d.Id == Order.DeliveryMethodId)
+                        .Select(d => d.Price)
+                        .FirstOrDefaultAsync();
+                    var Order_PaymentPrice = await _context.PaymentMethods
+                        .Where(p => p.Id == Order.PaymentMethodId)
+                        .Select (p => p.Price)
+                        .FirstOrDefaultAsync();
+                    decimal discount = 0;
+                    if (Order.CouponId != null)
+                    {
+                        var Order_FindDiscount = await _context.Coupons
+                            .Where(d => d.Id == Order.CouponId)
+                            .Select(p => p.DiscountAmount)
+                            .FirstOrDefaultAsync();
+
+                        discount = (decimal)(Order.BillPrice * Order_FindDiscount / 100);
+                    }
+                    Order.BillPrice = (float?)Math.Round((decimal)(Order_DeliveryPrice + Order_PaymentPrice + Order.BillPrice - (float?)discount), 2);
+                    _context.Orders.Update(Order);
                     await _context.SaveChangesAsync();
                     HttpContext.Session.SetInt32("OrderId", Order.Id);
                     await OnGetNewOrders(Order);
@@ -185,8 +274,22 @@ namespace ContosoPizza.Pages.Orders
             {
                 return NotFound("This customer doesn' exist");
             }
+            var orders_coupons = await _context.Orders
+                .Where(or => or.CustomerId == customer.Id)
+                .Where(or => or.Coupon.ExpireDate >= DateTime.Now || or.Coupon.ExpireDate == null)
+                .Where(or => or.CouponId != null)
+                .Select(or => new CouponsOrdersDto
+                {
+                    CouponCode = or.Coupon.CouponCode,
+                    CouponUsedAt = or.OrderPlacedAt
+                })
+                .ToListAsync();
 
             Customer = customer;
+            if (orders_coupons != null)
+            {
+                CouponsOrdersDto = orders_coupons;
+            }
             return await OnGet();
         }
 
@@ -208,7 +311,6 @@ namespace ContosoPizza.Pages.Orders
             }
             else
             {
-                Console.WriteLine("Khong co nut nao duoc bam");
                 return Page();
             }
         }
@@ -273,7 +375,7 @@ namespace ContosoPizza.Pages.Orders
                     smtp.Disconnect(true);
 
                     // Thông báo gửi email thành công
-                    ErrorMessage = "Email sent successfully to "+ emailstring + " !";
+                    TempData["ErrorMessage"] = "Create your order successfully. Please check your email "+ emailstring + " !";
                 }
             }
             catch (Exception ex)

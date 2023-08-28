@@ -15,24 +15,34 @@
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
             <input type="hidden" asp-for="Order.Id" />
             <div class="form-group">
-                <label asp-for="Order.OrderPlacedAt" class="control-label"></label>
+                <label asp-for="Order.OrderPlacedAt" class="control-label">Order Placed At</label>
                 <input asp-for="Order.OrderPlacedAt" class ="form-control" />
                 <span asp-validation-for="Order.OrderPlacedAt" class="text-danger"></span>
             </div>
             <div class="form-group">
-                <label asp-for="Order.OrderFullFilledAt" class="control-label"></label>
+                <label asp-for="Order.OrderFullFilledAt" class="control-label">Order Fullfilled At</label>
                 <input asp-for="Order.OrderFullFilledAt" class="form-control" />
                 <span asp-validation-for="Order.OrderFullFilledAt" class="text-danger"></span>
             </div>
             <div class="form-group">
-                <label asp-for="Order.EmployeeId" class="control-label"></label>
+                <label asp-for="Order.EmployeeId" class="control-label">Employee</label>
                 <select asp-for="Order.EmployeeId" class="form-control" asp-items="@ViewBag.EmployeeId" readonly></select>
             </div>         
-            <div class="form-group form-check" readonly>
-                <label class="form-check-label" readonly>
-                    <input id="IsCustomerMember" class="form-check-input" asp-for="Order.IsCustomerMember" readonly />
-                    @Html.DisplayNameFor(model => model.Order.IsCustomerMember)
-                </label>
+            <div class="form-group form-check">
+                @if (Model.Order.IsCustomerMember)
+                {
+                    <label class="form-check-label">
+                        <input id="IsCustomerMember" class="form-check-input" asp-for="Order.IsCustomerMember" checked readonly />
+                        @Html.DisplayNameFor(model => model.Order.IsCustomerMember)
+                    </label>
+                }
+                else
+                {
+                    <label class="form-check-label">
+                        <input id="IsCustomerMember" class="form-check-input" asp-for="Order.IsCustomerMember" disabled />
+                        @Html.DisplayNameFor(model => model.Order.IsCustomerMember)
+                    </label>
+                }
                 <input type="hidden" asp-for="Order.IsCustomerMember" />
             </div>
             <div class="form-group" id="PhoneNumber">
@@ -45,117 +55,59 @@
             </div>
             <div class="form-group" id="CustomerIdContainer" style="display: none;">
                 <label asp-for="Order.CustomerId" class="control-label">Customer</label>
-                <select asp-for="Order.CustomerId" class="form-control" asp-items="ViewBag.CustomerId" readonly></select>
+                <select asp-for="Order.CustomerId" class="form-control" asp-items="ViewBag.CustomerId" style="pointer-events: none;" readonly></select>
             </div>
             <div class="form-group" id="CouponIdContainer" style="display: none;">
                 <label asp-for="Order.CouponId" class="control-label">Coupon Code</label>
-                <select asp-for="Order.CouponId" class="form-control" asp-items="ViewBag.CouponId" readonly></select>
+                <select asp-for="Order.CouponId" class="form-control" asp-items="ViewBag.CouponId" style="pointer-events: none;" readonly></select>
             </div>
             <div class="form-group">
-                <label asp-for="Order.OrderStatusId" class="control-label"></label>
+                <label asp-for="Order.OrderStatusId" class="control-label">Order Status</label>
                 <select asp-for="Order.OrderStatusId" class="form-control" asp-items="ViewBag.OrderStatusId"></select>
                 <span asp-validation-for="Order.OrderStatusId" class="text-danger"></span>
             </div>
             <div class="form-group">
-                <label asp-for="Order.DeliveryMethodId" class="control-label"></label>
+                <label asp-for="Order.DeliveryMethodId" class="control-label">Delivery Method</label>
                 <select asp-for="Order.DeliveryMethodId" class="form-control" asp-items="ViewBag.DeliveryMethodId"></select>
                 <span asp-validation-for="Order.DeliveryMethodId" class="text-danger"></span>
             </div>
             <div class="form-group">
-                <label asp-for="Order.PaymentMethodId" class="control-label"></label>
+                <label asp-for="Order.PaymentMethodId" class="control-label">Payment Method</label>
                 <select asp-for="Order.PaymentMethodId" class="form-control" asp-items="ViewBag.PaymentMethodId"></select>
                 <span asp-validation-for="Order.PaymentMethodId" class="text-danger"></span>
             </div>
             <div class="form-group">
-                <label asp-for="Order.PlacedAddress" class="control-label"></label>
+                <label asp-for="Order.PlacedAddress" class="control-label">Customer's Placed Adress</label>
                 <input asp-for="Order.PlacedAddress" class="form-control" />
                 <span asp-validation-for="Order.PlacedAddress" class="text-danger"></span>
             </div>
             <div class="form-group">
-                <input type="submit" value="Save" name="saveButton" class="btn btn-primary" />
+                <input type="hidden" asp-for="Order.UpdatedCancelledAt" />
+                <input type="hidden" asp-for="Order.UpdatedDeActiveAt" />
+                <input type="hidden" asp-for="Order.UpdatedDeliveredAt" />
+                <input type="hidden" asp-for="Order.UpdatedDeliveringAt" />
+                <input type="hidden" asp-for="Order.UpdatedMakingAt" />
+                <input type="hidden" asp-for="Order.UpdatedReturnedAt" />
+                <input type="hidden" asp-for="Order.UpdatedWaitingAt" />
+                <input type="hidden" asp-for="Order.OrderNotification"/>
             </div>
+            <span class="row" style="padding-top:10px">
+                <span class="form-group btn btn-success btn-icon-split">
+                    <span class="icon text-white-50">
+                        <i class="fas fa-check"></i>
+                    </span>
+                    <input type="submit" value="Save" name="saveButton" style="background-color:#1cc88a; border:none;" />
+                </span>
+                &nbsp
+                <div>
+                    |
+                    <a class="btn btn-primary" asp-page="./Index">Back to list</a>
+                </div>
+            </span>
         </form>
-    </div>
-
-    <div class="col-md-2"></div>
-
-    <div class="col-md-4">
-        <h1>Find</h1>
-
-        <h4>Customer Member</h4>
-        <hr />
-        <form method="post">
-            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-            <input type="hidden" asp-for="Order.Id" />
-            <input type="hidden" asp-for="Order.PlacedAddress" />
-            <div class="form-group">
-                <label asp-for="Customer.Email" class="control-label"></label>
-                <input asp-for="Customer.Email" class="form-control" placeholder="Enter Customer's email here" />
-                <span asp-validation-for="Customer.Email" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <input type="submit" value="Find" name="findButton" class="btn btn-primary" />
-            </div>
-        </form>
-        <table class="table">
-            <thead>
-                <tr>
-                    <th>|</th>
-                    <th>
-                        @Html.DisplayNameFor(model=>model.Customer.Id)
-                    </th>
-                    <th>
-                        @Html.DisplayNameFor(model=>model.Customer.LastName)
-                    </th>
-                    <th>|</th>
-                    <th>
-                        @Html.DisplayNameFor(model=>model.Customer.Address)
-                    </th>
-                    <th>|</th>
-                    <th>
-                        @Html.DisplayNameFor(model=>model.Customer.Phone)
-                    </th>
-                    <th>|</th>
-                    <th>
-                        @Html.DisplayNameFor(model=>model.Customer.Email)
-                    </th>
-                    <th>|</th>
-                </tr>
-            </thead>
-
-            <tbody>
-                <tr>
-                    <th>|</th>
-                    <th>
-                        @Html.DisplayFor(model=>model.Customer.Id)
-                    </th>
-                    <th>
-                        @Html.DisplayFor(model=>model.Customer.LastName)
-                    </th>
-                    <th>|</th>
-                    <th>
-                        @Html.DisplayFor(model=>model.Customer.Address)
-                    </th>
-                    <th>|</th>
-                    <th>
-                        @Html.DisplayFor(model=>model.Customer.Phone)
-                    </th>
-                    <th>|</th>
-                    <th>
-                        @Html.DisplayFor(model=>model.Customer.Email)
-                    </th>
-                    <th>|</th>
-                </tr>
-            </tbody>
-        </table>
     </div>
 </div>
 
-
-
-<div>
-    <a asp-page="Index">Back to list</a>
-</div>
 
 <!-- Các trường mã HTML -->
 @section Scripts {

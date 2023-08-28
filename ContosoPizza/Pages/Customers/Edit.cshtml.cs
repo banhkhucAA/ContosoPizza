@@ -75,7 +75,13 @@ namespace ContosoPizza.Pages.Customers
                 }
             }
 
-            return Redirect($"./Index?Page={curentPage}");
+            if (HttpContext.Session.GetString("UserRole") == "Admin")
+                return Redirect($"./Index?Page={curentPage}");
+            else
+            {
+                ErrorMessage = "Update your information successfully";
+                return Page();
+            }
         }
 
         private bool CustomerExists(int id)

@@ -30,19 +30,19 @@
                 <div asp-validation-summary="ModelOnly" class="text-danger"></div>
                 <input type="hidden" asp-for="Order.Id" />
                 <div class="form-group">
-                    <label asp-for="Order.OrderPlacedAt" class="control-label"></label>
+                    <label asp-for="Order.OrderPlacedAt" class="control-label">Order Placed At</label>
                     <input asp-for="Order.OrderPlacedAt" class="form-control" readonly />
                     <span asp-validation-for="Order.OrderPlacedAt" class="text-danger"></span>
                 </div>
                 <div class="form-group">
-                    <label asp-for="Order.OrderFullFilledAt" class="control-label"></label>
+                    <label asp-for="Order.OrderFullFilledAt" class="control-label">Order Fullfilled At</label>
                     <input asp-for="Order.OrderFullFilledAt" class="form-control" readonly />
                     <span asp-validation-for="Order.OrderFullFilledAt" class="text-danger"></span>
                 </div>
                 @if (Model.Order.Employee != null)
                 {
                     <div class="form-group">
-                        <label asp-for="Order.EmployeeId" class="control-label"></label>
+                        <label asp-for="Order.EmployeeId" class="control-label">Employee</label>
                         <input class="form-control" value="@Model.Order.Employee.FirstName @Model.Order.Employee.LastName" readonly />
                     </div>
                 }
@@ -53,26 +53,26 @@
                     </label>
                 </div>
                 <div class="form-group">
-                    <label asp-for="Order.CustomerId" class="control-label">CustomerName</label>
-                    @if (Model.Order.Customer != null && Model.Order.Customer.FirstName != null)
+                    <label asp-for="Order.CustomerId" class="control-label">Customer Name</label>
+                    @if (Model.Order.Customer != null && Model.Order.Customer.FirstName != null && Model.Order.Customer.LastName != null)
                     {
-                        <input class="form-control" readonly value="@Model.Order.Customer.FirstName" />
+                        <input class="form-control" readonly value="@Model.Order.Customer.FirstName @Model.Order.Customer.LastName" />
                     }
                     else
                     {
                         <input class="form-control" readonly />
                         <div class="form-group">
-                            <label asp-for="Order.NoneCustomerMemberEmailAddress" class="control-label">EmailAddress</label>
+                            <label asp-for="Order.NoneCustomerMemberEmailAddress" class="control-label">Email Address</label>
                             <input asp-for="Order.NoneCustomerMemberEmailAddress" class="form-control" value="@Model.Order.NoneCustomerMemberEmailAddress" readonly />
                         </div>
                         <div class="form-group">
-                            <label asp-for="Order.NoneCustomerMemberPhoneNumber" class="control-label">PhoneNumber</label>
+                            <label asp-for="Order.NoneCustomerMemberPhoneNumber" class="control-label">Phone Number</label>
                             <input asp-for="Order.NoneCustomerMemberPhoneNumber" class="form-control" value="@Model.Order.NoneCustomerMemberPhoneNumber" readonly />
                         </div>
                     }
                 </div>
                 <div class="form-group">
-                    <label asp-for="Order.CouponId" class="control-label">CouponCode</label>
+                    <label asp-for="Order.CouponId" class="control-label">Coupon Code</label>
                     @if (Model.Order.Coupon != null && Model.Order.Coupon.CouponCode != null)
                     {
                         <input class="form-control" readonly value="@Model.Order.Coupon.CouponCode" />
@@ -83,32 +83,32 @@
                     }
                 </div>
                 <div class="form-group">
-                    <label asp-for="Order.OrderStatusId" class="control-label">OrderStatus</label>
+                    <label asp-for="Order.OrderStatusId" class="control-label">Order Status</label>
                     <input class="form-control" value="@Model.Order.OrderStatus.StatusName" readonly />
                 </div>
                 <div class="form-group">
-                    <label asp-for="Order.DeliveryMethodId" class="control-label">DeliveryMethod</label>
+                    <label asp-for="Order.DeliveryMethodId" class="control-label">Delivery Method</label>
                     <input class="form-control" value="@Model.Order.DeliveryMethod.Method" readonly />
                 </div>
                 <div class="form-group">
-                    <label asp-for="Order.PaymentMethodId" class="control-label">PaymentMethod</label>
+                    <label asp-for="Order.PaymentMethodId" class="control-label">Payment Method</label>
                     <input class="form-control" value="@Model.Order.PaymentMethod.Method" readonly />
                 </div>
                 <div class="form-group">
-                    <label asp-for="Order.PlacedAddress" class="control-label">PlacedAddress</label>
+                    <label asp-for="Order.PlacedAddress" class="control-label">Customer's placed address</label>
                     <input asp-for="Order.PlacedAddress" class="form-control" value="@Model.Order.PlacedAddress" readonly />
-                </div>
+                </div>              
             </div>
         </div>
     }
 
-    <div class="col-md-2"></div>
+    <div class="col-md-1"></div>
 
     @if (HttpContextAccessor.HttpContext.Session.GetString("UserRole") == "Employee" || HttpContextAccessor.HttpContext.Session.GetString("UserRole") == "Admin")
         {
 
-        <div class="col-md-6">
-            @if (HttpContextAccessor.HttpContext.Session.GetString("UserRole") == "Employee")
+        <div class="col-md-7">
+            @if (HttpContextAccessor.HttpContext.Session.GetString("UserRole") == "Employee" && Model.Order.OrderStatus.IsActive == true)
             {
                 <h1>Create</h1>
 
@@ -129,13 +129,21 @@
                 <input type="hidden" asp-for="Order.IsCustomerMember" />
                 <input type="hidden" asp-for="Order.NoneCustomerMemberEmailAddress" />
                 <input type="hidden" asp-for="Order.NoneCustomerMemberPhoneNumber" />
+                <input type="hidden" asp-for="Order.UpdatedCancelledAt" />
+                <input type="hidden" asp-for="Order.UpdatedDeActiveAt" />
+                <input type="hidden" asp-for="Order.UpdatedDeliveredAt" />
+                <input type="hidden" asp-for="Order.UpdatedDeliveringAt" />
+                <input type="hidden" asp-for="Order.UpdatedMakingAt" />
+                <input type="hidden" asp-for="Order.UpdatedReturnedAt" />
+                <input type="hidden" asp-for="Order.UpdatedWaitingAt" />
+                <input type="hidden" asp-for="Order.OrderNotification" />
                 <div class="form-group">
                     <label asp-for="OrderDetail.OrderId" class="control-label"></label>
                     <input asp-for="OrderDetail.OrderId" readonly class="form-control" value="@Model.Order.Id" style="max-width: 300px" />
                     <span asp-validation-for="OrderDetail.OrderId" class="text-danger"></span>
                 </div>
                 <div class="form-group">
-                    <label asp-for="OrderDetail.ProductId" class="control-label"></label>
+                    <label asp-for="OrderDetail.ProductId" class="control-label">Product</label>
                     <select asp-for="OrderDetail.ProductId" class="form-control" asp-items="ViewBag.ProductId" style="max-width: 300px"></select>
                 </div>
                 <div class="form-group">
@@ -167,62 +175,72 @@
                         <th></th>
                     </tr>
                 </thead>
-                <tbody>
-                    @foreach (var item in Model.OrderDetails_Show)
-                    {
-                        <tr>
-                            <td>
-                                @Html.DisplayFor(modelItem => item.Product.ProductName)
-                            </td>
-                            <td>
-                                @Html.DisplayFor(modelItem => item.Quantity)
-                            </td>
-                            <td>
-                                @Html.DisplayFor(modelItem => item.TotalPrice)
-                            </td>
-                            <td>
-                                <img src="@item.Product.Image" alt="Image" style="max-width: 200px; max-height: 200px;" />
-                            </td>
-                            @if (HttpContextAccessor.HttpContext.Session.GetString("UserRole") == "Employee")
-                            {
-                                <td>                                                     
-                                    <a asp-page="./Edit" asp-route-id="@item.Id">Edit</a> |
-                                    <a asp-page="./Delete" asp-route-id="@item.Id">Delete</a> |
+                <form method="post">
+                    <tbody>
+                        @for (int i = 0; i < Model.OrderDetails_Show.Count; i++)
+                        {
+                            var item = Model.OrderDetails_Show[i];
+                            <tr>
+                                <td>
+                                    @Html.DisplayFor(modelItem => item.Product.ProductName)
                                 </td>
-                            }
-                        </tr>
-                         {Bill = Bill+(float)item.TotalPrice; }
-                    }
-                </tbody>
+                                <td>
+                                    <input type="number" asp-for="@Model.OrderDetails_Show[i].Quantity" value="@item.Quantity" min="1" max="100" />
+                                    <input type="hidden" asp-for="@Model.OrderDetails_Show[i].ProductId" value="@item.ProductId" />
+                                    <input type="hidden" asp-for="@Model.OrderDetails_Show[i].OrderId" value="@item.OrderId"/>
+                                    <input type="hidden" asp-for="@Model.OrderDetails_Show[i].Id" value="@item.Id"/>
+                                </td>
+                                <td>
+                                    $@Html.DisplayFor(modelItem => item.TotalPrice)
+                                </td>
+                                <td>
+                                    <img src="@item.Product.Image" alt="Image" style="max-width: 200px; max-height: 200px;" />
+                                </td>
+                                @if (HttpContextAccessor.HttpContext.Session.GetString("UserRole") == "Employee" && Model.Order.OrderStatus.IsActive == true && Model.OrderDetails_Show.Count > 0)
+                                {
+                                    <td>
+                                        <div>
+                                            <input type="submit" name="UpdateQuantity" value="Update" class="btn btn-primary btn-icon-split search">
+                                        </div>
+                                        <div>
+                                        <input type="submit" asp-route-id="@Model.OrderDetails_Show[i].Id" name="DeleteProduct" value="Delete" class="btn btn-danger btn-icon-split">
+                                        </div>
+                                    </td>
+                                }
+                            </tr>
+                             {Bill = Bill+(float)item.TotalPrice; }
+                        }
+                    </tbody>
+                </form>
             </table>
 
-            <div>DeliveryMethod Price: @Model.Order.DeliveryMethod.Price $</div>
-                    <div>PaymentMethod Price: @(Model.Order.PaymentMethod.Price) $</div>
+            <div>Delivery Price: $@Model.Order.DeliveryMethod.Price</div>
+                    <div>Payment Price: $@(Model.Order.PaymentMethod.Price)</div>
                 @if (Model.Order.Coupon==null)
                 {
-                    <div>Total Discount: 0 $</div>
-                    <div>Total Price: @(Math.Round(Bill + @Model.Order.DeliveryMethod.Price + @Model.Order.PaymentMethod.Price, 2)) $</div>
+                    <div>Total Discount: $0</div>
+                    <div>Total Price: $@(Math.Round(Bill + @Model.Order.DeliveryMethod.Price + @Model.Order.PaymentMethod.Price, 2))</div>
                     @if (HttpContextAccessor.HttpContext.Session.GetString("UserRole") == "Customer")
                     {
                         <hr />
                         <div>Order placed at: @Model.Order.OrderPlacedAt</div>
                         @if(Model.Order.OrderFullFilledAt!=null)
                         {
-                            <div>Order placed at: @Model.Order.OrderPlacedAt</div>
+                            <div>Order fullfilled at: @Model.Order.OrderFullFilledAt</div>
                         }
                     }
                 }else
                 {
-                    <div>Total Discount:@(Math.Round((float)Bill * @Model.Order.Coupon.DiscountAmount/100, 2)) $</div>
+                    <div>Total Discount: $@(Math.Round((float)Bill * @Model.Order.Coupon.DiscountAmount/100, 2))</div>
                     var totalPrice = Math.Round(Bill + @Model.Order.DeliveryMethod.Price + @Model.Order.PaymentMethod.Price - (float)(Bill * @Model.Order.Coupon.DiscountAmount / 100), 2);
-                    <div>Total Price: @(Math.Round(totalPrice, 2)) $</div>
+                    <div>Total Price: $@(Math.Round(totalPrice, 2))</div>
                     @if (HttpContextAccessor.HttpContext.Session.GetString("UserRole") == "Customer")
                     {
                         <hr />
                         <div>Order placed at: @Model.Order.OrderPlacedAt</div>
                         @if (Model.Order.OrderFullFilledAt != null)
                         {
-                            <div>Order placed at: @Model.Order.OrderPlacedAt</div>
+                        <div>Order fullfilled at: @Model.Order.OrderFullFilledAt</div>
                         }
                     }
                 }
@@ -231,100 +249,115 @@
                     <form method="post">
                         <div class="form-group">
                             <input type="hidden" asp-for="Order.Id" />
-                            <input type="submit" value="Send email/Finish order" name="SendEmail" class="btn btn-primary" />
+                            <input type="submit" value="Send email/Finish order" name="SendEmail" class="btn btn-primary" style="background-color:orange"/>
                         </div>
                     </form>
                 }
-                @if (HttpContextAccessor.HttpContext.Session.GetString("UserRole") == "Employee" || HttpContextAccessor.HttpContext.Session.GetString("UserRole") == "Customer")
+                @if (HttpContextAccessor.HttpContext.Session.GetString("UserRole") == "Employee")
                 {
-                    <a href="/Orders/Index">Back to List</a>
+                    <a class="btn btn-primary" href="/Orders/Index">Back to List</a>
                 }else
                 {
-                    <a href="/StatisticalReport/ReportOrder?OrderBy=">Back to Order Report</a>
+                <a class="btn btn-primary" href="/StatisticalReport/ReportOrder?OrderBy=">Back to Order Report</a>
             }
             </div>
         }
     
-    
+    /////customer
         else if ((HttpContextAccessor.HttpContext.Session.GetString("UserRole") == "Customer"))
         {
-    <h1 class="text-center">Your recent items</h1>
+        <h1 class="text-center">Your recent items</h1>
 
-    <h4 class="text-center">Order Details</h4>
-    <hr />
-        <div class="text-center">
-                <table class="table mx-auto" style="max-width:60%">
-                    <thead>
-                        <tr>
-                            <th>@Html.DisplayNameFor(model => model.OrderDetails_Show[0].Product.ProductName)</th>
-                            <th>@Html.DisplayNameFor(model => model.OrderDetails_Show[0].Quantity)</th>
-                            <th>@Html.DisplayNameFor(model => model.OrderDetails_Show[0].TotalPrice)</th>
-                            <th>@Html.DisplayNameFor(model => model.OrderDetails_Show[0].Product.Image)</th>
-                            <th></th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        @foreach (var item in Model.OrderDetails_Show)
-                        {
+        <h4 class="text-center">Order Details</h4>
+        <hr />
+            <div class="text-center">
+                    <table class="table mx-auto" style="max-width:60%">
+                        <thead>
                             <tr>
-                                <td>
-                                    @Html.DisplayFor(modelItem => item.Product.ProductName)
-                                </td>
-                                <td>
-                                    @Html.DisplayFor(modelItem => item.Quantity)
-                                </td>
-                                <td>
-                                    @Html.DisplayFor(modelItem => item.TotalPrice)
-                                </td>
-                                <td>
-                                    <img src="@item.Product.Image" alt="Image" style="max-width: 200px; max-height: 200px;" />
-                                </td>                       
+                                <th>@Html.DisplayNameFor(model => model.OrderDetails_Show[0].Product.ProductName)</th>
+                                <th>@Html.DisplayNameFor(model => model.OrderDetails_Show[0].Quantity)</th>
+                                <th>@Html.DisplayNameFor(model => model.OrderDetails_Show[0].TotalPrice)</th>
+                                <th>@Html.DisplayNameFor(model => model.OrderDetails_Show[0].Product.Image)</th>
+                                <th></th>
                             </tr>
-                            { Bill = Bill + (float)item.TotalPrice; }
-                        }
-                    </tbody>
-                </table>
+                        </thead>
+                        <tbody>
+                            @foreach (var item in Model.OrderDetails_Show)
+                            {
+                                <tr>
+                                    <td>
+                                        @Html.DisplayFor(modelItem => item.Product.ProductName)
+                                    </td>
+                                    <td>
+                                        @Html.DisplayFor(modelItem => item.Quantity)
+                                    </td>
+                                    <td>
+                                        $@Html.DisplayFor(modelItem => item.TotalPrice)
+                                    </td>
+                                    <td>
+                                        <img src="@item.Product.Image" alt="Image" style="max-width: 200px; max-height: 200px;" />
+                                    </td>                       
+                                </tr>
+                                { Bill = Bill + (float)item.TotalPrice; }
+                            }
+                        </tbody>
+                    </table>
             
 
-            <div>DeliveryMethod Price: @Model.Order.DeliveryMethod.Price $</div>
-            <div>PaymentMethod Price: @(Model.Order.PaymentMethod.Price) $</div>
-            @if (Model.Order.Coupon == null)
-            {
-                <div>Total Discount: 0 $</div>
-                <div>Total Price: @(Math.Round(Bill + @Model.Order.DeliveryMethod.Price + @Model.Order.PaymentMethod.Price, 2)) $</div>
-                @if (HttpContextAccessor.HttpContext.Session.GetString("UserRole") == "Customer")
+                <div>Delivery Price: $@Model.Order.DeliveryMethod.Price</div>
+                <div>Payment Price: $@(Model.Order.PaymentMethod.Price)</div>
+                @if (Model.Order.Coupon == null)
                 {
-                    <hr />
-                    <div>Order placed at: @Model.Order.OrderPlacedAt</div>
-                    @if (Model.Order.OrderFullFilledAt != null)
+                    <div>Total Discount: $0</div>
+                    <div>Total Price: $@(Math.Round(Bill + @Model.Order.DeliveryMethod.Price + @Model.Order.PaymentMethod.Price, 2))</div>
+                    @if (HttpContextAccessor.HttpContext.Session.GetString("UserRole") == "Customer")
                     {
+                        <hr />
                         <div>Order placed at: @Model.Order.OrderPlacedAt</div>
+                        @if (Model.Order.OrderFullFilledAt != null)
+                        {
+                            <div>Order fullfilled at: @Model.Order.OrderFullFilledAt</div>
+                        }
                     }
                 }
-            }
-            else
-            {
-                <div>Total Discount:@(Math.Round((float)Bill * @Model.Order.Coupon.DiscountAmount / 100, 2)) $</div>
-                var totalPrice = Math.Round(Bill + @Model.Order.DeliveryMethod.Price + @Model.Order.PaymentMethod.Price - (float)(Bill * @Model.Order.Coupon.DiscountAmount / 100), 2);
-                <div>Total Price: @(Math.Round(totalPrice, 2)) $</div>
-
-                    <hr />
-                    <div>Order placed at: @Model.Order.OrderPlacedAt</div>
-                    @if (Model.Order.OrderFullFilledAt != null)
-                    {
-                        <div>Order placed at: @Model.Order.OrderPlacedAt</div>
-                    }
-
-            }
-            @if (HttpContextAccessor.HttpContext.Session.GetString("UserRole") == "Employee" || HttpContextAccessor.HttpContext.Session.GetString("UserRole") == "Customer")
-            {
+                else
+                {
+                    <div>Total Discount: $@(Math.Round((float)Bill * @Model.Order.Coupon.DiscountAmount / 100, 2))</div>
+                    var totalPrice = Math.Round(Bill + @Model.Order.DeliveryMethod.Price + @Model.Order.PaymentMethod.Price - (float)(Bill * @Model.Order.Coupon.DiscountAmount / 100), 2);
+                    <div>Total Price: $@(Math.Round(totalPrice, 2))</div>
+                }
+                @if (@Model.Order.OrderStatus.StatusName == "Making")
+                {
+                    <p style="color:red; font-weight:bold">Your order is making. Contact us if there is any problem.</p>
+                }
+                else if (@Model.Order.OrderStatus.StatusName == "Delivering")
+                {
+                    <p style="color:red; font-weight:bold">Your order is being delivered. Contact us if there is any problem.</p>
+                }
+                else if (@Model.Order.OrderStatus.StatusName == "Delivered")
+                {
+                    <p style="color:red; font-weight:bold">Your order has been delivered successfully. Contact us if there is any problem.</p>
+                }
+                else if (@Model.Order.OrderStatus.StatusName == "Canceled")
+                {
+                    <p style="color:red; font-weight:bold">Your order has been cancelled. Contact us if there is any problem.</p>
+                }
+                else if (@Model.Order.OrderStatus.StatusName == "Returned")
+                {
+                    <p style="color:red; font-weight:bold">Your order has been returned. Contact us if there is any problem.</p>
+                }
+                else if (@Model.Order.OrderStatus.StatusName == "Waiting")
+                {
+                    <p style="color:red; font-weight:bold">Your order is waiting in line. Contact us if there is any problem.</p>
+                }
+                else if (@Model.Order.OrderStatus.StatusName == "Delivering")
+                {
+                    <p style="color:red; font-weight:bold">Your order has been deactivated. Contact us if there is any problem.</p>
+                }
+                
                 <a class="a-back-to-list" href="/Orders/Index">Back to List</a>
-            }
-            else
-            {
-                <a class="a-back-to-list" href="/StatisticalReport/ReportOrder?OrderBy=">Back to Order Report</a>
-            }
-    </div>
+
+        </div>
         }
 </div> 
 

@@ -9,7 +9,7 @@
     <meta name="description" content="">
     <meta name="author" content="">
 
-    <title>Pizza Delicious</title>
+    <title>Pizza Steve</title>
 
     <!-- Custom fonts for this template-->
     <link href="/bootstrapAdmin/vendor/fontawesome-free/css/all.min.css" rel="stylesheet" type="text/css">
@@ -34,7 +34,7 @@
                 <!-- Sidebar - Brand -->
                 <a class="sidebar-brand d-flex align-items-center justify-content-center" href="/Employees/Index">
                     <span style="font-size:50px"class="flaticon-pizza-1 mr-1"></span>
-                    <div class="sidebar-brand-text mx-3">Pizza Delicious</div>
+                    <div class="sidebar-brand-text mx-3">Pizza Steve</div>
                 </a>
 
                 <hr class="sidebar-divider d-none d-md-block">
@@ -260,7 +260,7 @@
                                    data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                                     <span class="mr-2 d-none d-lg-inline text-gray-600 small">Hello, @HttpContextAccessor.HttpContext.Session.GetString("UserName").ToString()</span>
                                     <img class="img-profile rounded-circle"
-                                         src="/bootstrapAdmin/img/undraw_profile.svg">
+                                     src="@HttpContextAccessor.HttpContext.Session.GetString("UserImage").ToString()">
                                 </a>
                                 <!-- Dropdown - User Information -->
                                 <div class="dropdown-menu dropdown-menu-right shadow animated--grow-in"
@@ -313,7 +313,7 @@
 
     <footer style="padding-top:10px" class="border-top footer text-muted">
         <div class="container">
-            &copy; 2023 - ContosoPizza - <a asp-area="" asp-page="/Privacy">Privacy</a>
+            &copy; 2023 - PizzaSteve - <a asp-area="" asp-page="/Privacy">Privacy</a>
         </div>
     </footer>  
 

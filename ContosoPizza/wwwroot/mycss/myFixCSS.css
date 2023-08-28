@@ -197,3 +197,11 @@ h3 small {
     color:black;
 }
 
+.img-profile {
+    height: 2rem !important;
+    width: 2rem !important;
+}
+
+.rounded-circle {
+    border-radius: 50% !important;
+}

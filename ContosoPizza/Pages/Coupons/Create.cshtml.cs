@@ -42,8 +42,13 @@ namespace ContosoPizza.Pages.Coupons
             {
                 ErrorMessage = "This Coupon Code: "+ Coupon.CouponCode +" has already existed";
                 return Page();
-            }    
-
+            }
+            if (Coupon.ExpireDate < DateTime.Now) 
+            {
+                ErrorMessage = "Can't create a coupon that has expired date smaller than today";
+                return Page();
+            } 
+                
             _context.Coupons.Add(Coupon);   
             await _context.SaveChangesAsync();
 

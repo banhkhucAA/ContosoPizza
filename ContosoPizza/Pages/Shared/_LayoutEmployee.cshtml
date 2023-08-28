@@ -5,7 +5,7 @@
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>@ViewData["Title"] - ContosoPizza</title>
+    <title>@ViewData["Title"] - PizzaSteve</title>
 
     <link href="/bootstrapAdmin/vendor/fontawesome-free/css/all.min.css" rel="stylesheet" type="text/css">
     <link href="https://fonts.googleapis.com/css?family=Nunito:200,200i,300,300i,400,400i,600,600i,700,700i,800,800i,900,900i"
@@ -28,7 +28,7 @@
             <!-- Sidebar - Brand -->
             <a class="sidebar-brand d-flex align-items-center justify-content-center" href="/Employees/Index">
                 <span style="font-size:50px" class="flaticon-pizza-1 mr-1"></span>
-                <div class="sidebar-brand-text mx-3">Pizza Delicious</div>
+                <div class="sidebar-brand-text mx-3">Pizza Steve</div>
             </a>
 
             <hr class="sidebar-divider d-none d-md-block">
@@ -232,7 +232,7 @@
                                data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                                 <span class="mr-2 d-none d-lg-inline text-gray-600 small">Hello, @HttpContextAccessor.HttpContext.Session.GetString("UserName").ToString()</span>
                                 <img class="img-profile rounded-circle"
-                                     src="/bootstrapAdmin/img/undraw_profile.svg">
+                                     src="@HttpContextAccessor.HttpContext.Session.GetString("UserImage").ToString()">
                             </a>
                             <!-- Dropdown - User Information -->
                             <div class="dropdown-menu dropdown-menu-right shadow animated--grow-in"
@@ -242,10 +242,6 @@
                                     Profile
                                 </a>
                                 <div class="dropdown-divider"></div>
-                                @*<a class="dropdown-item" href="/Logout">
-                                <i class="fas fa-sign-out-alt fa-sm fa-fw mr-2 text-gray-400"></i>
-                                Logout
-                                </a>*@
                                 <a class="dropdown-item" href="#" data-toggle="modal" data-target="#logoutModal">
                                     <i class="fas fa-sign-out-alt fa-sm fa-fw mr-2 text-gray-400"></i>
                                     Logout
@@ -282,7 +278,7 @@
 
     <footer style="padding-top:10px" class="border-top footer text-muted">
         <div class="container">
-            &copy; 2023 - ContosoPizza - <a asp-area="" asp-page="/Privacy">Privacy</a>
+            &copy; 2023 - PizzaSteve - <a asp-area="" asp-page="/Privacy">Privacy</a>
         </div>
     </footer>
 
@@ -311,18 +307,6 @@
 </body>
 </html>
 
-<script>
-    document.getElementById("logoutButton").addEventListener("click", function () {
-        // Gửi yêu cầu đăng xuất tới trang Logout
-        fetch("/Logout", { method: "POST" })
-            .then(function (response) {
-                if (response.ok) {
-                    // Đăng xuất thành công, chuyển hướng đến trang khác
-                    window.location.href = "/Products";
-                }
-            });
-    });
-</script>
 
 <form method="post" asp-page="/Logout" asp-page-handler="OnPostAsync">
     <div class="modal fade" id="logoutModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"

@@ -7,6 +7,17 @@
 
 <h1 class="text-center">Employees Information</h1>
 
+<form class="text-center">
+Search:
+    <input type="text" asp-for="SearchName" />
+    <span class="form-group btn btn-primary btn-icon-split span-btn-search">
+        <span class="icon text-white-50">
+            <i class="fas fa-search"></i>
+        </span>
+        <input type="submit" value="Search" class="search" />
+    </span>
+</form>
+
 <p class="text-center">
     <a class="btn btn-primary" asp-page="Create">Create New</a>
 </p>

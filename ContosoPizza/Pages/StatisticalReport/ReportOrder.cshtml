@@ -73,16 +73,16 @@
                 @Html.DisplayNameFor(model => model.ReportOrderDtos[0].Id)
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.ReportOrderDtos[0].OrderPlacedAt)
+                Order Placed At
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.ReportOrderDtos[0].OrderFullfilledAt)
+                Order Fullfilled At
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.ReportOrderDtos[0].PriceOrder)
+                Price Order
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.ReportOrderDtos[0].DiscountAmount)
+                Discount Amount
             </th>
             <th></th>
         </tr>
@@ -102,10 +102,10 @@
                         @Html.DisplayFor(modelItem => item.OrderFullfilledAt)
                     </td>
                     <td>
-                        @Html.DisplayFor(modelItem => item.PriceOrder)
+                        $@Html.DisplayFor(modelItem => item.PriceOrder)
                     </td>
                     <td>
-                        @Html.DisplayFor(modelItem => item.DiscountAmount)
+                        $@Html.DisplayFor(modelItem => item.DiscountAmount)
                     </td>
                     <td></td>
                 </tr>

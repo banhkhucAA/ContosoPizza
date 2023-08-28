@@ -33,14 +33,16 @@ namespace ContosoPizza.Pages.LoginCustomer
             var customer = await _context.Customers.FirstOrDefaultAsync(m => m.Email == email && m.Pass == password);
             if(customer == null) 
             { 
-                ErrorMessage = "Login failed. Your email or password is incorrect";
+                TempData["ErrorMessage"] = "Login failed. Your email or password is incorrect";
                 return Page();
             };
             var userRole = "Customer";
             var userID = customer.Id;
+            var userName = customer.FirstName + " " + customer.LastName;
             HttpContext.Session.SetString("UserRole", userRole);
             HttpContext.Session.SetInt32("UserId", userID);
-            return RedirectToPage("/Products/Index");
+            HttpContext.Session.SetString("UserName", userName);
+            return RedirectToPage("/Home/Home");
         }
     }
 }

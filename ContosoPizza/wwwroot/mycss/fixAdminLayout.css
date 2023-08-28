@@ -55,3 +55,17 @@ select, input{
 .span-btn-search {
     margin-top: 10px;
 }
+
+input[type=submit]{
+    min-width:101px;
+    min-height:38px;
+}
+
+.img-profile {
+    height: 2rem!important;
+    width: 2rem!important;
+}
+
+.rounded-circle {
+    border-radius: 50% !important;
+}

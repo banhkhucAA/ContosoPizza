@@ -4,21 +4,25 @@
     ViewData["Title"] = "Login";
 }
 
-<h3>Login</h3>
 
-<form method="post">
-    <div>
-        <label for="email">Email:</label>
-        <input type="email" id="email" name="Email" required />
+<form method="post" class="height-min-1000 text-center column mx-auto col-md-5" style="padding-top:100px;">
+    <h1 class="text-center" style="padding-bottom:20px">Login</h1>
+    <div style="border:5px solid white" class="col-md-12">
+        <div class="mb-3" style="padding-top:10px">
+            <label for="email" class="form-label">Email:</label>
+            <input placeholder="Enter your employee's email" type="email" class="form-control text-center only-input" id="email" name="Email" required />
+        </div>
+        <div class="mb-3">
+            <label for="password" class="form-label">Password:</label>
+            <input placeholder="Enter your password" type="password" id="password" class="form-control text-center only-input" name="Password" required />
+        </div>
+        <div class="mb-3">
+            <input type="submit" value="Login">
+        </div>
     </div>
-    <div>
-        <label for="password">Password:</label>
-        <input type="password" id="password" name="Password" required />
-    </div>
-    <div>
-        <button type="submit">Login</button>
-    </div>
+    <div class="text-center" style="color:black; font-weight:bold; padding-top:10px">This property belongs to Pizza Delicious' employees only</div>
 </form>
+
 
 @section Scripts {
     @{
@@ -26,8 +30,9 @@
     }
     <script>
         $(document).ready(function () {
-            var errorMessage = '@Model.ErrorMessage';
-            if (errorMessage !== '') {
+            var errorMessage = '@TempData["ErrorMessage"]';
+
+            if (errorMessage !== '' || tempDataErrorMessage!='') {
                 $('#errorModal').modal('show');
             }
             $('#errorModal .close').click(function () {
@@ -49,7 +54,7 @@
                 </button>
             </div>
             <div class="modal-body alert">
-                @Model.ErrorMessage
+                @TempData["ErrorMessage"]
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>

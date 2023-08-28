@@ -41,18 +41,30 @@ namespace ContosoPizza.Pages.Coupons
             if (_context.Coupons != null)
             {
                 int offset = Math.Max((myPage - 1) * pageSize, 0);
-                
-                if (HttpContext.Session.GetString("UserRole")=="Admin"|| (HttpContext.Session.GetString("UserRole") == "Employee"))
-                {                    
-                    if(!string.IsNullOrEmpty(Expire)) 
+
+                if (HttpContext.Session.GetString("UserRole") == "Admin" || HttpContext.Session.GetString("UserRole") == "Employee")
+                {
+                    if (!string.IsNullOrEmpty(Expire))
                     {
-                        if(Expire=="Expired") Coupon = await _context.Coupons.Where(c=>c.ExpireDate<DateTime.UtcNow).ToListAsync();
-                        else if(Expire=="Available") Coupon = await _context.Coupons.Where(c => c.ExpireDate > DateTime.UtcNow || c.ExpireDate == null).ToListAsync();
+                        if (Expire == "Expired") Coupon = await _context.Coupons.Where(c => c.ExpireDate < DateTime.Now).ToListAsync();
+                        else if (Expire == "Available") Coupon = await _context.Coupons.Where(c => c.ExpireDate > DateTime.Now || c.ExpireDate == null).ToListAsync();
+                        else Coupon = await _context.Coupons.ToListAsync();
                     }
                     else Coupon = await _context.Coupons.ToListAsync();
                 }
-                else    
-                Coupon = await _context.Coupons.Where(c=>c.ExpireDate>DateTime.UtcNow||c.ExpireDate==null).ToListAsync();
+                else
+                {
+                    var used_coupons_in_orders = await _context.Orders
+                        .Where(o => o.CustomerId == HttpContext.Session.GetInt32("UserId"))
+                        .Where(o => o.CouponId != null)
+                        .Select(o => o.CouponId)
+                        .ToListAsync();
+
+                    Coupon = await _context.Coupons
+                            .Where(c => c.ExpireDate > DateTime.Now || c.ExpireDate == null)
+                            .Where(c => !used_coupons_in_orders.Contains(c.Id))
+                            .ToListAsync();
+                }
 
                 Coupon = Coupon
                     .Skip(offset)

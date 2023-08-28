@@ -7,7 +7,16 @@
 
 
 <h1 class="text-center">Customer Information</h1>
-
+<form class="text-center">
+    Search:
+    <input type="text" asp-for="Email" />
+    <span class="form-group btn btn-primary btn-icon-split span-btn-search">
+        <span class="icon text-white-50">
+            <i class="fas fa-search"></i>
+        </span>
+        <input type="submit" value="Search" class="search" />
+    </span>
+</form>
 <p class="text-center">
     <a class="btn btn-primary" asp-page="Create">Create New</a>
 </p>
@@ -114,31 +123,24 @@
         if (!currentPage) {
             currentPage = 1;
         } else {
-            currentPage = parseInt(currentPage); // Chuyển đổi thành số nguyên
+            currentPage = parseInt(currentPage);
         }
 
-        // Cập nhật giá trị ban đầu của ô input
         document.getElementById('pageInput').value = currentPage;
 
-        // Lắng nghe sự kiện khi người dùng thay đổi giá trị trong ô input
         document.getElementById('pageInput').addEventListener('input', function (event) {
-            currentPage = event.target.value; //target dùng để nhận biết xem là ô nào vừa thay đổi
+            currentPage = event.target.value;
+            localStorage.setItem('currentPage', currentPage); // Lưu giá trị tìm kiếm vào localStorage
         });
 
-        // Lắng nghe sự kiện khi người dùng kết thúc nhập giá trị vào ô input (nhấn Enter)
         document.getElementById('pageInput').addEventListener('change', function (event) {
             updateLink(currentPage);
         });
 
         function updateLink(value) {
-            // Lưu giá trị trang hiện tại vào localStorage
             localStorage.setItem('currentPage', value);
-
             window.location.href = `?Page=${value}`;
         }
-
-        currentPage = 1;
-        localStorage.setItem('currentPage', currentPage);
     </script>
 }
 <div class="modal fade" id="errorModal" tabindex="-1" role="dialog" aria-labelledby="errorModalLabel" aria-hidden="true">

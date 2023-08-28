@@ -24,27 +24,33 @@ namespace ContosoPizza.Pages.LoginEmployee
         [DataType(DataType.Password)]
         public string Password { get; set; }
 
-        [BindProperty]
-        public string ErrorMessage { get; set; }
+
+        public async Task<IActionResult>OnGetAsync()
+        {
+            TempData["ErrorMessage"] = HttpContext.Session.GetString("ErrorMessage");
+            HttpContext.Session.Remove("ErrorMessage");
+            return Page();
+        }
 
         public async Task<IActionResult> OnPostAsync(string email, string password)
-        {
+        {           
             // Kiểm tra thông tin đăng nhập và xử lý logic tại đây
             var employee = await _context.Employees.FirstOrDefaultAsync(m => m.Email == email && m.Pass == password);
             if(employee == null) 
-            { 
-                ErrorMessage = "Login failed. Your email or password is incorrect";
+            {
+                TempData["ErrorMessage"] = "Login failed. Your email or password is incorrect";
                 return Page();
             };
             var userRole = employee.Role;
             var userID = employee.Id;
             var userName = employee.FirstName + " "+employee.LastName;
+            var userImage = employee.Image;
             if (employee.Role == "Admin")
             {
                 HttpContext.Session.SetString("UserRole", userRole);
                 HttpContext.Session.SetString("UserName", userName);
                 HttpContext.Session.SetInt32("UserId", userID);
-                // Đăng nhập thành công, chuyển hướng đến trang chính hoặc trang khác
+                HttpContext.Session.SetString("UserImage", userImage);
                 return RedirectToPage("/Employees/Index");
             }
             else if (employee.Role == "Employee")
@@ -52,6 +58,7 @@ namespace ContosoPizza.Pages.LoginEmployee
                 HttpContext.Session.SetString("UserRole", userRole);
                 HttpContext.Session.SetString("UserName", userName);
                 HttpContext.Session.SetInt32("UserId", userID);
+                HttpContext.Session.SetString("UserImage", userImage);
                 return RedirectToPage("/Orders/Index");
             }
             else if (employee.Role == "Manager Employee")
@@ -60,6 +67,7 @@ namespace ContosoPizza.Pages.LoginEmployee
                 HttpContext.Session.SetString("UserRole", userRole);
                 HttpContext.Session.SetString("UserName", userName);
                 HttpContext.Session.SetInt32("UserId", userID);
+                HttpContext.Session.SetString("UserImage", userImage);
                 return RedirectToPage("/Orders/Index");
             }    
             else

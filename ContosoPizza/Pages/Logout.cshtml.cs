@@ -15,7 +15,7 @@ namespace ContosoPizza.Pages
             HttpContext.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
 
             // Chuyển hướng đến trang khác sau khi đăng xuất thành công
-            return Redirect("/Products");
+            return Redirect("/Home/Home");
         }
     }
 }

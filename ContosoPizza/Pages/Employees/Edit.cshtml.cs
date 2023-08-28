@@ -11,6 +11,7 @@ using ContosoPizza.Models.Generated;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Hosting;
 using System.Net.WebSockets;
+using System.Data;
 
 namespace ContosoPizza.Pages.Employees
 {
@@ -31,13 +32,21 @@ namespace ContosoPizza.Pages.Employees
         public Employee Employee { get; set; } = default!;
         [BindProperty]
         public string ErrorMessage { get; set; } = default!;
+        public SelectList Roles { get; set; }
+
         public async Task<IActionResult> OnGetAsync(int? id)
         {
             if (id == null || _context.Employees == null)
             {
                 return NotFound();
             }
-
+            List<SelectListItem> ItemRoles = new List<SelectListItem>
+            {
+                new SelectListItem { Value = "Admin", Text = "Admin" },
+                new SelectListItem { Value = "Employee", Text = "Employee" },
+                new SelectListItem { Value = "Manager Employee", Text = "Manager Employee" },
+            };
+            Roles = new SelectList(ItemRoles, "Value", "Text");
             var employee = await _context.Employees.FirstOrDefaultAsync(m => m.Id == id);
             if (employee == null)
             {
@@ -77,7 +86,8 @@ namespace ContosoPizza.Pages.Employees
             {
                 if (!IsValidImageFile(imageFile))
                 {
-                    return NotFound("Can't add your image because it is not in the correct format");
+                    ErrorMessage = "Can't add your image because it is not in the correct format of .png, .jpg or .jpeg";
+                    return await OnGetAsync(id);
                 }
                 if (!string.IsNullOrEmpty(existingEmployee.Image))
                 {
