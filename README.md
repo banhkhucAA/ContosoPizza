@@ -1,6 +1,6 @@
 # ContosoPizza
 1. About this project
-This is a C# web app project to manage buying and selling pizza. This project used mainly HTML, CSS, JavaScript, JQuery, and C# .net Web Application (using LINQ)
+- This is a C# web app project to manage buying, selling pizza, and many things more. This project used mainly HTML, CSS, JavaScript, JQuery, and C# .net Web Application (using LINQ)
 
 2. Project requirements
 This project caters to 3 main types of audiences after the system is officially put into practice:
