@@ -50,6 +50,16 @@ namespace ContosoPizza.Pages.Customers
             }
             var customer = await _context.Customers.FindAsync(id);
 
+            var customer_orders = await _context.Orders.
+                Where(or => or.CustomerId == id)
+                .ToListAsync();
+
+            if(customer_orders!=null)
+                foreach(var item in customer_orders)
+                {
+                    _context.Orders.Remove(item);
+                }    
+
             if (customer != null)
             {
                 Customer = customer;

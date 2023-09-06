@@ -215,10 +215,13 @@ namespace ContosoPizza.Pages.Orders
                         {
                             softDelOrder.OrderStatusId = 7;
                             softDelOrder.EmployeeId = userId;
+                            softDelOrder.IsOverDeliveringTime=false;
+                            softDelOrder.IsOverMakingTime = false;
+                            softDelOrder.IsOverWaitingTime=false;
                             _context.Orders.Attach(softDelOrder).State = EntityState.Modified;
                             await _context.SaveChangesAsync();                         
                         }
-                        TempData["ErrorMessage"] = "Soft delete successfully.";
+                        HttpContext.Session.SetString("ErrorMessage","Soft delete successfully.") ;
                         return await OnGetAsync();
                     }
                     else return NotFound();
@@ -230,10 +233,10 @@ namespace ContosoPizza.Pages.Orders
                     {
                         _context.Orders.Remove(hardDelOrder);
                         await _context.SaveChangesAsync();
-                        TempData["ErrorMessage"] = "Delete order successfully";
+                        HttpContext.Session.SetString("ErrorMessage", "Delete order successfully.");
                     }
                     else if (hardDelOrder != null && hardDelOrder.OrderStatus.IsActive == true)
-                        TempData["ErrorMessage"] = "This order is active, cant delete";
+                        HttpContext.Session.SetString("ErrorMessage", "This order is active, cant delete.");
                     else return NotFound();
                     return await OnGetAsync();
                 }

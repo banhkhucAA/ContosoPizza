@@ -103,7 +103,7 @@ namespace ContosoPizza.Pages.Cart
                 HttpContext.Session.SetString("OrderDetail_Show", orderDetailsJson);
             }    
             
-            return Page();
+            return OnGet();
         }
 
         

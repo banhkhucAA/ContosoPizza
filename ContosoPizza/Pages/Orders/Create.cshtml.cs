@@ -272,7 +272,8 @@ namespace ContosoPizza.Pages.Orders
             var customer = await _context.Customers.FirstOrDefaultAsync(c => c.Email == Customer.Email);
             if (customer==null)
             {
-                return NotFound("This customer doesn' exist");
+                ErrorMessage = "This customer doesn' exist";
+                return await OnGet();
             }
             var orders_coupons = await _context.Orders
                 .Where(or => or.CustomerId == customer.Id)

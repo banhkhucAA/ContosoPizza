@@ -49,8 +49,14 @@ namespace ContosoPizza.Pages.Products
             }
 
             if (!string.IsNullOrEmpty(Food_Type))
-            {
-                query = query.Where(f => f.ProductName.Contains(Food_Type) || f.Materials.Contains(Food_Type));
+            {               
+                if (Food_Type == "CarbonatedDrink")
+                    query = query.Where(f => f.ProductName.Contains("Carbonated") || f.Materials.Contains("Carbonated"));
+                else if (Food_Type == "FreshJuice")
+                    query = query.Where(f => f.ProductName.Contains("Juice") || f.Materials.Contains("Juice"));
+                else
+                    query = query.Where(f => f.ProductName.Contains(Food_Type) || f.Materials.Contains(Food_Type));
+
             }
 
             if (!string.IsNullOrEmpty(Food_Category))

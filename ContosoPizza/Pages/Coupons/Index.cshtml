@@ -61,7 +61,7 @@
                         @Html.DisplayFor(modelItem => item.CouponCode)
                     </td>
                     <td>
-                        $@Html.DisplayFor(modelItem => item.DiscountAmount)
+                        @Html.DisplayFor(modelItem => item.DiscountAmount)%
                     </td>
                     <td>
                         @Html.DisplayFor(modelItem => item.ExpireDate)
@@ -110,60 +110,126 @@
 }
 else
 {
-    <div class="padding-to-all text-center tab-content ftco-animate" style="min-height:700px">
-        <h1>Coupons</h1>   
-        <div class="row">
-            @if(Model.Coupon.Count>0)
-            {
-                <div class="col-md-6">
+    @if(Model.Coupon.Count<=2)
+    {
+        <div class="padding-to-all text-center tab-content ftco-animate" style="min-height:700px">
+            <h1>Coupons</h1>   
+            <div class="row">
+                @if(Model.Coupon.Count>0)
+                {
                     <div class="row">
-                        @foreach(var item in Model.Coupon)
-                        {
-                            <div class="col-md-6">
-                                <div class="coupon">
-                                    <div class="container-coupon">
-                                        <h3><span class="flaticon-pizza-1 mr-1">
-                                            Pizza<br>
-                                            </span>
-                                            <small>
-                                                Delicous
-                                            </small>
-                                        </h3>
+                        <div class="col-md-6">
+                            <div class="row">
+                                @foreach(var item in Model.Coupon)
+                                {
+                                    <div class="col-md-6">
+                                        <div class="coupon">
+                                            <div class="container-coupon">
+                                                <h3><span class="flaticon-pizza-1 mr-1">
+                                                    Pizza<br>
+                                                    </span>
+                                                    <small>
+                                                        Delicous
+                                                    </small>
+                                                </h3>
+                                            </div>
+                                            <div class="container-coupon" style="min-height:170px; background-color:#78efba!important">
+                                                <h2><b>@item.DiscountAmount% OFF</b></h2>
+                                                <p>@item.Description</p>
+                                            </div>
+                                            <div class="container-coupon" style="min-height:180px">
+                                                <p>Use Promo Code: <span class="promo-coupon">@item.CouponCode</span></p>
+                                                @if(@item.ExpireDate!=null)
+                                                {
+                                                    <p class="expire-coupon">Expires: @item.ExpireDate</p>
+                                                }else
+                                                {
+                                                    <p class="expire-coupon">Expires: No limited</p>
+                                                }
+                                            </div>
+                                        </div>
                                     </div>
-                                    <div class="container-coupon" style="min-height:170px; background-color:#78efba!important">
-                                        <h2><b>@item.DiscountAmount% OFF</b></h2>
-                                        <p>@item.Description</p>
-                                    </div>
-                                    <div class="container-coupon" style="min-height:180px">
-                                        <p>Use Promo Code: <span class="promo-coupon">@item.CouponCode</span></p>
-                                        @if(@item.ExpireDate!=null)
-                                        {
-                                            <p class="expire-coupon">Expires: @item.ExpireDate</p>
-                                        }else
-                                        {
-                                            <p class="expire-coupon">Expires: No limited</p>
-                                        }
-                                    </div>
-                                </div>
+                                }
                             </div>
-                        }
+                        </div>         
+                        <div class="col-md-6 text-center">
+                            <img src="~/EmployeePictures/pizza-steve-coupons.png" width="700" heiht="680"/>
+                        </div>
                     </div>
-                </div>         
-                <div class="col-md-6 text-center">
-                    <img src="~/EmployeePictures/pizza-steve-coupons.png" width="700" heiht="680"/>
-                </div>
-                <div class="text-center fix_bottom">
-                    Page: <input type="number" id="pageInput" style="color:black; font-weight:bold; font-size: 30px; max-width: 50px" min="1" step="1">
-                </div>
-            }else
-            {
-                <div class="col-md-12" style="height:auto">
-                    <img src="~/EmployeePictures/pizza-steve-no-coupons-available_transparent.png" style="max-height:500px">
-                </div>
-            }
+                }else
+                {
+                    <div class="col-md-12" style="height:auto">
+                        <img src="~/EmployeePictures/pizza-steve-no-coupons-available_transparent.png" style="max-height:500px">
+                    </div>
+                }
+            </div>
+            <div class="text-center fix_bottom" style="padding-top:100px">
+                Page: <input type="number" id="pageInput" style="color:black; font-weight:bold; font-size: 30px; max-width: 50px" min="1" step="1">
+            </div>     
         </div>
-        
-    </div>
+    }
+    else
+    {
+        <div class="padding-to-all text-center tab-content ftco-animate" style="min-height:1050px">
+            <h1>Coupons</h1>
+            <div class="row">
+                @if (Model.Coupon.Count > 0)
+                {
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="row">
+                                @foreach (var item in Model.Coupon)
+                                {
+                                    <div class="col-md-6">
+                                        <div class="coupon">
+                                            <div class="container-coupon">
+                                                <h3>
+                                                    <span class="flaticon-pizza-1 mr-1">
+                                                        Pizza<br>
+                                                    </span>
+                                                    <small>
+                                                        Delicous
+                                                    </small>
+                                                </h3>
+                                            </div>
+                                            <div class="container-coupon" style="min-height:170px; background-color:#78efba!important">
+                                                <h2><b>@item.DiscountAmount% OFF</b></h2>
+                                                <p>@item.Description</p>
+                                            </div>
+                                            <div class="container-coupon" style="min-height:180px">
+                                                <p>Use Promo Code: <span class="promo-coupon">@item.CouponCode</span></p>
+                                                @if (@item.ExpireDate != null)
+                                                {
+                                                    <p class="expire-coupon">Expires: @item.ExpireDate</p>
+                                                }
+                                                else
+                                                {
+                                                    <p class="expire-coupon">Expires: No limited</p>
+                                                }
+                                            </div>
+                                        </div>
+                                    </div>
+                                }
+                            </div>
+                        </div>
+                        <div class="col-md-6 text-center">
+                            <img src="~/EmployeePictures/pizza-steve-coupons.png" width="700" heiht="680" />
+                        </div>
+                    </div>
+                }
+                else
+                {
+                    <div class="col-md-12" style="height:auto">
+                        <img src="~/EmployeePictures/pizza-steve-no-coupons-available_transparent.png" style="max-height:500px">
+                    </div>
+                }
+            </div>
+            <div class="text-center fix_bottom" style="padding-top:100px">
+                Page: <input type="number" id="pageInput" style="color:black; font-weight:bold; font-size: 30px; max-width: 50px" min="1" step="1">
+            </div>
+        </div>
+    }
+
 }
 @section Scripts {
     @{

@@ -8,13 +8,14 @@
 
 <h1 class="text-center">Report Employees</h1>
 
-<form class="text-center">
+<form class="text-center" id="searchForm">
     <p>
         Filter Date:
         From: <input name="FromDate" type="date" asp-for="FromDate" value="" />
         &nbsp;&nbsp;&nbsp;&nbsp;
         To: <input name="ToDate" type="date" asp-for="ToDate" value="" />
-        <input type="hidden" class="btn btn-primary" value="Search" />
+        <input type="hidden" id="orderBy" name="OrderBy" value="" />
+        <input type="submit" class="btn btn-primary" value="Search" />
     </p>
     <p>
         Order by:
@@ -28,6 +29,7 @@
         </select>
     </p>
 </form>
+
 
 <table class="table">
     <thead> 
@@ -126,64 +128,68 @@
 <script> 
 
     document.addEventListener('DOMContentLoaded', function () {
-        const searchButton = document.querySelector('input[type="hidden"]');
-        let savedFromDate = localStorage.getItem('fromDate_EmployeeReport') || ''; // Lấy giá trị fromDate đã được lưu trữ từ trước (nếu có)
-        let savedToDate = localStorage.getItem('toDate_EmployeeReport') || ''; // Lấy giá trị toDate đã được lưu trữ từ trước (nếu có)
+        const searchForm = document.getElementById('searchForm');
+        const orderByInput = document.getElementById('orderBy');
+        let savedFromDate = localStorage.getItem('fromDate_EmployeeReport') || '';
+        let savedToDate = localStorage.getItem('toDate_EmployeeReport') || '';
         document.querySelector('input[name="FromDate"]').value = savedFromDate;
         document.querySelector('input[name="ToDate"]').value = savedToDate;
-        searchButton.addEventListener('click', redirectToSelectedOption);
 
         // Khôi phục giá trị đã lưu nếu có
         var storedOrderByValue = localStorage.getItem('selectedOrderByOption');
         if (storedOrderByValue) {
             document.getElementById('orderBySelect').value = storedOrderByValue;
+            orderByInput.value = storedOrderByValue; // Cập nhật giá trị "OrderBy" từ localStorage
         }
 
         document.getElementById('orderBySelect').addEventListener('change', function (event) {
+            const selectedValue = event.target.value;
+            orderByInput.value = selectedValue; // Cập nhật giá trị "OrderBy" khi thay đổi
+        });
+
+        // Xử lý sự kiện gửi biểu mẫu
+        searchForm.addEventListener('submit', function (event) {
+            event.preventDefault(); // Ngăn chặn việc gửi biểu mẫu mặc định
             redirectToSelectedOption();
         });
 
         function redirectToSelectedOption() {
             const baseUrl = window.location.href.split('?')[0];
-            var selectElement = document.getElementById("orderBySelect");
-            var selectedValue = selectElement.value;
             const queryParams = [];
             const fromDate = document.querySelector('input[name="FromDate"]').value;
             const toDate = document.querySelector('input[name="ToDate"]').value;
+            const selectedValue = orderByInput.value;
 
-            // Lưu trữ giá trị đã chọn vào localStorage       
-            if(selectedValue){
+            // Lưu trữ giá trị đã chọn vào localStorage
+            if (selectedValue) {
                 queryParams.push(`OrderBy=${selectedValue}`);
                 localStorage.setItem('selectedOrderByOption', selectedValue);
-            }else{
+            } else {
                 localStorage.removeItem('selectedOrderByOption');
             }
 
             if (fromDate) {
                 queryParams.push(`fromdate=${fromDate}`);
-                savedFromDate = fromDate; // Lưu giá trị fromDate hiện tại
-                localStorage.setItem('fromDate_EmployeeReport', fromDate); // Lưu giá trị fromDate vào localStorage
+                savedFromDate = fromDate;
+                localStorage.setItem('fromDate_EmployeeReport', fromDate);
             } else {
-                savedFromDate = ''; // Reset giá trị fromDate nếu không có giá trị
-                localStorage.removeItem('fromDate_EmployeeReport'); // Xóa giá trị fromDate từ localStorage
+                savedFromDate = '';
+                localStorage.removeItem('fromDate_EmployeeReport');
             }
 
             if (toDate) {
                 queryParams.push(`todate=${toDate}`);
-                savedToDate = toDate; // Lưu giá trị toDate hiện tại
-                localStorage.setItem('toDate_EmployeeReport', toDate); // Lưu giá trị toDate vào localStorage
+                savedToDate = toDate;
+                localStorage.setItem('toDate_EmployeeReport', toDate);
             } else {
-                savedToDate = ''; // Reset giá trị toDate nếu không có giá trị
-                localStorage.removeItem('toDate_EmployeeReport'); // Xóa giá trị toDate từ localStorage
+                savedToDate = '';
+                localStorage.removeItem('toDate_EmployeeReport');
             }
 
             const queryString = queryParams.join('&');
             const newUrl = `${baseUrl}?${queryString}`;
 
-            // Chuyển hướng đến đường dẫn đã chọn
-            if (selectedValue !== "") {
-                window.location.href = newUrl;
-            }
+            window.location.href = newUrl;
         }
     });
 </script>

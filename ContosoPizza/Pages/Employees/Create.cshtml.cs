@@ -50,8 +50,6 @@ namespace ContosoPizza.Pages.Employees
             if(exist_employee_email!=null) 
             {
                 ErrorMessage = "This email has already been used to register";
-                Console.WriteLine(ErrorMessage);
-                Console.WriteLine(exist_employee_email);
                 return OnGet();
             }
             bool IsValidImageFile(IFormFile imageFile)

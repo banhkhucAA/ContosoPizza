@@ -103,7 +103,7 @@
                     </span>
                     <input type="submit" value="Search" name="findButton" class="search" />
                 </span>
-                @if (Model.Customer!= null)
+                @if (Model.Customer!= null && Model.Customer.Id !=0)
                 {
                     <br />
                     <br />
@@ -150,7 +150,7 @@
                         </tbody>
                     </table>
                 }
-                @if (Model.CouponsOrdersDto != null)
+                @if (Model.CouponsOrdersDto != null && Model.Customer.Id !=0)
                 {
                     <br />
                     <table class="table">
